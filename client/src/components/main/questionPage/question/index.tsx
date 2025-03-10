@@ -25,7 +25,6 @@ interface QuestionProps {
  */
 const QuestionView = ({ question }: QuestionProps) => {
   const navigate = useNavigate();
-  const [isBookmarked, setIsBookmarked] = useState(false);
 
   /**
    * Function to navigate to the home page with the specified tag as a search parameter.
@@ -47,8 +46,6 @@ const QuestionView = ({ question }: QuestionProps) => {
   const handleAnswer = (questionID: ObjectId) => {
     navigate(`/question/${questionID}`);
   };
-
-  const handleBookmark = () => {};
 
   return (
     <div
@@ -82,9 +79,6 @@ const QuestionView = ({ question }: QuestionProps) => {
         <div className='question_author'>{question.askedBy}</div>
         <div>&nbsp;</div>
         <div className='question_meta'>asked {getMetaData(new Date(question.askDateTime))}</div>
-        <button className='bookmark_button' onClick={handleBookmark}>
-          <FontAwesomeIcon icon={faBookmark} />
-        </button>
       </div>
     </div>
   );
