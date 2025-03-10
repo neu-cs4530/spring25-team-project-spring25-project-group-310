@@ -48,3 +48,16 @@
 .question_meta {
   color: #bbbbbb;
 }
+
+.bookmark_button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: cornflowerblue;
+  transition: color 0.3s;
+}
+
+.bookmark_button:hover {
+  color:rgb(21, 0, 255);
+}
