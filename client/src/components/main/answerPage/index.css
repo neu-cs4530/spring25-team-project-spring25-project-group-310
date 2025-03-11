@@ -5,3 +5,25 @@
 .ansButton {
   margin: 2% 0 2% 2%;
 }
+
+.bookmark_button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: cornflowerblue;
+  transition: color 0.3s;
+}
+
+.bookmark_button_bookmarked {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color:rgb(21, 0, 255);
+  transition: color 0.3s;
+}
+
+.bookmark_button:hover {
+  color:rgb(21, 0, 255);
+}
