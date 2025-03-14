@@ -4,18 +4,20 @@
   justify-content: space-around;
   height: 10%;
   width: 100%;
-  background: #dddddd;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 .title {
   font-size: 32px;
   font-weight: 800;
+  color: var(--text-primary);
 }
 
 .logout-button {
   padding: 12px;
   font-size: 16px;
-  background-color: #007bff;
+  background-color: var(--accent-color);
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -23,20 +25,22 @@
   transition: background-color 0.3s;
 }
 
+
 .view-profile-button {
-  background-color: #007bff;
+  background-color: var(--accent-color);
   color: white;
   border: none;
   padding: 10px 15px;
   border-radius: 5px;
   cursor: pointer;
-  margin-left: 10px; /* Add spacing from Logout button */
+  margin-left: 10px;
+  /* Add spacing from Logout button */
 }
 
-.view-profile-button:hover {
-  background-color: #0056b3;
+.logout-button:hover {
+  background-color: var(--hover-color);
 }
 
 .view-profile-button:active {
-  background-color: #003f7f;
+  background-color: var(--hover-color);
 }
