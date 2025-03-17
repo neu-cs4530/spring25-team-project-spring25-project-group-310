@@ -5,7 +5,7 @@ import { Schema } from 'mongoose';
  *
  * This schema defines the structure for storing bookmark collections in the database.
  * Each collection includes the following fields:
- * - `userId`: The ObjectId of the user who owns the collection.
+ * - `username`: The username of the user who owns this collection.
  * - `name`: A short, descriptive name for the collection.
  * - `bookmarks`: An array of ObjectIds referencing Bookmark documents that belong to this collection.
  * - `isDefault`: A boolean flag indicating whether this collection is the default "All Bookmarks" collection.
@@ -13,30 +13,28 @@ import { Schema } from 'mongoose';
  */
 
 const collectionSchema = new Schema({
-    userId: {
+  username: {
+    type: String,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  bookmarks: [
+    {
       type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
+      ref: 'Bookmark',
     },
-    name: {
-      type: String,
-      required: true,
-    },
-    bookmarks: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'Bookmark',
-      },
-    ],
-    isDefault: {
-      type: Boolean,
-      default: false,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-  });
+  ],
+  isDefault: {
+    type: Boolean,
+    default: false,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-  export default collectionSchema;
-
+export default collectionSchema;
