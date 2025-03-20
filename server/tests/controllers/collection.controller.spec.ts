@@ -8,6 +8,7 @@ import * as collectionService from '../../services/collection.service';
 const app = express();
 app.use(express.json());
 app.use((req, res, next) => {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   (req as any).user = { username: 'testUser' };
   next();
 });

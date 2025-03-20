@@ -112,17 +112,17 @@ describe('Collection Service', () => {
 
   describe('deleteCollection', () => {
     it('should delete and return the collection', async () => {
-        mockingoose(CollectionModel).toReturn(mockDatabaseCollection, 'findOne');
-        mockingoose(CollectionModel).toReturn(mockDatabaseCollection, 'findOneAndDelete');
-      
-        const result: CollectionResponse = await deleteCollection(collectionId, 'testUser');
-        if ('error' in result) {
-          throw new Error(result.error);
-        } else {
-          expect(result).toHaveProperty('_id');
-          expect(result.username).toEqual('testUser');
-        }
-      });
+      mockingoose(CollectionModel).toReturn(mockDatabaseCollection, 'findOne');
+      mockingoose(CollectionModel).toReturn(mockDatabaseCollection, 'findOneAndDelete');
+
+      const result: CollectionResponse = await deleteCollection(collectionId, 'testUser');
+      if ('error' in result) {
+        throw new Error(result.error);
+      } else {
+        expect(result).toHaveProperty('_id');
+        expect(result.username).toEqual('testUser');
+      }
+    });
 
     it('should return an error if collection not found', async () => {
       mockingoose(CollectionModel).toReturn(null, 'findOne');
@@ -155,7 +155,7 @@ describe('Collection Service', () => {
         fail(result.error);
       } else {
         expect(result.bookmarks.map(String)).toContain(bookmarkId);
-    }
+      }
     });
 
     it('should return an error if collection not found or addition fails', async () => {

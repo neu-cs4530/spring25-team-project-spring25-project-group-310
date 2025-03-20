@@ -42,7 +42,9 @@ describe('Bookmark Service', () => {
     it('should return an array of bookmarks for the given username', async () => {
       mockingoose(BookmarkModel).toReturn([mockDatabaseBookmark], 'find');
 
-      const result = (await getBookmarksForUser(mockBookmark.username)) as unknown as DatabaseBookmark;
+      const result = (await getBookmarksForUser(
+        mockBookmark.username,
+      )) as unknown as DatabaseBookmark;
       expect(Array.isArray(result)).toBe(true);
       if (Array.isArray(result)) {
         expect(result.length).toBeGreaterThan(0);
@@ -62,7 +64,10 @@ describe('Bookmark Service', () => {
     it('should delete and return the bookmark', async () => {
       mockingoose(BookmarkModel).toReturn(mockDatabaseBookmark, 'findOneAndDelete');
 
-      const result: BookmarkResponse = await deleteBookmark(mockDatabaseBookmark._id.toString(), 'testUser');
+      const result: BookmarkResponse = await deleteBookmark(
+        mockDatabaseBookmark._id.toString(),
+        'testUser',
+      );
       if ('error' in result) {
         fail(result.error);
       } else {
@@ -81,7 +86,10 @@ describe('Bookmark Service', () => {
     it('should return an error if deletion fails', async () => {
       mockingoose(BookmarkModel).toReturn(new Error('Deletion error'), 'findOneAndDelete');
 
-      const result: BookmarkResponse = await deleteBookmark(mockDatabaseBookmark._id.toString(), 'testUser');
+      const result: BookmarkResponse = await deleteBookmark(
+        mockDatabaseBookmark._id.toString(),
+        'testUser',
+      );
       expect(result).toHaveProperty('error', 'Error when deleting bookmark');
     });
   });
