@@ -8,6 +8,7 @@ import { Request } from 'express';
  * - `bookmarks`: An array of ObjectIds referencing the bookmarks included in this collection.
  * - `isDefault`: Indicates if this is the default "All Bookmarks" collection. Each user automatically gets an empty default collection until they bookmark an item.
  * - `createdAt?`: The date and time when the collection was created.
+ * - `updatedAt?`: The date and time when the collection was updated.
  */
 
 export interface Collection {
@@ -16,6 +17,7 @@ export interface Collection {
   bookmarks: ObjectId[];
   isDefault: boolean;
   createdAt?: Date;
+  updatedAt?: Date;
 }
 
 /**
@@ -27,6 +29,7 @@ export interface Collection {
  * - `isDefault`: A flag indicating whether this is the default "All Bookmarks" collection.
  *                Each user automatically gets an empty default collection until they bookmark an item.
  * - `createdAt`: The date and time when the collection was created.
+ *  * - `updatedAt?`: The date and time when the collection was updated.
  */
 export interface DatabaseCollection extends Collection {
   _id: ObjectId;
