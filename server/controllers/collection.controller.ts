@@ -36,7 +36,7 @@ const collectionController = () => {
     }
     try {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const username = (req as any).user.username;
+      const { user: { username } } = req as any;
       const { name } = req.body;
       const newCollection: Collection = {
         username,
@@ -62,7 +62,7 @@ const collectionController = () => {
   const getCollectionsRoute = async (req: Request, res: Response): Promise<void> => {
     try {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const username = (req as any).user.username;
+      const { user: { username } } = req as any;
       const result = await getCollectionsForUser(username);
       if ('error' in result) {
         throw new Error(result.error);
@@ -91,7 +91,7 @@ const collectionController = () => {
     }
     try {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const username = (req as any).user.username;
+      const { user: { username } } = req as any;
       const result = await updateCollection(collectionId, name, username);
       if ('error' in result) {
         throw new Error(result.error);
@@ -115,7 +115,7 @@ const collectionController = () => {
     }
     try {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const username = (req as any).user.username;
+      const { user: { username } } = req as any;
       const result = await deleteCollection(collectionId, username);
       if ('error' in result) {
         throw new Error(result.error);
@@ -144,7 +144,7 @@ const collectionController = () => {
     }
     try {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const username = (req as any).user.username;
+      const { user: { username } } = req as any;
       const result = await addBookmarkToCollection(collectionId, bookmarkId, username);
       if ('error' in result) {
         throw new Error(result.error);
@@ -168,7 +168,7 @@ const collectionController = () => {
     }
     try {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const username = (req as any).user.username;
+      const { user: { username } } = req as any;
       const result = await removeBookmarkFromCollection(collectionId, bookmarkId, username);
       if ('error' in result) {
         throw new Error(result.error);

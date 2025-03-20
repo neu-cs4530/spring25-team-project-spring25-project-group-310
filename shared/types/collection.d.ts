@@ -1,5 +1,4 @@
 import { ObjectId } from 'mongodb';
-import { Request } from 'express';
 
 /**
  * Represents a collection of bookmarks.
