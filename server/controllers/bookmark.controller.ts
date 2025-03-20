@@ -36,7 +36,9 @@ const bookmarkController = () => {
 
     try {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const { user: { username } } = req as any;
+      const {
+        user: { username },
+      } = req as any;
       const bookmark: Bookmark = { username, questionId };
       const result: DatabaseBookmark | { error: string } = await saveBookmark(bookmark);
       if ('error' in result) {
@@ -56,7 +58,9 @@ const bookmarkController = () => {
   const getBookmarksRoute = async (req: Request, res: Response): Promise<void> => {
     try {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const { user: { username } } = req as any;
+      const {
+        user: { username },
+      } = req as any;
       const result = await getBookmarksForUser(username);
       if ('error' in result) {
         throw new Error(result.error);
@@ -76,7 +80,9 @@ const bookmarkController = () => {
     try {
       const { bookmarkId } = req.params;
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const { user: { username } } = req as any;
+      const {
+        user: { username },
+      } = req as any;
       if (!ObjectId.isValid(bookmarkId)) {
         res.status(400).send('Invalid bookmarkId format');
         return;
