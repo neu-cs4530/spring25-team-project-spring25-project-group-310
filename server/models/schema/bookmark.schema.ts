@@ -5,15 +5,14 @@ import { Schema } from 'mongoose';
  *
  * This schema defines the structure for storing bookmarks in the database.
  * Each bookmark includes the following fields:
- * - `userId`: The ObjectId of the user who created the bookmark.
+ * - `username`: The username of the user who created the bookmark.
  * - `questionId`: The ObjectId of the question being bookmarked.
  * - `createdAt`: The date and time when the bookmark was created.
  */
 
 const bookmarkSchema = new Schema({
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
+  username: {
+    type: String,
     required: true,
   },
   questionId: {
