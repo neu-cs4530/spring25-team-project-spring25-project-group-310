@@ -25,8 +25,6 @@ const AnswerPage = () => {
 
   const handleBookmark = () => {
     setIsBookmarked(!isBookmarked);
-    console.log(isBookmarked);
-    console.log(questionID);
   };
 
   return (
