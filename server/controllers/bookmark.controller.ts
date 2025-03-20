@@ -15,9 +15,7 @@ const bookmarkController = () => {
    * @param req The request object.
    * @returns true if valid, otherwise false.
    */
-  const isBookmarkRequestValid = (req: Request): boolean => {
-    return !!req.body.questionId;
-  };
+  const isBookmarkRequestValid = (req: Request): boolean => !!req.body.questionId;
 
   /**
    * Creates a new bookmark for a question.
@@ -37,6 +35,7 @@ const bookmarkController = () => {
     }
 
     try {
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const username = (req as any).user.username;
       const bookmark: Bookmark = { username, questionId };
       const result: DatabaseBookmark | { error: string } = await saveBookmark(bookmark);
@@ -56,6 +55,7 @@ const bookmarkController = () => {
    */
   const getBookmarksRoute = async (req: Request, res: Response): Promise<void> => {
     try {
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const username = (req as any).user.username;
       const result = await getBookmarksForUser(username);
       if ('error' in result) {
@@ -75,6 +75,7 @@ const bookmarkController = () => {
   const deleteBookmarkRoute = async (req: Request, res: Response): Promise<void> => {
     try {
       const { bookmarkId } = req.params;
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const username = (req as any).user.username;
       if (!ObjectId.isValid(bookmarkId)) {
         res.status(400).send('Invalid bookmarkId format');

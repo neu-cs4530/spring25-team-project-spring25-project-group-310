@@ -3,12 +3,9 @@ import supertest from 'supertest';
 import mongoose from 'mongoose';
 import collectionController from '../../controllers/collection.controller';
 import {
-  Collection,
   DatabaseCollection,
-  CollectionResponse,
 } from '../../types/types';
 import * as collectionService from '../../services/collection.service';
-import mockingoose from 'mockingoose';
 
 const app = express();
 app.use(express.json());
@@ -24,13 +21,6 @@ describe('Collection Controller', () => {
   });
 
   const collectionId = new mongoose.Types.ObjectId().toString();
-  const mockCollection: Collection = {
-    username: 'testUser',
-    name: 'Custom Collection',
-    bookmarks: [],
-    isDefault: false,
-  };
-
   const mockDatabaseCollection: DatabaseCollection = {
     _id: new mongoose.Types.ObjectId(),
     username: 'testUser',

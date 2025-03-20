@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { Collection, DatabaseCollection } from '../types/types';
+import { Collection } from '../types/types';
 import {
   saveCollection,
   getCollectionsForUser,
@@ -22,9 +22,7 @@ const collectionController = () => {
    * @param req The request object.
    * @returns true if valid, otherwise false.
    */
-  const isCreateCollectionRequestValid = (req: Request): boolean => {
-    return !!req.body.name;
-  };
+  const isCreateCollectionRequestValid = (req: Request): boolean => !!req.body.name;
 
   /**
    * Creates a new custom collection.
@@ -37,6 +35,7 @@ const collectionController = () => {
       return;
     }
     try {
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const username = (req as any).user.username;
       const { name } = req.body;
       const newCollection: Collection = {
@@ -62,6 +61,7 @@ const collectionController = () => {
    */
   const getCollectionsRoute = async (req: Request, res: Response): Promise<void> => {
     try {
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const username = (req as any).user.username;
       const result = await getCollectionsForUser(username);
       if ('error' in result) {
@@ -90,6 +90,7 @@ const collectionController = () => {
       return;
     }
     try {
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const username = (req as any).user.username;
       const result = await updateCollection(collectionId, name, username);
       if ('error' in result) {
@@ -113,6 +114,7 @@ const collectionController = () => {
       return;
     }
     try {
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const username = (req as any).user.username;
       const result = await deleteCollection(collectionId, username);
       if ('error' in result) {
@@ -141,6 +143,7 @@ const collectionController = () => {
       return;
     }
     try {
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const username = (req as any).user.username;
       const result = await addBookmarkToCollection(collectionId, bookmarkId, username);
       if ('error' in result) {
@@ -164,6 +167,7 @@ const collectionController = () => {
       return;
     }
     try {
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const username = (req as any).user.username;
       const result = await removeBookmarkFromCollection(collectionId, bookmarkId, username);
       if ('error' in result) {
