@@ -5,6 +5,9 @@ import { DatabaseBookmark } from '../types/types';
 /**
  * Mongoose model for the `Bookmark` collection.
  */
-const BookmarkModel: Model<DatabaseBookmark> = mongoose.model<DatabaseBookmark>('Bookmark', bookmarkSchema);
+const BookmarkModel: Model<DatabaseBookmark> = mongoose.model<DatabaseBookmark>(
+  'Bookmark',
+  bookmarkSchema,
+);
 
 export default BookmarkModel;

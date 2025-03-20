@@ -5,6 +5,9 @@ import { DatabaseCollection } from '../types/types';
 /**
  * Mongoose model for the `Collection` collection.
  */
-const CollectionModel: Model<DatabaseCollection> = mongoose.model<DatabaseCollection>('Collection', collectionSchema);
+const CollectionModel: Model<DatabaseCollection> = mongoose.model<DatabaseCollection>(
+  'Collection',
+  collectionSchema,
+);
 
 export default CollectionModel;

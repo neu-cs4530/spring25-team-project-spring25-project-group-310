@@ -2,9 +2,7 @@ import express from 'express';
 import supertest from 'supertest';
 import mongoose from 'mongoose';
 import collectionController from '../../controllers/collection.controller';
-import {
-  DatabaseCollection,
-} from '../../types/types';
+import { DatabaseCollection } from '../../types/types';
 import * as collectionService from '../../services/collection.service';
 
 const app = express();
@@ -17,7 +15,7 @@ app.use('/collections', collectionController());
 
 describe('Collection Controller', () => {
   afterEach(() => {
-    jest.clearAllMocks(); 
+    jest.clearAllMocks();
   });
 
   const collectionId = new mongoose.Types.ObjectId().toString();
@@ -59,7 +57,9 @@ describe('Collection Controller', () => {
         .post('/collections')
         .send({ name: 'Custom Collection' });
       expect(response.status).toBe(500);
-      expect(response.text).toContain('Error when creating collection: Error when saving a collection');
+      expect(response.text).toContain(
+        'Error when creating collection: Error when saving a collection',
+      );
     });
   });
 
@@ -101,9 +101,7 @@ describe('Collection Controller', () => {
     });
 
     it('should return 400 if collection name is missing', async () => {
-      const response = await supertest(app)
-        .put(`/collections/${collectionId}`)
-        .send({});
+      const response = await supertest(app).put(`/collections/${collectionId}`).send({});
       expect(response.status).toBe(400);
       expect(response.text).toEqual('Collection name is required');
     });
@@ -117,7 +115,9 @@ describe('Collection Controller', () => {
     });
 
     it('should return 500 if updateCollection service returns an error', async () => {
-      jest.spyOn(collectionService, 'updateCollection').mockResolvedValue({ error: 'Collection not found' });
+      jest
+        .spyOn(collectionService, 'updateCollection')
+        .mockResolvedValue({ error: 'Collection not found' });
       const response = await supertest(app)
         .put(`/collections/${collectionId}`)
         .send({ name: 'New Name' });
@@ -143,7 +143,9 @@ describe('Collection Controller', () => {
     });
 
     it('should return 500 if deleteCollection service returns an error', async () => {
-      jest.spyOn(collectionService, 'deleteCollection').mockResolvedValue({ error: 'Collection not found' });
+      jest
+        .spyOn(collectionService, 'deleteCollection')
+        .mockResolvedValue({ error: 'Collection not found' });
       const response = await supertest(app).delete(`/collections/${collectionId}`);
       expect(response.status).toBe(500);
       expect(response.text).toContain('Collection not found');
@@ -153,7 +155,10 @@ describe('Collection Controller', () => {
   describe('POST /collections/:collectionId/bookmarks', () => {
     it('should add a bookmark to the collection', async () => {
       const bookmarkId = new mongoose.Types.ObjectId().toString();
-      const updatedCollection = { ...mockDatabaseCollection, bookmarks: [bookmarkId] } as unknown as DatabaseCollection;
+      const updatedCollection = {
+        ...mockDatabaseCollection,
+        bookmarks: [bookmarkId],
+      } as unknown as DatabaseCollection;
       jest.spyOn(collectionService, 'addBookmarkToCollection').mockResolvedValue(updatedCollection);
 
       const response = await supertest(app)
@@ -167,9 +172,7 @@ describe('Collection Controller', () => {
     });
 
     it('should return 400 if bookmarkId is missing', async () => {
-      const response = await supertest(app)
-        .post(`/collections/${collectionId}/bookmarks`)
-        .send({});
+      const response = await supertest(app).post(`/collections/${collectionId}/bookmarks`).send({});
       expect(response.status).toBe(400);
       expect(response.text).toEqual('BookmarkId is required');
     });
@@ -199,9 +202,13 @@ describe('Collection Controller', () => {
     it('should remove a bookmark from the collection', async () => {
       const bookmarkId = new mongoose.Types.ObjectId().toString();
       const updatedCollection = { ...mockDatabaseCollection, bookmarks: [] };
-      jest.spyOn(collectionService, 'removeBookmarkFromCollection').mockResolvedValue(updatedCollection);
+      jest
+        .spyOn(collectionService, 'removeBookmarkFromCollection')
+        .mockResolvedValue(updatedCollection);
 
-      const response = await supertest(app).delete(`/collections/${collectionId}/bookmarks/${bookmarkId}`);
+      const response = await supertest(app).delete(
+        `/collections/${collectionId}/bookmarks/${bookmarkId}`,
+      );
       expect(response.status).toBe(200);
       expect(response.body.message).toEqual('Bookmark removed from collection');
       expect(response.body.collection.bookmarks.map(String)).not.toContain(bookmarkId);
@@ -218,7 +225,9 @@ describe('Collection Controller', () => {
       jest.spyOn(collectionService, 'removeBookmarkFromCollection').mockResolvedValue({
         error: 'Collection not found or failed to remove bookmark',
       });
-      const response = await supertest(app).delete(`/collections/${collectionId}/bookmarks/${bookmarkId}`);
+      const response = await supertest(app).delete(
+        `/collections/${collectionId}/bookmarks/${bookmarkId}`,
+      );
       expect(response.status).toBe(500);
       expect(response.text).toContain('Collection not found or failed to remove bookmark');
     });

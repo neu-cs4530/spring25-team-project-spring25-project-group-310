@@ -32,9 +32,7 @@ describe('Bookmark Controller', () => {
 
       jest.spyOn(bookmarkService, 'saveBookmark').mockResolvedValue(dbBookmark);
 
-      const response = await supertest(app)
-        .post('/bookmarks')
-        .send(bookmarkPayload);
+      const response = await supertest(app).post('/bookmarks').send(bookmarkPayload);
 
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty('_id');
@@ -50,9 +48,7 @@ describe('Bookmark Controller', () => {
     });
 
     it('should return 400 if questionId is invalid', async () => {
-      const response = await supertest(app)
-        .post('/bookmarks')
-        .send({ questionId: 'invalid' });
+      const response = await supertest(app).post('/bookmarks').send({ questionId: 'invalid' });
       expect(response.status).toBe(400);
       expect(response.text).toEqual('Invalid questionId format');
     });
@@ -64,13 +60,9 @@ describe('Bookmark Controller', () => {
       jest
         .spyOn(bookmarkService, 'saveBookmark')
         .mockResolvedValue({ error: 'Error when saving a bookmark' });
-      const response = await supertest(app)
-        .post('/bookmarks')
-        .send(bookmarkPayload);
+      const response = await supertest(app).post('/bookmarks').send(bookmarkPayload);
       expect(response.status).toBe(500);
-      expect(response.text).toContain(
-        'Error when creating bookmark: Error when saving a bookmark'
-      );
+      expect(response.text).toContain('Error when creating bookmark: Error when saving a bookmark');
     });
   });
 
@@ -85,9 +77,7 @@ describe('Bookmark Controller', () => {
         },
       ];
 
-      jest
-        .spyOn(bookmarkService, 'getBookmarksForUser')
-        .mockResolvedValue(dbBookmarks);
+      jest.spyOn(bookmarkService, 'getBookmarksForUser').mockResolvedValue(dbBookmarks);
 
       const response = await supertest(app).get('/bookmarks');
       expect(response.status).toBe(200);
@@ -116,9 +106,7 @@ describe('Bookmark Controller', () => {
         createdAt: new Date(),
       };
 
-      jest
-        .spyOn(bookmarkService, 'deleteBookmark')
-        .mockResolvedValue(dbBookmark);
+      jest.spyOn(bookmarkService, 'deleteBookmark').mockResolvedValue(dbBookmark);
 
       const response = await supertest(app).delete(`/bookmarks/${bookmarkId}`);
       expect(response.status).toBe(200);
