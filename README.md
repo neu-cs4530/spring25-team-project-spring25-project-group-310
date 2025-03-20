@@ -102,3 +102,7 @@ npm run stryker
 ```sh
 node --max-old-space-size=4096 ./node_modules/.bin/stryker run
 ```
+
+Artificial Intelligence was consulted for the development of this project.
+Specifically,
+- Claude AI

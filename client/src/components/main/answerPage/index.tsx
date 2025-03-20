@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBookmark } from '@fortawesome/free-solid-svg-icons';
 import { getMetaData } from '../../../tool';
 import AnswerView from './answer';
 import AnswerHeader from './header';
@@ -15,14 +17,27 @@ import useAnswerPage from '../../../hooks/useAnswerPage';
  */
 const AnswerPage = () => {
   const { questionID, question, handleNewComment, handleNewAnswer } = useAnswerPage();
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   if (!question) {
     return null;
   }
 
+  const handleBookmark = () => {
+    setIsBookmarked(!isBookmarked);
+  };
+
   return (
     <>
-      <VoteComponent question={question} />
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <VoteComponent question={question} />
+        <button
+          className={isBookmarked ? 'bookmark_button' : 'bookmark_button_bookmarked'}
+          onClick={handleBookmark}
+          style={{ marginLeft: '10px' }}>
+          <FontAwesomeIcon icon={faBookmark} />
+        </button>
+      </div>
       <AnswerHeader ansCount={question.answers.length} title={question.title} />
       <QuestionBody
         views={question.views.length}
