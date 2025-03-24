@@ -10,7 +10,7 @@ const ANSWER_API_URL = `${process.env.REACT_APP_SERVER_URL}/answer`;
  * @param ans - The answer object containing the answer details.
  * @throws Error Throws an error if the request fails or the response status is not 200.
  */
-const addAnswer = async (qid: string, ans: Answer): Promise<PopulatedDatabaseAnswer> => {
+const addAnswer = async (qid: string, ans: Answer | FormData): Promise<PopulatedDatabaseAnswer> => {
   const data = { qid, ans };
 
   const res = await api.post(`${ANSWER_API_URL}/addAnswer`, data);

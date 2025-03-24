@@ -23,6 +23,14 @@ const questionSchema: Schema = new Schema(
     text: {
       type: String,
     },
+    files: [
+      {
+        filename: String,
+        path: String,
+        mimetype: String,
+        size: Number,
+      },
+    ],
     tags: [{ type: Schema.Types.ObjectId, ref: 'Tag' }],
     answers: [{ type: Schema.Types.ObjectId, ref: 'Answer' }],
     askedBy: {
