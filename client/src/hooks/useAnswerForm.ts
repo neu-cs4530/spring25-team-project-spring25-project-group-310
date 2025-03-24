@@ -24,7 +24,6 @@ interface FileWithMetadata {
  * with file upload capabilities.
  */
 const useAnswerForm = () => {
-  const { qid } = useParams();
   const navigate = useNavigate();
 
   const { user } = useUserContext();
@@ -35,7 +34,6 @@ const useAnswerForm = () => {
   const [files, setFiles] = useState<FileWithMetadata[]>([]);
   const [fileErr, setFileErr] = useState<string>('');
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [dragCounter, setDragCounter] = useState<number>(0);
 
   const getFileType = (mimeType: string): 'image' | 'pdf' | 'text' | null => {
     if (allowedFileTypes.image.includes(mimeType)) return 'image';
@@ -219,27 +217,6 @@ const useAnswerForm = () => {
     });
   }, [files]);
 
-  const validateForm = (): boolean => {
-    let isValid = true;
-
-    if (!text) {
-      setTextErr('Question text cannot be empty');
-      isValid = false;
-    } else if (!validateHyperlink(text)) {
-      setTextErr('Invalid hyperlink format.');
-      isValid = false;
-    } else {
-      setTextErr('');
-    }
-
-    if (files.length > 10) {
-      setFileErr('Cannot upload more than 10 files');
-      isValid = false;
-    }
-
-    return isValid;
-  };
-
   /**
    * Function to post an answer to a question with attached files.
    * It validates the answer text and files, then posts the answer if valid.
@@ -278,7 +255,6 @@ const useAnswerForm = () => {
         navigate(`/question/${questionID}`);
       }
     } catch (error) {
-      console.error('Error posting answer:', error);
       setTextErr('Failed to post answer. Please try again.');
     }
   };
