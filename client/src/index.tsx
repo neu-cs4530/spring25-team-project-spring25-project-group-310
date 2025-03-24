@@ -5,6 +5,8 @@ import { io } from 'socket.io-client';
 import { useEffect, useState } from 'react';
 import FakeStackOverflow from './components/fakestackoverflow';
 import { FakeSOSocket } from './types/types';
+import './theme.css';
+import ThemeProvider from './components/theme/ThemeProvider';
 
 const container = document.getElementById('root');
 
@@ -30,9 +32,11 @@ const App = () => {
   }, [socket, serverURL]);
 
   return (
-    <Router>
-      <FakeStackOverflow socket={socket} />
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <FakeStackOverflow socket={socket} />
+      </Router>
+    </ThemeProvider>
   );
 };
 

@@ -3,16 +3,25 @@ import { useNavigate } from 'react-router-dom';
 import useHeader from '../../hooks/useHeader';
 import './index.css';
 import useUserContext from '../../hooks/useUserContext';
+import useTheme from '../../hooks/useTheme';
 
 /**
  * Header component that renders the main title and a search bar.
  * The search bar allows the user to input a query and navigate to the search results page
  * when they press Enter.
+ * Includes a toggle for switching between light and dark themes.
  */
 const Header = () => {
   const { val, handleInputChange, handleKeyDown, handleSignOut } = useHeader();
   const { user: currentUser } = useUserContext();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
+
+  // Toggle theme function
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+
   return (
     <div id='header' className='header'>
       <div></div>
@@ -25,6 +34,9 @@ const Header = () => {
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
       />
+      <button onClick={toggleTheme} className='theme-toggle-button'>
+        {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
+      </button>
       <button onClick={handleSignOut} className='logout-button'>
         Log out
       </button>
