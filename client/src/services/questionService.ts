@@ -46,7 +46,7 @@ const getQuestionById = async (
  * @param q - The question object to add.
  * @throws Error if there is an issue creating the new question.
  */
-const addQuestion = async (q: Question): Promise<PopulatedDatabaseQuestion> => {
+const addQuestion = async (q: Question | FormData): Promise<PopulatedDatabaseQuestion> => {
   const res = await api.post(`${QUESTION_API_URL}/addQuestion`, q);
 
   if (res.status !== 200) {

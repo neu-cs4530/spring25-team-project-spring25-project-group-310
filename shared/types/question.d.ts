@@ -25,6 +25,7 @@ export type OrderType = 'newest' | 'unanswered' | 'active' | 'mostViewed';
  * - `upVotes`: An array of usernames who have upvoted the question.
  * - `downVotes`: An array of usernames who have downvoted the question.
  * - `comments`: An array of comments related to the question.
+ * - `files`: An array of files attached to the question.
  */
 export interface Question {
   title: string;
@@ -45,12 +46,15 @@ export interface Question {
  * - `tags`: An array of ObjectIds referencing tags associated with the question.
  * - `answers`: An array of ObjectIds referencing answers associated with the question.
  * - `comments`: An array of ObjectIds referencing comments associated with the question.
+ * - `files`: An array of file metadata for files attached to the question.
  */
-export interface DatabaseQuestion extends Omit<Question, 'tags' | 'answers' | 'comments'> {
+export interface DatabaseQuestion
+  extends Omit<Question, 'tags' | 'answers' | 'comments' | 'files'> {
   _id: ObjectId;
   tags: ObjectId[];
   answers: ObjectId[];
   comments: ObjectId[];
+  files?: FileMetadata[]; // In database, we store file metadata
 }
 
 /**
@@ -58,6 +62,7 @@ export interface DatabaseQuestion extends Omit<Question, 'tags' | 'answers' | 'c
  * - `tags`: An array of populated `DatabaseTag` objects.
  * - `answers`: An array of populated `PopulatedDatabaseAnswer` objects.
  * - `comments`: An array of populated `DatabaseComment` objects.
+ * - `files`: An array of file metadata for files attached to the question.
  */
 export interface PopulatedDatabaseQuestion
   extends Omit<DatabaseQuestion, 'tags' | 'answers' | 'comments'> {
@@ -118,6 +123,7 @@ export interface FindQuestionByIdRequest extends Request {
  */
 export interface AddQuestionRequest extends Request {
   body: Question;
+  files?: Express.Multer.File[]; // For handling file uploads with multer
 }
 
 /**
