@@ -1,14 +1,58 @@
-import { useContext } from 'react';
-import ThemeContext, { ThemeContextType } from '../contexts/ThemeContext';
+import { useState, createContext, useContext } from 'react';
 
-const useTheme = (): ThemeContextType => {
-  const context = useContext(ThemeContext);
+export type ThemeType =
+  | 'light'
+  | 'dark'
+  | 'deep'
+  | 'funk'
+  | 'future'
+  | 'roboto'
+  | 'swiss'
+  | 'system';
 
-  if (context === null) {
-    throw new Error('Theme context is null.');
-  }
+interface ThemeContextType {
+  theme: ThemeType;
+  setTheme: (theme: ThemeType) => void;
+}
 
-  return context;
+const defaultContextValue: ThemeContextType = {
+  theme: 'light',
+  setTheme: () => {},
 };
 
-export default useTheme;
+export const ThemeContext = createContext<ThemeContextType>(defaultContextValue);
+
+/**
+ * Hook to be used inside the provider to create the theme state
+ */
+export const useThemeProvider = () => {
+  const [theme, setThemeState] = useState<ThemeType>(() => {
+    const savedTheme = localStorage.getItem('theme') as ThemeType;
+    if (
+      savedTheme &&
+      ['light', 'dark', 'deep', 'funk', 'future', 'roboto', 'swiss', 'system'].includes(savedTheme)
+    ) {
+      return savedTheme;
+    }
+    return 'light';
+  });
+
+  // Function to both update state and save to localStorage
+  const setTheme = (newTheme: ThemeType) => {
+    setThemeState(newTheme);
+    localStorage.setItem('theme', newTheme);
+  };
+
+  return { theme, setTheme };
+};
+
+/**
+ * Hook to be used by components to access the theme
+ */
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeContextProvider');
+  }
+  return context;
+};

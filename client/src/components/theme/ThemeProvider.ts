@@ -1,23 +1,145 @@
-import React, { useEffect, useState } from 'react';
-import ThemeContext, { ThemeType } from '../../contexts/ThemeContext';
+import React from 'react';
+import { base, dark, deep, funk, future, roboto, swiss, system } from '@theme-ui/presets';
 
-type ThemeProviderProps = {
-  children: React.ReactNode;
+// Define our theme presets collection
+const themePresets = {
+  light: {
+    ...base,
+    colors: {
+      ...base.colors,
+      background: '#ffffff',
+      text: '#212529',
+      primary: '#0d6efd',
+      secondary: '#6c757d',
+      accent: '#3d8bfd',
+      muted: '#f8f9fa',
+      highlight: '#dee2e6',
+      headerBg: '#dddddd',
+      buttonBg: '#007bff',
+      buttonHover: '#0056b3',
+      buttonActive: '#003f7f',
+      buttonText: '#ffffff',
+      inputBg: '#ffffff',
+      borderColor: '#dee2e6',
+      shadowColor: 'rgba(0, 0, 0, 0.1)',
+    },
+    styles: {
+      ...base.styles,
+    },
+  },
+  dark: {
+    ...dark,
+    colors: {
+      ...dark.colors,
+      background: '#121212',
+      text: '#e9ecef',
+      primary: '#3d8bfd',
+      secondary: '#adb5bd',
+      accent: '#0d6efd',
+      muted: '#1e1e1e',
+      highlight: '#343a40',
+      headerBg: '#1a1a1a',
+      buttonBg: '#0d6efd',
+      buttonHover: '#0b5ed7',
+      buttonActive: '#0a58ca',
+      buttonText: '#ffffff',
+      inputBg: '#2c2c2c',
+      borderColor: '#343a40',
+      shadowColor: 'rgba(0, 0, 0, 0.3)',
+    },
+    styles: {
+      ...dark.styles,
+    },
+  },
+  deep: {
+    ...deep,
+    colors: {
+      ...deep.colors,
+      headerBg: deep.colors.background,
+      buttonBg: deep.colors.primary,
+      buttonHover: '#156681',
+      buttonActive: '#0e4f66',
+      buttonText: '#ffffff',
+      inputBg: deep.colors.background,
+      borderColor: deep.colors.muted,
+      highlight: deep.colors.highlight || '#333333',
+      shadowColor: 'rgba(0, 0, 0, 0.2)',
+    },
+  },
+  funk: {
+    ...funk,
+    colors: {
+      ...funk.colors,
+      headerBg: funk.colors.secondary,
+      buttonBg: funk.colors.primary,
+      buttonHover: '#d25bdc',
+      buttonActive: '#ba37c5',
+      buttonText: funk.colors.background,
+      inputBg: funk.colors.background,
+      borderColor: funk.colors.muted,
+      highlight: '#ddddff',
+      shadowColor: 'rgba(0, 0, 0, 0.2)',
+    },
+  },
+  future: {
+    ...future,
+    colors: {
+      ...future.colors,
+      headerBg: future.colors.muted,
+      buttonBg: future.colors.primary,
+      buttonHover: '#3e5987',
+      buttonActive: '#2c3f61',
+      buttonText: future.colors.background,
+      inputBg: future.colors.background,
+      borderColor: future.colors.muted,
+      highlight: future.colors.highlight || '#333333',
+      shadowColor: 'rgba(0, 0, 0, 0.2)',
+    },
+  },
+  roboto: {
+    ...roboto,
+    colors: {
+      ...roboto.colors,
+      headerBg: roboto.colors.muted,
+      buttonBg: roboto.colors.primary,
+      buttonHover: '#c21f3a',
+      buttonActive: '#a61834',
+      buttonText: '#ffffff',
+      inputBg: roboto.colors.background,
+      borderColor: roboto.colors.muted,
+      shadowColor: 'rgba(0, 0, 0, 0.2)',
+    },
+  },
+  swiss: {
+    ...swiss,
+    colors: {
+      ...swiss.colors,
+      headerBg: swiss.colors.muted,
+      buttonBg: swiss.colors.primary,
+      buttonHover: '#cc0000',
+      buttonActive: '#aa0000',
+      buttonText: '#ffffff',
+      inputBg: swiss.colors.background,
+      borderColor: swiss.colors.muted,
+      highlight: swiss.colors.highlight || '#e0e0e0',
+      shadowColor: 'rgba(0, 0, 0, 0.2)',
+    },
+  },
+  system: {
+    ...system,
+    colors: {
+      ...system.colors,
+      headerBg: system.colors.muted,
+      buttonBg: system.colors.primary,
+      buttonHover: '#0c6cc2',
+      buttonActive: '#0a5ca4',
+      buttonText: '#ffffff',
+      inputBg: system.colors.background,
+      borderColor: system.colors.muted,
+      highlight: system.colors.highlight || '#e0e0e0',
+      shadowColor: 'rgba(0, 0, 0, 0.2)',
+    },
+  },
 };
 
-function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<ThemeType>(() => {
-    const savedTheme = localStorage.getItem('theme');
-    return savedTheme === 'dark' ? 'dark' : 'light';
-  });
-
-  useEffect(() => {
-    localStorage.setItem('theme', theme);
-    document.body.setAttribute('data-theme', theme);
-  }, [theme]);
-
-  // Was trying to use jsx here but for some reason it kept erroring.
-  return React.createElement(ThemeContext.Provider, { value: { theme, setTheme } }, children);
-}
-
-export default ThemeProvider;
+export default themePresets;
