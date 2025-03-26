@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import FakeStackOverflow from './components/fakestackoverflow';
 import { FakeSOSocket } from './types/types';
 import './theme.css';
-import ThemeProvider from './components/theme/ThemeProvider';
+import ThemeProvider from './components/theme/ThemePresets';
 
 const container = document.getElementById('root');
 
