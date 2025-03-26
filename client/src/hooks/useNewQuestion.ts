@@ -24,6 +24,16 @@ interface FileWithMetadata {
 }
 
 /**
+ * Custom hook to handle question submission and form validation
+ *
+ * @returns title - The current value of the title input.
+ * @returns text - The current value of the text input.
+ * @returns tagNames - The current value of the tags input.
+ * @returns codeSnippet - The current value of the code snippet input.
+ * @returns titleErr - Error message for the title field, if any.
+ * @returns textErr - Error message for the text field, if any.
+ * @returns tagErr - Error message for the tag field, if any.
+ * @returns postQuestion - Function to validate the form and submit a new question.
  * Custom hook to handle question submission and form validation with advanced file upload support
  */
 const useNewQuestion = () => {
@@ -32,6 +42,7 @@ const useNewQuestion = () => {
   const [title, setTitle] = useState<string>('');
   const [text, setText] = useState<string>('');
   const [tagNames, setTagNames] = useState<string>('');
+  const [codeSnippet, setCodeSnippet] = useState<string>('');
   const [files, setFiles] = useState<FileWithMetadata[]>([]);
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
@@ -314,6 +325,7 @@ const useNewQuestion = () => {
     const question: Question = {
       title,
       text,
+      codeSnippet,
       tags,
       askedBy: user.username,
       askDateTime: new Date(),
@@ -357,6 +369,8 @@ const useNewQuestion = () => {
     setTitle,
     text,
     setText,
+    codeSnippet,
+    setCodeSnippet,
     tagNames,
     setTagNames,
     files,

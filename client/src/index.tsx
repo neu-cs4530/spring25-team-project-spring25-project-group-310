@@ -10,6 +10,10 @@ import ThemeProvider from './components/theme/ThemeProvider';
 
 const container = document.getElementById('root');
 
+window.addEventListener('unhandledrejection', event => {
+  console.error('Unhandled promise rejection:', event.reason);
+});
+
 const App = () => {
   const [socket, setSocket] = useState<FakeSOSocket | null>(null);
 

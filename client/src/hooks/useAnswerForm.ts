@@ -20,6 +20,13 @@ interface FileWithMetadata {
 }
 
 /**
+ * Custom hook for managing the state and logic of an answer submission form.
+ *
+ * @returns text - the current text input for the answer.
+ * @returns textErr - the error message related to the text input.
+ * @returns setText - the function to update the answer text input.
+ * @returns setCodeSnippet - the function to update the code snippet input.
+ * @returns postAnswer - the function to submit the answer after validation.
  * Custom hook for managing the state and logic of an answer submission form
  * with file upload capabilities.
  */
@@ -28,6 +35,7 @@ const useAnswerForm = () => {
 
   const { user } = useUserContext();
   const [text, setText] = useState<string>('');
+  const [codeSnippet, setCodeSnippet] = useState<string>('');
   const [textErr, setTextErr] = useState<string>('');
   const [questionID, setQuestionID] = useState<string>('');
 
@@ -243,6 +251,7 @@ const useAnswerForm = () => {
     formData.append('text', text);
     formData.append('ansBy', user.username);
     formData.append('ansDateTime', new Date().toISOString());
+    formData.append('codeSnipper', codeSnippet);
 
     files.forEach(fileObj => {
       formData.append('files', fileObj.file);
@@ -266,6 +275,8 @@ const useAnswerForm = () => {
     files,
     fileErr,
     isDragging,
+    codeSnippet,
+    setCodeSnippet,
     postAnswer,
     handleFileChange,
     handleDragEnter,

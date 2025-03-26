@@ -1,7 +1,5 @@
 /* All the CSS related to answers Page*/
 .answer {
-  display: flex;
-  flex-direction: row;
   border-bottom: #000000 1px dashed;
 }
 
@@ -10,9 +8,11 @@
 }
 
 .answerAuthor {
-  margin-left: 5%;
+  margin-top: 20px;
+  
 }
 
 .answer_author {
   color: green;
+  padding-top: 20px;
 }
