@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { validateHyperlink } from '../tool';
 import addAnswer from '../services/answerService';
 import useUserContext from './useUserContext';
@@ -37,98 +37,94 @@ const useAnswerForm = () => {
   const [text, setText] = useState<string>('');
   const [codeSnippet, setCodeSnippet] = useState<string>('');
   const [textErr, setTextErr] = useState<string>('');
-  const [questionID, setQuestionID] = useState<string>('');
+  const [questionID] = useState<string>('');
 
   const [files, setFiles] = useState<FileWithMetadata[]>([]);
   const [fileErr, setFileErr] = useState<string>('');
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
-  const getFileType = (mimeType: string): 'image' | 'pdf' | 'text' | null => {
+  const getFileType = useCallback((mimeType: string): 'image' | 'pdf' | 'text' | null => {
     if (allowedFileTypes.image.includes(mimeType)) return 'image';
     if (allowedFileTypes.pdf.includes(mimeType)) return 'pdf';
     if (allowedFileTypes.text.includes(mimeType)) return 'text';
     return null;
-  };
+  }, []);
 
-  const processFile = (file: File): FileWithMetadata | null => {
-    const fileType = getFileType(file.type);
-
-    if (!fileType) {
-      return null;
-    }
-
-    if (file.size > MAX_FILE_SIZE) {
-      return null;
-    }
-
-    const fileWithMetadata: FileWithMetadata = {
-      file,
-      id: `${Date.now()}-${file.name}`,
-      type: fileType,
-    };
-
-    if (fileType === 'image') {
-      fileWithMetadata.preview = URL.createObjectURL(file);
-    }
-
-    return fileWithMetadata;
-  };
+  const processFile = useCallback(
+    (file: File): FileWithMetadata | null => {
+      const fileType = getFileType(file.type);
+      if (!fileType) {
+        return null;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        return null;
+      }
+      const fileWithMetadata: FileWithMetadata = {
+        file,
+        id: `${Date.now()}-${file.name}`,
+        type: fileType,
+      };
+      if (fileType === 'image') {
+        fileWithMetadata.preview = URL.createObjectURL(file);
+      }
+      return fileWithMetadata;
+    },
+    [getFileType],
+  );
 
   /**
    * Process and add files to state
    */
-  const addFiles = useCallback((selectedFiles: File[]) => {
-    const newValidFiles: FileWithMetadata[] = [];
-    const invalidFiles: string[] = [];
-    const oversizedFiles: string[] = [];
+  const addFiles = useCallback(
+    (selectedFiles: File[]) => {
+      const newValidFiles: FileWithMetadata[] = [];
+      const invalidFiles: string[] = [];
+      const oversizedFiles: string[] = [];
 
-    selectedFiles.forEach(file => {
-      const fileType = getFileType(file.type);
-      if (!fileType) {
-        invalidFiles.push(file.name);
-        return;
-      }
-
-      if (file.size > MAX_FILE_SIZE) {
-        oversizedFiles.push(file.name);
-        return;
-      }
-
-      const processedFile = processFile(file);
-      if (processedFile) {
-        newValidFiles.push(processedFile);
-      }
-    });
-
-    if (invalidFiles.length > 0 || oversizedFiles.length > 0) {
-      let errorMsg = '';
-
-      if (invalidFiles.length > 0) {
-        errorMsg += `Unsupported file format(s): ${invalidFiles.join(', ')}. `;
-      }
-
-      if (oversizedFiles.length > 0) {
-        errorMsg += `Files exceeding 5MB limit: ${oversizedFiles.join(', ')}`;
-      }
-
-      setFileErr(errorMsg);
-    }
-
-    if (newValidFiles.length > 0) {
-      setFiles(prevFiles => {
-        if (prevFiles.length + newValidFiles.length > 10) {
-          setFileErr(prev => `${prev ? `${prev} ` : ''}Cannot upload more than 10 files.`);
-          const remainingSlots = 10 - prevFiles.length;
-          return [...prevFiles, ...newValidFiles.slice(0, remainingSlots)];
+      selectedFiles.forEach(file => {
+        const fileType = getFileType(file.type);
+        if (!fileType) {
+          invalidFiles.push(file.name);
+          return;
         }
-        return [...prevFiles, ...newValidFiles];
+        if (file.size > MAX_FILE_SIZE) {
+          oversizedFiles.push(file.name);
+          return;
+        }
+        const processedFile = processFile(file);
+        if (processedFile) {
+          newValidFiles.push(processedFile);
+        }
       });
-    }
-  }, []);
+
+      if (invalidFiles.length > 0 || oversizedFiles.length > 0) {
+        let errorMsg = '';
+
+        if (invalidFiles.length > 0) {
+          errorMsg += `Unsupported file format(s): ${invalidFiles.join(', ')}. `;
+        }
+        if (oversizedFiles.length > 0) {
+          errorMsg += `Files exceeding 5MB limit: ${oversizedFiles.join(', ')}`;
+        }
+        setFileErr(errorMsg);
+      }
+
+      if (newValidFiles.length > 0) {
+        setFiles(prevFiles => {
+          if (prevFiles.length + newValidFiles.length > 10) {
+            setFileErr(prev => `${prev ? `${prev} ` : ''}Cannot upload more than 10 files.`);
+            const remainingSlots = 10 - prevFiles.length;
+            return [...prevFiles, ...newValidFiles.slice(0, remainingSlots)];
+          }
+          return [...prevFiles, ...newValidFiles];
+        });
+      }
+    },
+    [getFileType, processFile],
+  );
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
-
     setFileErr('');
     const selectedFiles = Array.from(e.target.files);
     addFiles(selectedFiles);
@@ -157,7 +153,6 @@ const useAnswerForm = () => {
       e.preventDefault();
       e.stopPropagation();
       setIsDragging(false);
-
       if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
         const droppedFiles = Array.from(e.dataTransfer.files);
         addFiles(droppedFiles);
@@ -169,15 +164,12 @@ const useAnswerForm = () => {
   const removeFile = useCallback((id: string) => {
     setFiles(prevFiles => {
       const updatedFiles = prevFiles.filter(file => file.id !== id);
-
       const removedFile = prevFiles.find(file => file.id === id);
       if (removedFile?.preview) {
         URL.revokeObjectURL(removedFile.preview);
       }
-
       return updatedFiles;
     });
-
     setFileErr('');
   }, []);
 
@@ -187,35 +179,34 @@ const useAnswerForm = () => {
         URL.revokeObjectURL(file.preview);
       }
     });
-
     setFiles([]);
     setFileErr('');
   }, [files]);
 
-  const replaceFile = useCallback((id: string, newFile: File) => {
-    const processedFile = processFile(newFile);
-
-    if (!processedFile) {
-      setFileErr(
-        `Unable to process file ${newFile.name}. File may be too large or an unsupported format.`,
-      );
-      return;
-    }
-
-    setFiles(prevFiles =>
-      prevFiles.map(file => {
-        if (file.id === id) {
-          if (file.preview) {
-            URL.revokeObjectURL(file.preview);
+  const replaceFile = useCallback(
+    (id: string, newFile: File) => {
+      const processedFile = processFile(newFile);
+      if (!processedFile) {
+        setFileErr(
+          `Unable to process file ${newFile.name}. File may be too large or an unsupported format.`,
+        );
+        return;
+      }
+      setFiles(prevFiles =>
+        prevFiles.map(file => {
+          if (file.id === id) {
+            if (file.preview) {
+              URL.revokeObjectURL(file.preview);
+            }
+            return processedFile;
           }
-          return processedFile;
-        }
-        return file;
-      }),
-    );
-
-    setFileErr('');
-  }, []);
+          return file;
+        }),
+      );
+      setFileErr('');
+    },
+    [processFile],
+  );
 
   const cleanupFilePreviewUrls = useCallback(() => {
     files.forEach(file => {
@@ -251,7 +242,7 @@ const useAnswerForm = () => {
     formData.append('text', text);
     formData.append('ansBy', user.username);
     formData.append('ansDateTime', new Date().toISOString());
-    formData.append('codeSnipper', codeSnippet);
+    formData.append('codeSnippet', codeSnippet);
 
     files.forEach(fileObj => {
       formData.append('files', fileObj.file);
@@ -259,7 +250,6 @@ const useAnswerForm = () => {
 
     try {
       const res = await addAnswer(questionID, formData);
-
       if (res && res._id) {
         navigate(`/question/${questionID}`);
       }

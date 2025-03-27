@@ -91,54 +91,52 @@ const useNewQuestion = () => {
   /**
    * Process and add files to state
    */
-  const addFiles = useCallback((selectedFiles: File[]) => {
-    const newValidFiles: FileWithMetadata[] = [];
-    const invalidFiles: string[] = [];
-    const oversizedFiles: string[] = [];
+  const addFiles = useCallback(
+    (selectedFiles: File[]) => {
+      const newValidFiles: FileWithMetadata[] = [];
+      const invalidFiles: string[] = [];
+      const oversizedFiles: string[] = [];
 
-    selectedFiles.forEach(file => {
-      const fileType = getFileType(file.type);
-      if (!fileType) {
-        invalidFiles.push(file.name);
-        return;
-      }
-
-      if (file.size > MAX_FILE_SIZE) {
-        oversizedFiles.push(file.name);
-        return;
-      }
-
-      const processedFile = processFile(file);
-      if (processedFile) {
-        newValidFiles.push(processedFile);
-      }
-    });
-
-    if (invalidFiles.length > 0 || oversizedFiles.length > 0) {
-      let errorMsg = '';
-
-      if (invalidFiles.length > 0) {
-        errorMsg += `Unsupported file format(s): ${invalidFiles.join(', ')}. `;
-      }
-
-      if (oversizedFiles.length > 0) {
-        errorMsg += `Files exceeding 5MB limit: ${oversizedFiles.join(', ')}`;
-      }
-
-      setFileErr(errorMsg);
-    }
-
-    if (newValidFiles.length > 0) {
-      setFiles(prevFiles => {
-        if (prevFiles.length + newValidFiles.length > 10) {
-          setFileErr(prev => `${prev ? `${prev} ` : ''}Cannot upload more than 10 files.`);
-          const remainingSlots = 10 - prevFiles.length;
-          return [...prevFiles, ...newValidFiles.slice(0, remainingSlots)];
+      selectedFiles.forEach(file => {
+        const fileType = getFileType(file.type);
+        if (!fileType) {
+          invalidFiles.push(file.name);
+          return;
         }
-        return [...prevFiles, ...newValidFiles];
+        if (file.size > MAX_FILE_SIZE) {
+          oversizedFiles.push(file.name);
+          return;
+        }
+        const processedFile = processFile(file);
+        if (processedFile) {
+          newValidFiles.push(processedFile);
+        }
       });
-    }
-  }, []);
+
+      if (invalidFiles.length > 0 || oversizedFiles.length > 0) {
+        let errorMsg = '';
+        if (invalidFiles.length > 0) {
+          errorMsg += `Unsupported file format(s): ${invalidFiles.join(', ')}. `;
+        }
+        if (oversizedFiles.length > 0) {
+          errorMsg += `Files exceeding 5MB limit: ${oversizedFiles.join(', ')}`;
+        }
+        setFileErr(errorMsg);
+      }
+
+      if (newValidFiles.length > 0) {
+        setFiles(prevFiles => {
+          if (prevFiles.length + newValidFiles.length > 10) {
+            setFileErr(prev => `${prev ? `${prev} ` : ''}Cannot upload more than 10 files.`);
+            const remainingSlots = 10 - prevFiles.length;
+            return [...prevFiles, ...newValidFiles.slice(0, remainingSlots)];
+          }
+          return [...prevFiles, ...newValidFiles];
+        });
+      }
+    },
+    [getFileType, processFile],
+  );
 
   /**
    * Handle file input changes
@@ -221,30 +219,31 @@ const useNewQuestion = () => {
   /**
    * Replace a file with a new one
    */
-  const replaceFile = useCallback((id: string, newFile: File) => {
-    const processedFile = processFile(newFile);
+  const replaceFile = useCallback(
+    (id: string, newFile: File) => {
+      const processedFile = processFile(newFile);
+      if (!processedFile) {
+        setFileErr(
+          `Unable to process file ${newFile.name}. File may be too large or an unsupported format.`,
+        );
+        return;
+      }
 
-    if (!processedFile) {
-      setFileErr(
-        `Unable to process file ${newFile.name}. File may be too large or an unsupported format.`,
-      );
-      return;
-    }
-
-    setFiles(prevFiles =>
-      prevFiles.map(file => {
-        if (file.id === id) {
-          if (file.preview) {
-            URL.revokeObjectURL(file.preview);
+      setFiles(prevFiles =>
+        prevFiles.map(file => {
+          if (file.id === id) {
+            if (file.preview) {
+              URL.revokeObjectURL(file.preview);
+            }
+            return processedFile;
           }
-          return processedFile;
-        }
-        return file;
-      }),
-    );
-
-    setFileErr('');
-  }, []);
+          return file;
+        }),
+      );
+      setFileErr('');
+    },
+    [processFile],
+  );
 
   /**
    * Cleanup function to release object URLs when component unmounts
