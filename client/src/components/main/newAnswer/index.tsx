@@ -3,6 +3,7 @@ import React, { useRef, useEffect } from 'react';
 import Form from '../baseComponents/form';
 import TextArea from '../baseComponents/textarea';
 import useAnswerForm from '../../../hooks/useAnswerForm';
+import CodeCompiler from '../codeCompiler';
 
 const ImageIcon = () => (
   <svg
@@ -76,6 +77,8 @@ const NewAnswerPage = () => {
     postAnswer,
     handleFileChange,
     handleDragEnter,
+    codeSnippet,
+    setCodeSnippet,
     handleDragLeave,
     handleDragOver,
     handleDrop,
@@ -160,6 +163,10 @@ const NewAnswerPage = () => {
         setState={setText}
         err={textErr}
       />
+      <div className='code-editor-section'>
+        <label className='code-editor-label'>Code Snippet</label>
+        <CodeCompiler code={codeSnippet} onCodeChange={setCodeSnippet} />
+      </div>
 
       <div
         className={`file-upload-container ${isDragging ? 'dragging' : ''}`}

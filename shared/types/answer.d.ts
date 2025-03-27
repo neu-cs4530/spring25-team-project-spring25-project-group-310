@@ -6,12 +6,14 @@ import { Comment, DatabaseComment } from './comment';
  * Represents an answer to a question.
  * - `text`: The answer text.
  * - `ansBy`: The author of the answer.
+ * - `codeSnippet`: The code written in the compiler.
  * - `ansDateTime`: The timestamp of when the answer was given.
  * - `comments`: A list of comments associated with the answer.
  */
 export interface Answer {
   text: string;
   ansBy: string;
+  codeSnippet?: string;
   ansDateTime: Date;
   comments: Comment[];
 }

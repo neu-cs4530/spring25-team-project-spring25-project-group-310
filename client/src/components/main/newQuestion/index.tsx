@@ -3,6 +3,7 @@ import useNewQuestion from '../../../hooks/useNewQuestion';
 import Form from '../baseComponents/form';
 import Input from '../baseComponents/input';
 import TextArea from '../baseComponents/textarea';
+import CodeCompiler from '../codeCompiler';
 import './index.css';
 
 const ImageIcon = () => (
@@ -74,6 +75,8 @@ const NewQuestionPage = () => {
     setText,
     tagNames,
     setTagNames,
+    codeSnippet,
+    setCodeSnippet,
     files,
     isDragging,
     titleErr,
@@ -184,6 +187,10 @@ const NewQuestionPage = () => {
         setState={setTagNames}
         err={tagErr}
       />
+      <div className='code-editor-section'>
+        <label className='code-editor-label'>Code Snippet</label>
+        <CodeCompiler code={codeSnippet} onCodeChange={setCodeSnippet} />
+      </div>
 
       <div
         className={`file-upload-container ${isDragging ? 'dragging' : ''}`}
