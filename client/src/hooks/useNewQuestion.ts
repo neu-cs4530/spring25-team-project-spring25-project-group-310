@@ -54,39 +54,37 @@ const useNewQuestion = () => {
   /**
    * Determine file type category from MIME type
    */
-  const getFileType = (mimeType: string): 'image' | 'pdf' | 'text' | null => {
+  const getFileType = useCallback((mimeType: string): 'image' | 'pdf' | 'text' | null => {
     if (allowedFileTypes.image.includes(mimeType)) return 'image';
     if (allowedFileTypes.pdf.includes(mimeType)) return 'pdf';
     if (allowedFileTypes.text.includes(mimeType)) return 'text';
     return null;
-  };
+  }, []);
 
   /**
    * Create preview URLs for image files
    */
-  const processFile = (file: File): FileWithMetadata | null => {
-    const fileType = getFileType(file.type);
-
-    if (!fileType) {
-      return null;
-    }
-
-    if (file.size > MAX_FILE_SIZE) {
-      return null;
-    }
-
-    const fileWithMetadata: FileWithMetadata = {
-      file,
-      id: `${Date.now()}-${file.name}`,
-      type: fileType,
-    };
-
-    if (fileType === 'image') {
-      fileWithMetadata.preview = URL.createObjectURL(file);
-    }
-
-    return fileWithMetadata;
-  };
+  const processFile = useCallback(
+    (file: File): FileWithMetadata | null => {
+      const fileType = getFileType(file.type);
+      if (!fileType) {
+        return null;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        return null;
+      }
+      const fileWithMetadata: FileWithMetadata = {
+        file,
+        id: `${Date.now()}-${file.name}`,
+        type: fileType,
+      };
+      if (fileType === 'image') {
+        fileWithMetadata.preview = URL.createObjectURL(file);
+      }
+      return fileWithMetadata;
+    },
+    [getFileType],
+  );
 
   /**
    * Process and add files to state
@@ -139,18 +137,17 @@ const useNewQuestion = () => {
   );
 
   /**
-   * Handle file input changes
+   * Handle file input changes.
    */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
-
     setFileErr('');
     const selectedFiles = Array.from(e.target.files);
     addFiles(selectedFiles);
   };
 
   /**
-   * Handle file drag events
+   * Handle file drag events.
    */
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -175,7 +172,6 @@ const useNewQuestion = () => {
       e.preventDefault();
       e.stopPropagation();
       setIsDragging(false);
-
       if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
         const droppedFiles = Array.from(e.dataTransfer.files);
         addFiles(droppedFiles);
@@ -185,25 +181,22 @@ const useNewQuestion = () => {
   );
 
   /**
-   * Remove a file from the selection
+   * Remove a file from the selection.
    */
   const removeFile = useCallback((id: string) => {
     setFiles(prevFiles => {
       const updatedFiles = prevFiles.filter(file => file.id !== id);
-
       const removedFile = prevFiles.find(file => file.id === id);
       if (removedFile?.preview) {
         URL.revokeObjectURL(removedFile.preview);
       }
-
       return updatedFiles;
     });
-
     setFileErr('');
   }, []);
 
   /**
-   * Clear all selected files
+   * Clear all selected files.
    */
   const clearFiles = useCallback(() => {
     files.forEach(file => {
@@ -211,13 +204,13 @@ const useNewQuestion = () => {
         URL.revokeObjectURL(file.preview);
       }
     });
-
     setFiles([]);
     setFileErr('');
   }, [files]);
 
   /**
-   * Replace a file with a new one
+   * Replace a file with a new one.
+   * Wrapped in useCallback with processFile dependency.
    */
   const replaceFile = useCallback(
     (id: string, newFile: File) => {
@@ -228,7 +221,6 @@ const useNewQuestion = () => {
         );
         return;
       }
-
       setFiles(prevFiles =>
         prevFiles.map(file => {
           if (file.id === id) {
@@ -246,7 +238,7 @@ const useNewQuestion = () => {
   );
 
   /**
-   * Cleanup function to release object URLs when component unmounts
+   * Cleanup function to release object URLs when component unmounts.
    */
   const cleanupFilePreviewUrls = useCallback(() => {
     files.forEach(file => {
@@ -257,7 +249,7 @@ const useNewQuestion = () => {
   }, [files]);
 
   /**
-   * Validate the form before submitting the question
+   * Validate the form before submitting the question.
    */
   const validateForm = (): boolean => {
     let isValid = true;
@@ -310,7 +302,7 @@ const useNewQuestion = () => {
   };
 
   /**
-   * Post a question with files to the server
+   * Post a question with files to the server.
    */
   const postQuestion = async () => {
     if (!validateForm()) return;
@@ -353,7 +345,6 @@ const useNewQuestion = () => {
 
     try {
       const res = await addQuestion(formData);
-
       if (res && res._id) {
         cleanupFilePreviewUrls();
         navigate('/home');
