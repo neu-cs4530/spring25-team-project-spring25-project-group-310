@@ -7,21 +7,21 @@
 .vote-button {
   padding: 0.5rem;
   margin-right: 0.5rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 0.125rem;
-  background-color: #f0f0f0;
+  background-color: var(--secondary-bg);
   cursor: pointer;
   outline: none;
 }
 
 .vote-button-upvoted {
-  background-color: #38a169;
-  color: white;
+  background-color: var(--button-hover);
+  color: var(--button-text);
 }
 
 .vote-button-downvoted {
-  background-color: #e53e3e;
-  color: white;
+  background-color: var(--accent-color);
+  color: var(--button-text);
 }
 
 .vote-count {

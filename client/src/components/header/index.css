@@ -1,46 +1,110 @@
-.header {
+/* Container styles */
+.container {
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  justify-content: space-around;
-  height: 10%;
+  min-height: 100vh;
+  background-color: var(--primary-bg);
+  padding: 20px;
+}
+
+/* Heading styles */
+.container h2 {
+  font-size: 2rem;
+  color: var(--primary-text);
+  margin-bottom: 10px;
+}
+
+.container h3 {
+  font-size: 1.5rem;
+  color: var(--secondary-text);
+  margin-bottom: 20px;
+}
+
+.container h4 {
+  font-size: 1rem;
+  color: var(--secondary-text);
+  margin: 15px 0 5px;
+  /* Adjusted for better spacing */
+  text-align: left;
+  /* Align text to the left */
   width: 100%;
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  /* Ensure alignment respects the form's width */
+  max-width: 400px;
+  /* Match the form's max width */
 }
 
-.title {
-  font-size: 32px;
-  font-weight: 800;
-  color: var(--text-primary);
+/* Form styles */
+form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-.logout-button {
+/* Input styles */
+.input-text {
   padding: 12px;
   font-size: 16px;
-  background-color: var(--accent-color);
-  color: #fff;
+  width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background-color: var(--input-bg);
+  color: var(--primary-text);
+  box-sizing: border-box;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+
+.input-text:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 5px var(--shadow-color);
+}
+
+/* Button styles */
+.signup-button {
+  padding: 12px;
+  font-size: 16px;
+  background-color: var(--button-bg);
+  color: var(--button-text);
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
+.signup-button:hover {
+  background-color: var(--button-hover);
+}
 
-.view-profile-button {
-  background-color: var(--accent-color);
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
+.signup-button:active {
+  background-color: var(--button-active);
+}
+
+/* Signup link styles */
+.login-link {
+  margin-top: 30px;
+  /* Increased spacing */
+  font-size: 14px;
+  color: var(--accent-color);
+  text-decoration: none;
   cursor: pointer;
-  margin-left: 10px;
-  /* Add spacing from Logout button */
+  transition: color 0.3s;
+  text-align: center;
+  /* Center the link */
 }
 
-.logout-button:hover {
-  background-color: var(--hover-color);
+.login-link:hover {
+  color: var(--button-hover);
+  text-decoration: underline;
 }
 
-.view-profile-button:active {
-  background-color: var(--hover-color);
+.error-message {
+  color: var(--accent-color);
+  font-size: 14px;
+  margin-top: 20px;
+  text-align: center;
 }

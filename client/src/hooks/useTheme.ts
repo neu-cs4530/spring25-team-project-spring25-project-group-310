@@ -1,14 +1,6 @@
 import { useState, createContext, useContext } from 'react';
 
-export type ThemeType =
-  | 'light'
-  | 'dark'
-  | 'deep'
-  | 'funk'
-  | 'future'
-  | 'roboto'
-  | 'swiss'
-  | 'system';
+export type ThemeType = 'light' | 'dark' | 'deep' | 'funk' | 'tosh' | 'swiss';
 
 interface ThemeContextType {
   theme: ThemeType;
@@ -28,10 +20,7 @@ export const ThemeContext = createContext<ThemeContextType>(defaultContextValue)
 export const useThemeProvider = () => {
   const [theme, setThemeState] = useState<ThemeType>(() => {
     const savedTheme = localStorage.getItem('theme') as ThemeType;
-    if (
-      savedTheme &&
-      ['light', 'dark', 'deep', 'funk', 'future', 'roboto', 'swiss', 'system'].includes(savedTheme)
-    ) {
+    if (savedTheme && ['light', 'dark', 'deep', 'funk', 'tosh', 'swiss'].includes(savedTheme)) {
       return savedTheme;
     }
     return 'light';

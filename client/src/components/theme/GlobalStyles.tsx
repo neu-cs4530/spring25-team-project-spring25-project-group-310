@@ -63,11 +63,6 @@ const GlobalStyles = () => {
         background-color: var(--input-bg) !important;
         color: var(--primary-text) !important;
       }
-      
-      /* Add smooth transitions */
-      body, #root, .main, .sideBarNav, .card, input, button, div, span, p, h1, h2, h3, h4, h5, h6 {
-        transition: all 0.3s ease;
-      }
     `;
 
     // Remove existing one if it exists

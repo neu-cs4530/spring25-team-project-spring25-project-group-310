@@ -1,5 +1,5 @@
 import React from 'react';
-import { base, dark, deep, funk, future, roboto, swiss, system } from '@theme-ui/presets';
+import { base, dark, deep, funk, swiss, tosh } from '@theme-ui/presets';
 
 // Define our theme presets collection
 const themePresets = {
@@ -62,7 +62,7 @@ const themePresets = {
       buttonText: '#ffffff',
       inputBg: deep.colors.background,
       borderColor: deep.colors.muted,
-      highlight: deep.colors.highlight || '#333333',
+      highlight: '#333333', // Fallback value
       shadowColor: 'rgba(0, 0, 0, 0.2)',
     },
   },
@@ -81,32 +81,19 @@ const themePresets = {
       shadowColor: 'rgba(0, 0, 0, 0.2)',
     },
   },
-  future: {
-    ...future,
+  tosh: {
+    ...tosh,
     colors: {
-      ...future.colors,
-      headerBg: future.colors.muted,
-      buttonBg: future.colors.primary,
-      buttonHover: '#3e5987',
-      buttonActive: '#2c3f61',
-      buttonText: future.colors.background,
-      inputBg: future.colors.background,
-      borderColor: future.colors.muted,
-      highlight: future.colors.highlight || '#333333',
-      shadowColor: 'rgba(0, 0, 0, 0.2)',
-    },
-  },
-  roboto: {
-    ...roboto,
-    colors: {
-      ...roboto.colors,
-      headerBg: roboto.colors.muted,
-      buttonBg: roboto.colors.primary,
-      buttonHover: '#c21f3a',
-      buttonActive: '#a61834',
+      ...tosh.colors,
+      background: '#121212',
+      headerBg: tosh.colors.muted,
+      buttonBg: tosh.colors.primary,
+      buttonHover: '#ff3377',
+      buttonActive: '#ff1166',
       buttonText: '#ffffff',
-      inputBg: roboto.colors.background,
-      borderColor: roboto.colors.muted,
+      inputBg: tosh.colors.background,
+      borderColor: tosh.colors.muted,
+      highlight: '#e0e0e0', // Fallback value
       shadowColor: 'rgba(0, 0, 0, 0.2)',
     },
   },
@@ -121,22 +108,7 @@ const themePresets = {
       buttonText: '#ffffff',
       inputBg: swiss.colors.background,
       borderColor: swiss.colors.muted,
-      highlight: swiss.colors.highlight || '#e0e0e0',
-      shadowColor: 'rgba(0, 0, 0, 0.2)',
-    },
-  },
-  system: {
-    ...system,
-    colors: {
-      ...system.colors,
-      headerBg: system.colors.muted,
-      buttonBg: system.colors.primary,
-      buttonHover: '#0c6cc2',
-      buttonActive: '#0a5ca4',
-      buttonText: '#ffffff',
-      inputBg: system.colors.background,
-      borderColor: system.colors.muted,
-      highlight: system.colors.highlight || '#e0e0e0',
+      highlight: '#e0e0e0', // Fallback value
       shadowColor: 'rgba(0, 0, 0, 0.2)',
     },
   },
