@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './index.css';
 import { handleHyperlink } from '../../../../tool';
+import CodeCompiler from '../../codeCompiler';
 
 /**
  * Interface representing the props for the QuestionBody component.
@@ -15,6 +16,7 @@ interface QuestionBodyProps {
   text: string;
   askby: string;
   meta: string;
+  codeSnippet?: string;
 }
 
 /**
@@ -27,15 +29,25 @@ interface QuestionBodyProps {
  * @param askby The username of the question's author.
  * @param meta Additional metadata related to the question.
  */
-const QuestionBody = ({ views, text, askby, meta }: QuestionBodyProps) => (
-  <div id='questionBody' className='questionBody right_padding'>
-    <div className='bold_title answer_question_view'>{views} views</div>
-    <div className='answer_question_text'>{handleHyperlink(text)}</div>
-    <div className='answer_question_right'>
-      <div className='question_author'>{askby}</div>
-      <div className='answer_question_meta'>asked {meta}</div>
+const QuestionBody = ({ views, text, askby, meta, codeSnippet }: QuestionBodyProps) => {
+  const [code, setCode] = useState<string>(codeSnippet || '');
+
+  return (
+    <div id='questionBody' className='questionBody right_padding'>
+      <div className='answer_question_text'>{handleHyperlink(text)}</div>
+      {codeSnippet && (
+        <div className='question_codeCompiler'>
+          <h4>Code Snippet</h4>
+          <CodeCompiler code={code} onCodeChange={setCode} readOnly={true} />
+        </div>
+      )}
+      <div className='answer_question_right'>
+        <div className='question_author'>{askby}</div>
+        <div className='answer_question_meta'>asked {meta}</div>
+      </div>
+      <div className='bold_title answer_question_view'>{views} views</div>
     </div>
-  </div>
-);
+  );
+};
 
 export default QuestionBody;

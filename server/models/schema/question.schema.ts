@@ -23,8 +23,13 @@ const questionSchema: Schema = new Schema(
     text: {
       type: String,
     },
+    codeSnippet: {
+      type: String,
+      default: '',
+    },
     files: [
       {
+        fileId: String,
         filename: String,
         path: String,
         mimetype: String,

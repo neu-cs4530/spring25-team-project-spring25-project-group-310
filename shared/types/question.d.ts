@@ -30,6 +30,7 @@ export type OrderType = 'newest' | 'unanswered' | 'active' | 'mostViewed';
 export interface Question {
   title: string;
   text: string;
+  codeSnippet?: string;
   tags: Tag[];
   askedBy: string;
   askDateTime: Date;

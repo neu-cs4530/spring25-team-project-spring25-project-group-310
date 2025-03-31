@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { handleHyperlink } from '../../../../tool';
 import CommentSection from '../../commentSection';
 import './index.css';
 import { Comment, DatabaseComment } from '../../../../types/types';
+import CodeCompiler from '../../codeCompiler';
 
 /**
  * Interface representing the props for the AnswerView component.
@@ -19,6 +20,7 @@ interface AnswerProps {
   meta: string;
   comments: DatabaseComment[];
   handleAddComment: (comment: Comment) => void;
+  codeSnippet?: string;
 }
 
 /**
@@ -31,17 +33,34 @@ interface AnswerProps {
  * @param comments An array of comments associated with the answer.
  * @param handleAddComment Function to handle adding a new comment.
  */
-const AnswerView = ({ text, ansBy, meta, comments, handleAddComment }: AnswerProps) => (
-  <div className='answer right_padding'>
-    <div id='answerText' className='answerText'>
-      {handleHyperlink(text)}
+const AnswerView = ({
+  text,
+  ansBy,
+  meta,
+  comments,
+  codeSnippet,
+  handleAddComment,
+}: AnswerProps) => {
+  const [code, setCode] = useState<string>(codeSnippet || '');
+
+  return (
+    <div className='answer right_padding'>
+      <div id='answerText' className='answerText'>
+        {handleHyperlink(text)}
+      </div>
+      {codeSnippet && (
+        <div className='question_codeCompiler'>
+          <h4>Code Snippet</h4>
+          <CodeCompiler code={code} onCodeChange={setCode} readOnly={true} />
+        </div>
+      )}
+      <div className='answerAuthor'>
+        <div className='answer_author'>{ansBy}</div>
+        <div className='answer_question_meta'>{meta}</div>
+      </div>
+      <CommentSection comments={comments} handleAddComment={handleAddComment} />
     </div>
-    <div className='answerAuthor'>
-      <div className='answer_author'>{ansBy}</div>
-      <div className='answer_question_meta'>{meta}</div>
-    </div>
-    <CommentSection comments={comments} handleAddComment={handleAddComment} />
-  </div>
-);
+  );
+};
 
 export default AnswerView;
