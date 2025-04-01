@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Box, Flex, Text, Input, Button } from 'theme-ui';
 import useHeader from '../../hooks/useHeader';
 import './index.css';
 import useUserContext from '../../hooks/useUserContext';
-import { Box, Flex, Text, Input, Button } from 'theme-ui';
 import ThemeSelector from '../theme/ThemeSelector'; // Update this path
 
 /**
@@ -18,7 +18,15 @@ const Header = () => {
   const navigate = useNavigate();
 
   return (
-    <Flex as="header" sx={{ alignItems: 'center', justifyContent: 'space-around', height: '10%', width: '100%', bg: 'headerBg' }}>
+    <Flex
+      as='header'
+      sx={{
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        height: '10%',
+        width: '100%',
+        bg: 'headerBg',
+      }}>
       <Box></Box>
       <Text sx={{ fontSize: '32px', fontWeight: '800' }}>Semicolon</Text>
       <Input
@@ -31,14 +39,12 @@ const Header = () => {
       <ThemeSelector />
       <Button
         onClick={handleSignOut}
-        sx={{ bg: 'buttonBg', color: 'buttonText', '&:hover': { bg: 'buttonHover' } }}
-      >
+        sx={{ 'bg': 'buttonBg', 'color': 'buttonText', '&:hover': { bg: 'buttonHover' } }}>
         Log out
       </Button>
       <Button
         onClick={() => navigate(`/user/${currentUser.username}`)}
-        sx={{ bg: 'buttonBg', color: 'buttonText', ml: 2, '&:hover': { bg: 'buttonHover' } }}
-      >
+        sx={{ 'bg': 'buttonBg', 'color': 'buttonText', 'ml': 2, '&:hover': { bg: 'buttonHover' } }}>
         View Profile
       </Button>
     </Flex>

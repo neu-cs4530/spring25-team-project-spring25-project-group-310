@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { Theme, ThemeUIProvider } from 'theme-ui';
+import { ThemeUIProvider } from 'theme-ui';
 import { ThemeContext, useThemeProvider } from '../hooks/useTheme';
 import themePresets from './theme/ThemePresets';
 import GlobalStyles from './theme/GlobalStyles';

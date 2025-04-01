@@ -1,5 +1,5 @@
 // components/theme/GlobalStyles.tsx
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useThemeUI } from 'theme-ui';
 
 const GlobalStyles = () => {

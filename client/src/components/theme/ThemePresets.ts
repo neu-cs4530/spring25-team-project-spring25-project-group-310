@@ -1,4 +1,3 @@
-import React from 'react';
 import { base, dark, deep, funk, swiss, tosh } from '@theme-ui/presets';
 
 // Define our theme presets collection
