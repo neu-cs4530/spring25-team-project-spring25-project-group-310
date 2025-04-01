@@ -5,7 +5,7 @@
 
 .input_hint {
   font-size: 14px;
-  color: black;
+  color: var(--primary-text);
   margin-bottom: 5px;
   font-style: italic;
   margin-left: 10px;
@@ -16,11 +16,11 @@
   box-sizing: border-box;
   padding: 10px;
   margin-bottom: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
 }
 
 .input_error {
-  color: red;
+  color: var(--accent-color);
   margin-bottom: 20px;
 }

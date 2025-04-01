@@ -1,6 +1,6 @@
 .custom-button {
-  background-color: #007bff;
-  color: #fff;
+  background-color: var(--button-bg);
+  color: var(--button-text);
   border: none;
   border-radius: 6px;
   padding: 10px 16px;
@@ -9,11 +9,11 @@
 }
 
 .custom-button:hover {
-  background-color: #0056b3;
+  background-color: var(--button-hover);
 }
 
 .custom-input {
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 10px;
   font-size: 16px;
@@ -35,27 +35,27 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: #fff;
-  border: 2px solid #ddd;
+  background-color: var(--primary-bg);
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   padding: 16px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--shadow-color);
 }
 
 .chat-container h2 {
   margin-bottom: 16px;
   font-size: 20px;
-  color: #555;
+  color: var(--secondary-text);
 }
 
 .chat-messages {
   flex: 1;
   overflow-y: auto;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 10px;
   margin-bottom: 16px;
-  background-color: #fefefe;
+  background-color: var(--input-bg);
   max-height: 400px;
 }
 
@@ -64,7 +64,7 @@
 }
 
 .chat-message strong {
-  color: #007bff;
+  color: var(--accent-color);
 }
 
 .message-input {
@@ -76,40 +76,40 @@
 /* Chat list styles */
 .chats-list {
   width: 30%;
-  background-color: #fff;
-  border: 2px solid #ddd;
+  background-color: var(--primary-bg);
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   padding: 16px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--shadow-color);
 }
 
 .chats-list h2 {
   font-size: 18px;
   margin-bottom: 16px;
-  color: #555;
+  color: var(--secondary-text);
 }
 
 .chats-list-card:hover {
-  background-color: #eaeaea;
+  background-color: var(--secondary-bg);
 }
 
 /* Create panel styles */
 .create-panel {
   margin-bottom: 16px;
   padding: 16px;
-  background-color: #fff;
-  border: 2px solid #ddd;
+  background-color: var(--primary-bg);
+  border: 2px solid var(--border-color);
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--shadow-color);
 }
 
 .create-panel p {
   margin-bottom: 8px;
-  color: #555;
+  color: var(--secondary-text);
 }
 
 .direct-message-error {
-  color: red;
+  color: var(--accent-color);
   font-weight: bold;
   margin-top: 15px;
 }

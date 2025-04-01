@@ -1,51 +1,53 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Box, Flex, Text, Input, Button } from 'theme-ui';
 import useHeader from '../../hooks/useHeader';
 import './index.css';
 import useUserContext from '../../hooks/useUserContext';
-import useTheme from '../../hooks/useTheme';
+import ThemeSelector from '../theme/ThemeSelector'; // Update this path
 
 /**
  * Header component that renders the main title and a search bar.
  * The search bar allows the user to input a query and navigate to the search results page
  * when they press Enter.
- * Includes a toggle for switching between light and dark themes.
+ * Includes a theme selector for switching between available themes.
  */
 const Header = () => {
   const { val, handleInputChange, handleKeyDown, handleSignOut } = useHeader();
   const { user: currentUser } = useUserContext();
   const navigate = useNavigate();
-  const { theme, setTheme } = useTheme();
-
-  // Toggle theme function
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
-  };
 
   return (
-    <div id='header' className='header'>
-      <div></div>
-      <div className='title'>Semicolon</div>
-      <input
-        id='searchBar'
+    <Flex
+      as='header'
+      sx={{
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        height: '10%',
+        width: '100%',
+        bg: 'headerBg',
+      }}>
+      <Box></Box>
+      <Text sx={{ fontSize: '32px', fontWeight: '800' }}>Semicolon</Text>
+      <Input
         placeholder='Search ...'
-        type='text'
         value={val}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
+        sx={{ bg: 'inputBg', color: 'text' }}
       />
-      <button onClick={toggleTheme} className='theme-toggle-button'>
-        {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
-      </button>
-      <button onClick={handleSignOut} className='logout-button'>
+      <ThemeSelector />
+      <Button
+        onClick={handleSignOut}
+        sx={{ 'bg': 'buttonBg', 'color': 'buttonText', '&:hover': { bg: 'buttonHover' } }}>
         Log out
-      </button>
-      <button
-        className='view-profile-button'
-        onClick={() => navigate(`/user/${currentUser.username}`)}>
+      </Button>
+      <Button
+        onClick={() => navigate(`/user/${currentUser.username}`)}
+        sx={{ 'bg': 'buttonBg', 'color': 'buttonText', 'ml': 2, '&:hover': { bg: 'buttonHover' } }}>
         View Profile
-      </button>
-    </div>
+      </Button>
+    </Flex>
   );
 };
 
