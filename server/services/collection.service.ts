@@ -1,4 +1,5 @@
-import { Collection, CollectionResponse, DatabaseCollection } from '../types/types';
+import { ObjectId } from 'mongodb';
+import { Bookmark, Collection, CollectionResponse, DatabaseCollection } from '../types/types';
 import CollectionModel from '../models/collection.model';
 
 /**
@@ -141,5 +142,19 @@ export const removeBookmarkFromCollection = async (
     return updatedCollection;
   } catch (error) {
     return { error: `Error when removing bookmark from collection: ${(error as Error).message}` };
+  }
+};
+
+export const getBookmarksForCollection = async (
+  collectionId: string,
+): Promise<ObjectId[] | { error: string }> => {
+  try {
+    const collection = await CollectionModel.findById(collectionId);
+    if (!collection) {
+      return { error: 'Collection not found' };
+    }
+    return collection.bookmarks;
+  } catch (error) {
+    return { error: 'Error when fetching bookmarks in collection' };
   }
 };

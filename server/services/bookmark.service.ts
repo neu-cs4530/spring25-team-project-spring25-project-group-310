@@ -43,7 +43,7 @@ export const deleteBookmark = async (
 ): Promise<BookmarkResponse> => {
   try {
     const deletedBookmark: DatabaseBookmark | null = await BookmarkModel.findOneAndDelete({
-      _id: bookmarkId,
+      questionId: bookmarkId,
       username,
     });
     if (!deletedBookmark) {

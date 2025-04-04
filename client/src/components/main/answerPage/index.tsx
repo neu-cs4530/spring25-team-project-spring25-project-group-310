@@ -10,21 +10,61 @@ import QuestionBody from './questionBody';
 import VoteComponent from '../voteComponent';
 import CommentSection from '../commentSection';
 import useAnswerPage from '../../../hooks/useAnswerPage';
+import BookmarkPrompt from '../bookmarkPrompt'; // Import the BookmarkPrompt component
+import {
+  addBookmarkToCollection,
+  addBookmarkWithoutCollection,
+} from '../../../services/bookmarkService';
+import useUserContext from '../../../hooks/useUserContext';
 
-/**
- * AnswerPage component that displays the full content of a question along with its answers.
- * It also includes the functionality to vote, ask a new question, and post a new answer.
- */
 const AnswerPage = () => {
   const { questionID, question, handleNewComment, handleNewAnswer } = useAnswerPage();
+  const [isBookmarkModalOpen, setIsBookmarkModalOpen] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const { user: currentUser } = useUserContext();
+  const { username } = currentUser;
 
   if (!question) {
     return null;
   }
 
-  const handleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
+  const handleBookmarkClick = async () => {
+    try {
+      console.log('Bookmarking question:', questionID, 'for user:', username);
+
+      // Add bookmark to default collection
+      await addBookmarkWithoutCollection(questionID, username);
+
+      // Update local state
+      setIsBookmarked(true);
+
+      // Dispatch event to notify profile settings to refresh
+      window.dispatchEvent(
+        new CustomEvent('bookmarkAdded', {
+          detail: {
+            questionId: questionID,
+            username,
+            title: question.title, // Include the title for better display in profile
+          },
+        }),
+      );
+
+      console.log('Bookmark added successfully, opening modal for collection selection');
+
+      // Open modal for further organization
+      setIsBookmarkModalOpen(true);
+    } catch (error) {
+      console.error('Failed to bookmark question:', error);
+    }
+  };
+
+  const handleBookmarkClose = () => {
+    setIsBookmarkModalOpen(false);
+  };
+
+  const handleBookmarkSuccess = () => {
+    // Additional success handling if needed
+    setIsBookmarked(true);
   };
 
   return (
@@ -32,12 +72,21 @@ const AnswerPage = () => {
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <VoteComponent question={question} />
         <button
-          className={isBookmarked ? 'bookmark_button' : 'bookmark_button_bookmarked'}
-          onClick={handleBookmark}
+          className={`bookmark_button ${isBookmarked ? 'bookmarked' : ''}`}
+          onClick={handleBookmarkClick}
           style={{ marginLeft: '10px' }}>
           <FontAwesomeIcon icon={faBookmark} />
         </button>
-      </div>
+      </div>{' '}
+      {/* Bookmark Prompt Modal */}
+      {isBookmarkModalOpen && (
+        <BookmarkPrompt
+          questionId={String(question._id)}
+          onClose={handleBookmarkClose}
+          onSuccess={handleBookmarkSuccess}
+          username={currentUser.username}
+        />
+      )}
       <AnswerHeader ansCount={question.answers.length} title={question.title} />
       <QuestionBody
         views={question.views.length}

@@ -1,13 +1,13 @@
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { Bookmark, DatabaseBookmark } from '../types/types';
+import { Bookmark, DatabaseBookmark, FakeSOSocket } from '../types/types';
 import { saveBookmark, getBookmarksForUser, deleteBookmark } from '../services/bookmark.service';
 
 /**
  * Controller for bookmark-related endpoints.
  * Uses the user's unique username (from req.user.username) for all operations.
  */
-const bookmarkController = () => {
+const bookmarkController = (socket?: FakeSOSocket) => {
   const router = express.Router();
 
   /**
@@ -36,9 +36,14 @@ const bookmarkController = () => {
 
     try {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const {
-        user: { username },
-      } = req as any;
+      // const {
+      //   user: { username },
+      // } = req as any;
+      const { username } = req.params;
+      if (!username) {
+        res.status(400).send('Invalid request: Username is required');
+        return;
+      }
       const bookmark: Bookmark = { username, questionId };
       const result: DatabaseBookmark | { error: string } = await saveBookmark(bookmark);
       if ('error' in result) {
@@ -58,9 +63,8 @@ const bookmarkController = () => {
   const getBookmarksRoute = async (req: Request, res: Response): Promise<void> => {
     try {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const {
-        user: { username },
-      } = req as any;
+      const { username } = req.params;
+
       const result = await getBookmarksForUser(username);
       if ('error' in result) {
         throw new Error(result.error);
@@ -78,11 +82,8 @@ const bookmarkController = () => {
    */
   const deleteBookmarkRoute = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { bookmarkId } = req.params;
+      const { username, bookmarkId } = req.params;
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const {
-        user: { username },
-      } = req as any;
       if (!ObjectId.isValid(bookmarkId)) {
         res.status(400).send('Invalid bookmarkId format');
         return;
@@ -97,9 +98,9 @@ const bookmarkController = () => {
     }
   };
 
-  router.post('/', addBookmarkRoute);
-  router.get('/', getBookmarksRoute);
-  router.delete('/:bookmarkId', deleteBookmarkRoute);
+  router.post('/:username', addBookmarkRoute);
+  router.get('/:username', getBookmarksRoute);
+  router.delete('/:username/:bookmarkId', deleteBookmarkRoute);
 
   return router;
 };

@@ -18,6 +18,9 @@ import userController from './controllers/user.controller';
 import messageController from './controllers/message.controller';
 import chatController from './controllers/chat.controller';
 import gameController from './controllers/game.controller';
+import collectionController from './controllers/collection.controller';
+import bookmarkController from './controllers/bookmark.controller';
+import { Socket } from 'socket.io-client';
 
 dotenv.config();
 
@@ -81,6 +84,8 @@ app.use('/comment', commentController(socket));
 app.use('/messaging', messageController(socket));
 app.use('/user', userController(socket));
 app.use('/chat', chatController(socket));
+app.use('/collections', collectionController(socket));
+app.use('/bookmark', bookmarkController(socket));
 app.use('/games', gameController(socket));
 
 // Export the app instance
