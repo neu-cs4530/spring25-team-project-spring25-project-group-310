@@ -1,17 +1,11 @@
+// In components/Header.tsx
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Box, Flex, Text, Input, Button } from 'theme-ui';
+import { useNavigate } from 'react-router-dom';
 import useHeader from '../../hooks/useHeader';
 import './index.css';
 import useUserContext from '../../hooks/useUserContext';
-import ThemeSelector from '../theme/ThemeSelector'; // Update this path
 
-/**
- * Header component that renders the main title and a search bar.
- * The search bar allows the user to input a query and navigate to the search results page
- * when they press Enter.
- * Includes a theme selector for switching between available themes.
- */
 const Header = () => {
   const { val, handleInputChange, handleKeyDown, handleSignOut } = useHeader();
   const { user: currentUser } = useUserContext();
@@ -36,7 +30,12 @@ const Header = () => {
         onKeyDown={handleKeyDown}
         sx={{ bg: 'inputBg', color: 'text' }}
       />
-      <ThemeSelector />
+      {/* Replace ThemeSelector with Settings button */}
+      <Button
+        onClick={() => navigate('/settings')}
+        sx={{ 'bg': 'buttonBg', 'color': 'buttonText', '&:hover': { bg: 'buttonHover' } }}>
+        Settings
+      </Button>
       <Button
         onClick={handleSignOut}
         sx={{ 'bg': 'buttonBg', 'color': 'buttonText', '&:hover': { bg: 'buttonHover' } }}>

@@ -63,6 +63,19 @@ const GlobalStyles = () => {
         background-color: var(--input-bg) !important;
         color: var(--primary-text) !important;
       }
+        html {
+  font-size: calc(16px * var(--text-size-factor, 100%) / 100) !important;
+}
+
+/* Apply line height */
+p, li, div, span, input, textarea, button, a {
+  line-height: var(--line-height, 1.5) !important;
+}
+
+/* Apply contrast */
+body {
+  filter: var(--contrast-filter, contrast(100%)) !important;
+}
     `;
 
     // Remove existing one if it exists
