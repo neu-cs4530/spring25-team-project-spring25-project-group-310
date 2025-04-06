@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Heading, Flex, Text, Button } from 'theme-ui';
 import { useTheme, ThemeType } from '../../../hooks/useTheme';
 import themePresets from '../../theme/ThemePresets';
-import useAccessibility from '../../../hooks/useAccessibility';
+import useAccessibilitySettings from '../../../hooks/useAccessibility';
 
 // Use the same ThemePreviewCard component from the original ThemeSelector
 const ThemePreviewCard = ({
@@ -90,7 +90,7 @@ const SettingsPage: React.FC = () => {
     updateLineHeight,
     updateContrast,
     resetToDefaults,
-  } = useAccessibility();
+  } = useAccessibilitySettings();
 
   // Available themes - use the same list as in your original ThemeSelector
   const availableThemes: ThemeType[] = ['light', 'dark', 'deep', 'funk', 'tosh', 'swiss'];

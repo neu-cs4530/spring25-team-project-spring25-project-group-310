@@ -38,7 +38,7 @@ export const applyAccessibilitySettings = (settings: AccessibilitySettings): voi
 const initialSettings = getSavedSettings();
 applyAccessibilitySettings(initialSettings);
 
-export const useAccessibility = () => {
+export const useAccessibilitySettings = () => {
   const [settings, setSettings] = useState<AccessibilitySettings>(initialSettings);
 
   const updateSettings = (newSettings: AccessibilitySettings) => {
@@ -76,4 +76,4 @@ export const useAccessibility = () => {
   };
 };
 
-export default useAccessibility;
+export default useAccessibilitySettings;
