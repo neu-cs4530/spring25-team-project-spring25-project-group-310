@@ -1,5 +1,9 @@
 .questionBody {
-  border-bottom: #000000 1px dashed;
+  display: flex;
+  flex-direction: row;
+  /* justify-content: space-between;  */
+  margin-top: 5%;
+  border-bottom: var(--border-color) 1px dashed;
 }
 
 .answer_question_view {
@@ -12,6 +16,9 @@
   margin-bottom: 20px;
 }
 
+.question_author {
+  margin-right: 5px;
+}
 .question_author {
   margin-right: 5px;
 }

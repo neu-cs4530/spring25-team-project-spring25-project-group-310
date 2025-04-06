@@ -1,8 +1,8 @@
 .game-item {
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 15px;
-  background: #f9f9f9;
+  background: var(--secondary-bg);
 }
 
 .game-item p {
@@ -16,7 +16,7 @@
 }
 
 .game-item li {
-  background: #eef2f3;
+  background: var(--input-bg);
   margin: 3px 0;
   padding: 5px 10px;
   border-radius: 4px;

@@ -1,6 +1,8 @@
 /* All the CSS related to answers Page*/
 .answer {
-  border-bottom: #000000 1px dashed;
+  display: flex;
+  flex-direction: row;
+  border-bottom: var(--border-color) 1px dashed;
 }
 
 .answerText {
@@ -13,6 +15,5 @@
 }
 
 .answer_author {
-  color: green;
-  padding-top: 20px;
+  color: var(--accent-color);
 }

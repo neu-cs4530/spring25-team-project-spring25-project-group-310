@@ -1,11 +1,11 @@
 .question {
   display: flex;
   flex-direction: row;
-  border-top: #000000 1px dashed;
+  border-top: var(--border-color) 1px dashed;
 }
 
 .postStats {
-  color: #bbbbbb;
+  color: var(--secondary-text);
   text-align: center;
   width: 10%;
 }
@@ -15,7 +15,7 @@
 }
 
 .postTitle {
-  color: cornflowerblue;
+  color: var(--accent-color);
 }
 
 .question_tags {
@@ -23,8 +23,8 @@
 }
 
 .question_tag_button {
-  color: #ffffff;
-  background: gray;
+  color: var(--button-text);
+  background: var(--button-bg);
   border-width: 0;
   border-radius: 8px;
   margin-left: 2%;
@@ -42,9 +42,9 @@
 }
 
 .question_author {
-  color: red;
+  color: var(--accent-color);
 }
 
 .question_meta {
-  color: #bbbbbb;
+  color: var(--secondary-text);
 }

@@ -8,15 +8,15 @@
   height: 100%;
   width: 100%;
   margin: auto;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--shadow-color);
 }
 
 .chat-header {
-  background-color: #3090e2;
-  color: white;
+  background-color: var(--header-bg);
+  color: var(--primary-text);
   padding: 10px 20px;
   text-align: center;
 }
@@ -26,7 +26,7 @@
   padding: 5px;
   overflow-y: auto;
   overflow-x: hidden;
-  background-color: #f9f9f9;
+  background-color: var(--secondary-bg);
 }
 
 .user-name {
@@ -37,14 +37,14 @@
 .message-input {
   display: flex;
   padding: 10px;
-  border-top: 1px solid #ddd;
-  background-color: #fff;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--primary-bg);
 }
 
 .message-textbox {
   flex: 1;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   margin-right: 10px;
   width: 100%;
@@ -60,25 +60,29 @@
 .send-button {
   padding: 10px 20px;
   border: none;
-  background-color: #007bff;
-  color: white;
+  background-color: var(--button-bg);
+  color: var(--button-text);
   border-radius: 4px;
   cursor: pointer;
   width: 100px;
 }
 
 .send-button:hover {
-  background-color: #0056b3;
+  background-color: var(--button-hover);
 }
 
 .error-message {
-  color: red;
+  color: var(--accent-color);
   font-size: 0.85rem;
-  margin-left: 10px; /* Adds space between the button and the error message */
-  background-color: #ffe6e6; /* Light red background for better visibility */
+  margin-left: 10px;
+  /* Adds space between the button and the error message */
+  background-color: var(--secondary-bg);
+  /* Light red background for better visibility */
   padding: 5px 10px;
-  border: 1px solid #ffcccc;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
-  display: inline-block; /* Prevents it from stretching unnecessarily */
-  white-space: nowrap; /* Prevents wrapping of the message */
+  display: inline-block;
+  /* Prevents it from stretching unnecessarily */
+  white-space: nowrap;
+  /* Prevents wrapping of the message */
 }
