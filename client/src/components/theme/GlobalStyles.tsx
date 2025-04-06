@@ -1,4 +1,3 @@
-// components/theme/GlobalStyles.tsx
 import { useEffect } from 'react';
 import { useThemeUI } from 'theme-ui';
 

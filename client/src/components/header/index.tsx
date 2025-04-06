@@ -1,4 +1,3 @@
-// In components/Header.tsx
 import React from 'react';
 import { Box, Flex, Text, Input, Button } from 'theme-ui';
 import { useNavigate } from 'react-router-dom';

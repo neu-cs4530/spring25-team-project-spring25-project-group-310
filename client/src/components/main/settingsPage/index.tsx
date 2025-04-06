@@ -1,4 +1,3 @@
-// src/components/main/SettingsPage.tsx
 import React from 'react';
 import { Box, Heading, Flex, Text, Button } from 'theme-ui';
 import { useTheme, ThemeType } from '../../../hooks/useTheme';

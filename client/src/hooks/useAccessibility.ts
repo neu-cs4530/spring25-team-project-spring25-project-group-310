@@ -1,5 +1,4 @@
-// src/hooks/useAccessibility.ts
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface AccessibilitySettings {
   fontSize: number;
@@ -15,13 +14,9 @@ const defaultSettings: AccessibilitySettings = {
 
 // Get settings from localStorage, with fallback to defaults
 const getSavedSettings = (): AccessibilitySettings => {
-  try {
-    const savedSettings = localStorage.getItem('accessibility-settings');
-    if (savedSettings) {
-      return JSON.parse(savedSettings);
-    }
-  } catch (error) {
-    console.error('Error loading accessibility settings:', error);
+  const savedSettings = localStorage.getItem('accessibility-settings');
+  if (savedSettings) {
+    return JSON.parse(savedSettings);
   }
   return defaultSettings;
 };
@@ -40,7 +35,6 @@ export const applyAccessibilitySettings = (settings: AccessibilitySettings): voi
 };
 
 // Apply the settings immediately when the app loads, before any React code runs
-// This prevents the "flash" of default styles before React loads
 const initialSettings = getSavedSettings();
 applyAccessibilitySettings(initialSettings);
 
@@ -68,7 +62,7 @@ export const useAccessibility = () => {
   };
 
   const resetToDefaults = () => {
-      updateSettings(defaultSettings);
+    updateSettings(defaultSettings);
   };
 
   return {

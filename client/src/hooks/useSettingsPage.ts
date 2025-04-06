@@ -1,5 +1,3 @@
-// src/hooks/useSettingsPage.ts
-import { useEffect } from 'react';
 import { useTheme, ThemeType } from './useTheme';
 import useAccessibility from './useAccessibility';
 
