@@ -45,6 +45,8 @@ const AnswerPage = () => {
         askby={question.askedBy}
         meta={getMetaData(new Date(question.askDateTime))}
         codeSnippet={question.codeSnippet}
+        files={question.files}
+        questionId={String(question._id)}
       />
       <CommentSection
         comments={question.comments}
@@ -58,6 +60,8 @@ const AnswerPage = () => {
           meta={getMetaData(new Date(a.ansDateTime))}
           comments={a.comments}
           codeSnippet={a.codeSnippet}
+          files={a.files}
+          answerId={String(a._id)}
           handleAddComment={(comment: Comment) =>
             handleNewComment(comment, 'answer', String(a._id))
           }

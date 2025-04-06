@@ -57,7 +57,6 @@ const bookmarkController = () => {
    */
   const getBookmarksRoute = async (req: Request, res: Response): Promise<void> => {
     try {
-      /* eslint-disable @typescript-eslint/no-explicit-any */
       const {
         user: { username },
       } = req as any;
@@ -79,7 +78,6 @@ const bookmarkController = () => {
   const deleteBookmarkRoute = async (req: Request, res: Response): Promise<void> => {
     try {
       const { bookmarkId } = req.params;
-      /* eslint-disable @typescript-eslint/no-explicit-any */
       const {
         user: { username },
       } = req as any;

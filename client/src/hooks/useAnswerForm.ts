@@ -1,8 +1,9 @@
-import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useCallback, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { validateHyperlink } from '../tool';
 import addAnswer from '../services/answerService';
 import useUserContext from './useUserContext';
+import { Answer, FileMetaData, UIFileMetaData } from '../types/types';
 
 const allowedFileTypes = {
   image: ['image/jpeg', 'image/png', 'image/jpg'],
@@ -10,17 +11,9 @@ const allowedFileTypes = {
   text: ['text/plain'],
 };
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
-
-interface FileWithMetadata {
-  file: File;
-  id: string;
-  preview?: string;
-  type: 'image' | 'pdf' | 'text';
-}
+const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
 /**
- * Custom hook for managing the state and logic of an answer submission form.
  *
  * @returns text - the current text input for the answer.
  * @returns textErr - the error message related to the text input.
@@ -32,16 +25,43 @@ interface FileWithMetadata {
  */
 const useAnswerForm = () => {
   const navigate = useNavigate();
-
+  const { qid } = useParams();
   const { user } = useUserContext();
+
   const [text, setText] = useState<string>('');
   const [codeSnippet, setCodeSnippet] = useState<string>('');
   const [textErr, setTextErr] = useState<string>('');
-  const [questionID] = useState<string>('');
+  const [questionID, setQuestionID] = useState<string>('');
 
-  const [files, setFiles] = useState<FileWithMetadata[]>([]);
+  const [files, setFiles] = useState<UIFileMetaData[]>([]);
   const [fileErr, setFileErr] = useState<string>('');
   const [isDragging, setIsDragging] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (qid) {
+      setQuestionID(qid);
+    }
+  }, [qid]);
+
+  /**
+   * Convert a file to Base64 string
+   */
+  // eslint-disable-next-line arrow-body-style
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const base64String = reader.result?.toString().split(',')[1];
+        if (base64String) {
+          resolve(base64String);
+        } else {
+          reject(new Error('Failed to convert file to Base64'));
+        }
+      };
+      reader.onerror = error => reject(error);
+    });
+  };
 
   const getFileType = useCallback((mimeType: string): 'image' | 'pdf' | 'text' | null => {
     if (allowedFileTypes.image.includes(mimeType)) return 'image';
@@ -51,7 +71,7 @@ const useAnswerForm = () => {
   }, []);
 
   const processFile = useCallback(
-    (file: File): FileWithMetadata | null => {
+    (file: File): UIFileMetaData | null => {
       const fileType = getFileType(file.type);
       if (!fileType) {
         return null;
@@ -59,7 +79,7 @@ const useAnswerForm = () => {
       if (file.size > MAX_FILE_SIZE) {
         return null;
       }
-      const fileWithMetadata: FileWithMetadata = {
+      const fileWithMetadata: UIFileMetaData = {
         file,
         id: `${Date.now()}-${file.name}`,
         type: fileType,
@@ -77,7 +97,7 @@ const useAnswerForm = () => {
    */
   const addFiles = useCallback(
     (selectedFiles: File[]) => {
-      const newValidFiles: FileWithMetadata[] = [];
+      const newValidFiles: UIFileMetaData[] = [];
       const invalidFiles: string[] = [];
       const oversizedFiles: string[] = [];
 
@@ -238,22 +258,43 @@ const useAnswerForm = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('text', text);
-    formData.append('ansBy', user.username);
-    formData.append('ansDateTime', new Date().toISOString());
-    formData.append('codeSnippet', codeSnippet);
-
-    files.forEach(fileObj => {
-      formData.append('files', fileObj.file);
-    });
-
     try {
-      const res = await addAnswer(questionID, formData);
+      // Create file metadata for the backend
+      const fileMetadataPromises = files.map(async fileData => {
+        const base64Content = await fileToBase64(fileData.file);
+        return {
+          fileId: fileData.id,
+          filename: fileData.file.name,
+          contentType: fileData.file.type,
+          size: fileData.file.size,
+          content: base64Content,
+        } as FileMetaData;
+      });
+
+      const fileMetadata = await Promise.all(fileMetadataPromises);
+
+      // Create the answer object with files
+      const answer: Answer = {
+        text,
+        ansBy: user.username,
+        codeSnippet: codeSnippet || '',
+        ansDateTime: new Date(),
+        comments: [],
+        files: fileMetadata.length > 0 ? fileMetadata : undefined,
+      };
+
+      // Send answer to server
+      const res = await addAnswer(questionID, {
+        qid: questionID,
+        ans: answer,
+      });
+
       if (res && res._id) {
+        cleanupFilePreviewUrls();
         navigate(`/question/${questionID}`);
       }
     } catch (error) {
+      console.error('Error posting answer:', error);
       setTextErr('Failed to post answer. Please try again.');
     }
   };

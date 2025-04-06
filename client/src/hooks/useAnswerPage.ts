@@ -76,12 +76,10 @@ const useAnswerPage = () => {
         const res = await getQuestionById(questionID, user.username);
         setQuestion(res || null);
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error('Error fetching question:', error);
       }
     };
 
-    // eslint-disable-next-line no-console
     fetchData().catch(e => console.log(e));
   }, [questionID, user.username]);
 

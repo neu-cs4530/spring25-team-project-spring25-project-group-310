@@ -1,6 +1,6 @@
-import express, { Response } from 'express';
+import express, { RequestHandler, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { Answer, AddAnswerRequest, FakeSOSocket, PopulatedDatabaseAnswer } from '../types/types';
+import { Answer, AddAnswerRequest, FakeSOSocket, PopulatedDatabaseAnswer, FileMetaData } from '../types/types';
 import { addAnswerToQuestion, saveAnswer } from '../services/answer.service';
 import { populateDocument } from '../utils/database.util';
 
@@ -14,7 +14,7 @@ const answerController = (socket: FakeSOSocket) => {
    *
    * @returns `true` if the request is valid, otherwise `false`.
    */
-  function isRequestValid(req: AddAnswerRequest): boolean {
+  function isRequestValid(req: { body: { qid: string; ans: Answer } }): boolean {
     return !!req.body.qid && !!req.body.ans;
   }
 
@@ -30,6 +30,18 @@ const answerController = (socket: FakeSOSocket) => {
   }
 
   /**
+   * Validates file metadata to ensure it has all required properties.
+   */
+  const isFileMetadataValid = (files: FileMetaData[]): boolean => {
+    return files.every(file => 
+      file.filename && 
+      file.contentType && 
+      file.size && 
+      file.content
+    );
+  };
+
+  /**
    * Adds a new answer to a question in the database. The answer request and answer are
    * validated and then saved. If successful, the answer is associated with the corresponding
    * question. If there is an error, the HTTP response's status is updated.
@@ -40,7 +52,7 @@ const answerController = (socket: FakeSOSocket) => {
    * @returns A Promise that resolves to void.
    */
   const addAnswer = async (req: AddAnswerRequest, res: Response): Promise<void> => {
-    if (!isRequestValid(req)) {
+    if (!isRequestValid(req as any)) {
       res.status(400).send('Invalid request');
       return;
     }
@@ -49,8 +61,23 @@ const answerController = (socket: FakeSOSocket) => {
       return;
     }
 
-    const { qid } = req.body;
+    const { qid, ans } = req.body;
     const ansInfo: Answer = req.body.ans;
+
+    // If files are included, validate them
+    if (ansInfo.files && ansInfo.files.length > 0) {
+      if (!isFileMetadataValid(ansInfo.files)) {
+        res.status(400).send('Invalid file metadata');
+        return;
+      }
+      
+      
+      // Ensure each file has a fileId
+      ansInfo.files = ansInfo.files.map(file => ({
+        ...file,
+        fileId: file.fileId || new ObjectId().toString()
+      }));
+    }
 
     try {
       const ansFromDb = await saveAnswer(ansInfo);
@@ -83,7 +110,7 @@ const answerController = (socket: FakeSOSocket) => {
   };
 
   // add appropriate HTTP verbs and their endpoints to the router.
-  router.post('/addAnswer', addAnswer);
+  router.post('/addAnswer', addAnswer as RequestHandler);
 
   return router;
 };

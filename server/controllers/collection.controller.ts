@@ -63,7 +63,6 @@ const collectionController = () => {
    */
   const getCollectionsRoute = async (req: Request, res: Response): Promise<void> => {
     try {
-      /* eslint-disable @typescript-eslint/no-explicit-any */
       const {
         user: { username },
       } = req as any;
@@ -94,7 +93,6 @@ const collectionController = () => {
       return;
     }
     try {
-      /* eslint-disable @typescript-eslint/no-explicit-any */
       const {
         user: { username },
       } = req as any;
@@ -120,7 +118,6 @@ const collectionController = () => {
       return;
     }
     try {
-      /* eslint-disable @typescript-eslint/no-explicit-any */
       const {
         user: { username },
       } = req as any;
@@ -151,7 +148,6 @@ const collectionController = () => {
       return;
     }
     try {
-      /* eslint-disable @typescript-eslint/no-explicit-any */
       const {
         user: { username },
       } = req as any;
@@ -177,7 +173,6 @@ const collectionController = () => {
       return;
     }
     try {
-      /* eslint-disable @typescript-eslint/no-explicit-any */
       const {
         user: { username },
       } = req as any;

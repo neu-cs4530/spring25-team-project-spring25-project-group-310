@@ -26,14 +26,12 @@ const CodeCompiler: React.FC<CodeCompilerProps> = ({ code, onCodeChange, readOnl
       let capturedOutput = '';
       /* eslint-disable no-console */
       const originalConsoleLog = console.log;
-      /* eslint-disable no-console */
       console.log = (...args: unknown[]): void => {
         capturedOutput += `${args.join(' ')}\n`;
       };
 
       // eslint-disable-next-line no-eval
       const result = eval(code);
-      /* eslint-disable no-console */
       console.log = originalConsoleLog;
 
       const resultOutput = result !== undefined ? result.toString() : '';

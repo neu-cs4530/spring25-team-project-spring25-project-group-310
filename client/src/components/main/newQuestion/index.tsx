@@ -114,16 +114,16 @@ const NewQuestionPage = () => {
     }
   };
 
-  const handleReplaceFile = (id: string) => {
+  const handleReplaceFile = async (id: string) => {
     const replaceInput = document.createElement('input');
     replaceInput.type = 'file';
     replaceInput.accept = '.jpg,.jpeg,.png,.pdf,.txt';
 
-    replaceInput.onchange = e => {
+    replaceInput.onchange = async e => {
       const target = e.target as HTMLInputElement;
       if (target.files && target.files.length > 0) {
         const newFile = target.files[0];
-        replaceFile(id, newFile);
+        await replaceFile(id, newFile);
       }
     };
 

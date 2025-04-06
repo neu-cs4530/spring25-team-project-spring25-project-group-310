@@ -1,4 +1,5 @@
 import { Schema } from 'mongoose';
+import fileMetaDataSchema from './fileMetaData.schema';
 /**
  * Mongoose schema for the Answer collection.
  *
@@ -21,15 +22,7 @@ const answerSchema: Schema = new Schema(
       type: String,
       default: '',
     },
-    files: [
-      {
-        fileId: String,
-        filename: String,
-        path: String,
-        mimetype: String,
-        size: Number,
-      },
-    ],
+    files: [fileMetaDataSchema],
     ansDateTime: {
       type: Date,
     },
