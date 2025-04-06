@@ -18,6 +18,7 @@ import ProfileSettings from './profileSettings';
 import AllGamesPage from './main/games/allGamesPage';
 import GamePage from './main/games/gamePage';
 import BookmarkCollections from './main/bookmarkCollections';
+import SettingsPage from './main/settingsPage/index';
 
 const ProtectedRoute = ({
   user,
@@ -68,6 +69,7 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
             <Route path='/games' element={<AllGamesPage />} />
             <Route path='/games/:gameID' element={<GamePage />} />
             <Route path='/bookmarks' element={<BookmarkCollections />} />
+            <Route path='/settings' element={<SettingsPage />} />
           </Route>
         }
       </Routes>
