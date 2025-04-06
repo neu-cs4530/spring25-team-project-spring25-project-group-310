@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { ObjectId } from 'mongodb';
 import { Bookmark, Collection, CollectionResponse, DatabaseCollection } from '../types/types';
 import CollectionModel from '../models/collection.model';

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { Bookmark, DatabaseBookmark, FakeSOSocket } from '../types/types';

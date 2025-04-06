@@ -1,60 +1,102 @@
-.bookmark-collections-container {
-    display: flex;
-    height: 100%;
-    overflow: hidden;
-    background-color: #f8f9fa;
+/* Modern Bookmarks Page Styling */
+.bookmarks-page {
+    width: 100%;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: #333;
 }
 
-/* Collections Sidebar Styles */
-.collections-sidebar {
+/* Debug Panel */
+.debug-panel {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    max-width: 400px;
+    z-index: 1000;
+}
+
+.debug-panel button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* Main Layout */
+.bookmarks-container {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 60px);
+    /* Adjust based on your header/navbar height */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+}
+
+/* Sidebar */
+.sidebar {
     width: 300px;
-    background-color: #ffffff;
-    border-right: 1px solid #e1e4e8;
+    background: #f8f9fa;
+    border-right: 1px solid #eaeaea;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    height: 100%;
 }
 
-.collections-header {
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #eaeaea;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px;
-    border-bottom: 1px solid #e1e4e8;
 }
 
-.collections-header h2 {
+.sidebar-header h2 {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
 }
 
-.new-collection-btn {
-    background: none;
+.create-btn {
+    background: #0077cc;
+    color: white;
     border: none;
-    color: #0366d6;
+    padding: 8px 12px;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
-    padding: 4px 8px;
+    transition: background-color 0.2s;
 }
 
-.new-collection-btn:hover {
-    text-decoration: underline;
+.create-btn:hover {
+    background: #005fa3;
 }
 
+/* New Collection Form */
 .new-collection-form {
     padding: 16px;
-    background-color: #f6f8fa;
-    border-bottom: 1px solid #e1e4e8;
+    background: #fff;
+    border-bottom: 1px solid #eaeaea;
 }
 
-.collection-name-input {
+.new-collection-form input {
     width: 100%;
-    padding: 8px;
-    margin-bottom: 12px;
-    border: 1px solid #e1e4e8;
-    border-radius: 3px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
     font-size: 14px;
+    margin-bottom: 10px;
 }
 
 .form-actions {
@@ -63,184 +105,334 @@
     gap: 8px;
 }
 
-.cancel-btn,
-.create-btn {
-    padding: 6px 12px;
-    border-radius: 3px;
-    font-size: 14px;
-    cursor: pointer;
-}
-
 .cancel-btn {
-    background-color: #f6f8fa;
-    border: 1px solid #e1e4e8;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
 }
 
-.create-btn {
-    background-color: #2ea44f;
-    border: 1px solid rgba(27, 31, 35, 0.15);
+.submit-btn {
+    background: #0077cc;
     color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
 }
 
+.submit-btn:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Collections List */
 .collections-list {
     flex: 1;
     overflow-y: auto;
-    padding: 8px 0;
+    padding: 10px;
 }
 
 .collection-item {
-    padding: 12px 16px;
-    cursor: pointer;
-    border-left: 3px solid transparent;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .collection-item:hover {
-    background-color: #f6f8fa;
+    background: #f0f0f0;
 }
 
-.collection-item.selected {
-    background-color: #f0f3f9;
-    border-left-color: #0366d6;
+.collection-item.active {
+    background: #e6f7ff;
+    border-left: 3px solid #0077cc;
 }
 
 .collection-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     flex: 1;
 }
 
-.collection-info h3 {
-    margin: 0;
-    font-size: 16px;
+.collection-name {
     font-weight: 500;
 }
 
-.bookmark-count {
+.collection-count {
+    background: #eee;
+    color: #666;
+    padding: 2px 8px;
+    border-radius: 12px;
     font-size: 12px;
-    color: #6a737d;
-    margin-left: 8px;
-}
-
-.collection-actions {
-    visibility: hidden;
-}
-
-.collection-item:hover .collection-actions {
-    visibility: visible;
 }
 
 .delete-btn {
-    background: none;
+    visibility: hidden;
+    opacity: 0;
+    background: #f44336;
+    color: white;
     border: none;
-    color: #cb2431;
-    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
     font-size: 12px;
-    padding: 2px 4px;
+    transition: opacity 0.2s;
 }
 
-.delete-btn:hover {
-    text-decoration: underline;
+.collection-item:hover .delete-btn {
+    visibility: visible;
+    opacity: 1;
 }
 
-/* Bookmarks Area Styles */
-.bookmarks-area {
+.empty-collections {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+}
+
+.empty-collections button {
+    margin-top: 16px;
+}
+
+/* Main Content */
+.main-content {
     flex: 1;
     padding: 20px;
     overflow-y: auto;
 }
 
-.search-container {
-    margin-bottom: 20px;
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #eaeaea;
 }
 
-.search-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #e1e4e8;
-    border-radius: 3px;
-    font-size: 14px;
-}
-
-.bookmarks-title {
-    font-size: 20px;
+.content-header h1 {
+    margin: 0;
+    font-size: 24px;
     font-weight: 600;
+}
+
+.search-bar {
+    position: relative;
+    width: 300px;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 10px 16px;
+    padding-right: 40px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: #0077cc;
+    box-shadow: 0 0 0 3px rgba(0, 119, 204, 0.1);
+}
+
+.clear-search {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+/* Bookmarks List */
+.bookmarks-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.bookmark-card {
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.bookmark-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.bookmark-content {
+    padding: 16px;
+    cursor: pointer;
+}
+
+.bookmark-content h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #0077cc;
+}
+
+.bookmark-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+}
+
+.remove-btn {
+    width: 100%;
+    padding: 8px;
+    background: #f8f9fa;
+    border: none;
+    border-top: 1px solid #eaeaea;
+    color: #f44336;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.remove-btn:hover {
+    background: #fee;
+}
+
+.empty-bookmarks {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px;
+    color: #666;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.clear-btn {
+    margin-top: 12px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* No Selection State */
+.no-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: #666;
+}
+
+.no-selection h2 {
+    margin-bottom: 12px;
+    font-size: 20px;
+}
+
+/* Login Required and Error States */
+.bookmarks-login-required,
+.bookmarks-error,
+.bookmarks-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 60px);
+}
+
+.login-card,
+.error-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 32px;
+    text-align: center;
+    max-width: 400px;
+}
+
+.login-card h2,
+.error-card h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.login-btn,
+.retry-btn {
+    background: #0077cc;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    transition: background-color 0.2s;
+}
+
+.login-btn:hover,
+.retry-btn:hover {
+    background: #005fa3;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: #0077cc;
+    animation: spin 1s linear infinite;
     margin-bottom: 16px;
 }
 
-.bookmarks-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
-.bookmark-item {
-    background-color: white;
-    border: 1px solid #e1e4e8;
-    border-radius: 6px;
-    padding: 16px;
-    transition: box-shadow 0.2s ease;
-}
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .bookmarks-container {
+        flex-direction: column;
+    }
 
-.bookmark-item:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-}
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #eaeaea;
+    }
 
-.bookmark-title {
-    margin: 0 0 8px 0;
-    font-size: 16px;
-    font-weight: 500;
-    color: #0366d6;
-}
+    .content-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 
-.bookmark-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
+    .search-bar {
+        width: 100%;
+        margin-top: 16px;
+    }
 
-.tag {
-    background-color: #f1f8ff;
-    color: #0366d6;
-    font-size: 12px;
-    padding: 2px 6px;
-    border-radius: 20px;
-}
-
-.empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-    color: #6a737d;
-    text-align: center;
-}
-
-.create-collection-btn {
-    background: none;
-    border: none;
-    color: #0366d6;
-    cursor: pointer;
-    font-size: 14px;
-    margin-top: 8px;
-}
-
-.create-collection-btn:hover {
-    text-decoration: underline;
-}
-
-.loading,
-.error {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
-    padding: 20px;
-    color: #6a737d;
-}
-
-.error {
-    color: #cb2431;
+    .bookmarks-list {
+        grid-template-columns: 1fr;
+    }
 }

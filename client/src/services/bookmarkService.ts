@@ -75,9 +75,12 @@ const deleteCollection = async (collectionId: string): Promise<DatabaseCollectio
  * @param collectionId ID of the collection
  * @returns Promise resolving to an array of bookmarks
  */
-const fetchBookmarksForCollection = async (collectionId: string): Promise<Bookmark[]> => {
+const fetchBookmarksForCollection = async (
+  collectionId: string,
+  username: string,
+): Promise<Bookmark[]> => {
   try {
-    const response = await axios.get(`${API_URL}/collections/${collectionId}/bookmarks`);
+    const response = await axios.get(`${API_URL}/collections/${username}/${collectionId}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

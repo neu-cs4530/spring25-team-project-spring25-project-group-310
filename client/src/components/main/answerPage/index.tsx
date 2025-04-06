@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookmark } from '@fortawesome/free-solid-svg-icons';
 import { getMetaData } from '../../../tool';
@@ -10,11 +10,8 @@ import QuestionBody from './questionBody';
 import VoteComponent from '../voteComponent';
 import CommentSection from '../commentSection';
 import useAnswerPage from '../../../hooks/useAnswerPage';
-import BookmarkPrompt from '../bookmarkPrompt'; // Import the BookmarkPrompt component
-import {
-  addBookmarkToCollection,
-  addBookmarkWithoutCollection,
-} from '../../../services/bookmarkService';
+import BookmarkPrompt from '../bookmarkPrompt';
+import { addBookmarkWithoutCollection, fetchAllBookmarks } from '../../../services/bookmarkService';
 import useUserContext from '../../../hooks/useUserContext';
 
 const AnswerPage = () => {
@@ -24,11 +21,39 @@ const AnswerPage = () => {
   const { user: currentUser } = useUserContext();
   const { username } = currentUser;
 
+  // Check if the question is already bookmarked when component mounts
+  useEffect(() => {
+    const checkIfBookmarked = async () => {
+      if (!questionID || !username) return;
+
+      try {
+        // Fetch all bookmarks for the user
+        const bookmarks = await fetchAllBookmarks(username);
+
+        // Check if this question is already in the bookmarks
+        const isAlreadyBookmarked = bookmarks.some(bookmark => bookmark.questionId === questionID);
+
+        setIsBookmarked(isAlreadyBookmarked);
+        console.log(`Question ${questionID} bookmark status:`, isAlreadyBookmarked);
+      } catch (error) {
+        console.error('Error checking bookmark status:', error);
+      }
+    };
+
+    checkIfBookmarked();
+  }, [questionID, username]);
+
   if (!question) {
     return null;
   }
 
   const handleBookmarkClick = async () => {
+    // If already bookmarked, just open the organization dialog
+    if (isBookmarked) {
+      setIsBookmarkModalOpen(true);
+      return;
+    }
+
     try {
       console.log('Bookmarking question:', questionID, 'for user:', username);
 
@@ -44,14 +69,13 @@ const AnswerPage = () => {
           detail: {
             questionId: questionID,
             username,
-            title: question.title, // Include the title for better display in profile
+            title: question.title,
           },
         }),
       );
 
       console.log('Bookmark added successfully, opening modal for collection selection');
 
-      // Open modal for further organization
       setIsBookmarkModalOpen(true);
     } catch (error) {
       console.error('Failed to bookmark question:', error);
@@ -63,7 +87,6 @@ const AnswerPage = () => {
   };
 
   const handleBookmarkSuccess = () => {
-    // Additional success handling if needed
     setIsBookmarked(true);
   };
 
@@ -74,10 +97,12 @@ const AnswerPage = () => {
         <button
           className={`bookmark_button ${isBookmarked ? 'bookmarked' : ''}`}
           onClick={handleBookmarkClick}
-          style={{ marginLeft: '10px' }}>
+          style={{ marginLeft: '10px' }}
+          title={isBookmarked ? 'Organize bookmark' : 'Bookmark this question'}>
           <FontAwesomeIcon icon={faBookmark} />
         </button>
-      </div>{' '}
+      </div>
+
       {/* Bookmark Prompt Modal */}
       {isBookmarkModalOpen && (
         <BookmarkPrompt
@@ -87,6 +112,7 @@ const AnswerPage = () => {
           username={currentUser.username}
         />
       )}
+
       <AnswerHeader ansCount={question.answers.length} title={question.title} />
       <QuestionBody
         views={question.views.length}
