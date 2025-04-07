@@ -1,8 +1,7 @@
-
 /**
  * Represents metadata for a file attached to a question or answer.
  * This interface is designed for files processed on the frontend and sent as Base64 strings.
- * 
+ *
  * - `fileId`: A unique identifier for the file (generated on the frontend).
  * - `filename`: The original name of the file.
  * - `contentType`: The MIME type of the file.
@@ -20,7 +19,7 @@ export interface FileMetaData {
 
 /**
  * Frontend-specific extension of FileMetaData for UI handling
- * 
+ *
  * - `file`: The actual File object from the browser.
  * - `id`: Unique identifier for tracking in the UI.
  * - `preview`: Optional URL for image previews.

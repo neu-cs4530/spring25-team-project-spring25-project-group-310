@@ -33,6 +33,11 @@ const SideBarNav = () => {
         Tags
       </NavLink>
       <NavLink
+        to='/bookmarks'
+        className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
+        Bookmarks
+      </NavLink>
+      <NavLink
         to='/messaging'
         id='menu_messaging'
         className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}

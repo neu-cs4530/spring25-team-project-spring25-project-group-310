@@ -24,7 +24,7 @@ const fileController = () => {
       const { type, id, fileIndex } = req.params;
       const fileIdx = parseInt(fileIndex, 10);
 
-      if (isNaN(fileIdx)) {
+      if (Number.isNaN(fileIdx)) {
         res.status(400).json({ error: 'Invalid file index' });
         return;
       }

@@ -3,20 +3,20 @@ import { Schema } from 'mongoose';
 const fileMetaDataSchema: Schema = new Schema({
   filename: {
     type: String,
-    required: true
+    required: true,
   },
   contentType: {
     type: String,
-    required: true
+    required: true,
   },
   size: {
     type: Number,
-    required: true
+    required: true,
   },
   content: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 });
 
 export default fileMetaDataSchema;

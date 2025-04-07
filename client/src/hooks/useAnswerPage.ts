@@ -72,12 +72,8 @@ const useAnswerPage = () => {
      * Function to fetch the question data based on the question ID.
      */
     const fetchData = async () => {
-      try {
-        const res = await getQuestionById(questionID, user.username);
-        setQuestion(res || null);
-      } catch (error) {
-        console.error('Error fetching question:', error);
-      }
+      const res = await getQuestionById(questionID, user.username);
+      setQuestion(res || null);
     };
 
     fetchData().catch(e => console.log(e));

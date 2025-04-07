@@ -8,7 +8,7 @@ import {
   VoteRequest,
   FakeSOSocket,
   PopulatedDatabaseQuestion,
-  FileMetaData
+  FileMetaData,
 } from '../types/types';
 import {
   addVoteToQuestion,
@@ -20,7 +20,6 @@ import {
 } from '../services/question.service';
 import { processTags } from '../services/tag.service';
 import { populateDocument } from '../utils/database.util';
-import fileService from '../services/file.service';
 
 const questionController = (socket: FakeSOSocket) => {
   const router = express.Router();
@@ -94,16 +93,11 @@ const questionController = (socket: FakeSOSocket) => {
     question.askDateTime !== undefined &&
     question.askDateTime !== null;
 
-    /**
+  /**
    * Validates file metadata to ensure it has all required properties.
    */
   const isFileMetadataValid = (files: FileMetaData[]): boolean => {
-    return files.every(file => 
-      file.filename && 
-      file.contentType && 
-      file.size && 
-      file.content
-    );
+    return files.every(file => file.filename && file.contentType && file.size && file.content);
   };
 
   /**
@@ -111,8 +105,6 @@ const questionController = (socket: FakeSOSocket) => {
    * Supports file attachments as Base64 encoded strings.
    */
   const addQuestion = async (req: AddQuestionRequest, res: Response): Promise<void> => {
-    const body = req.body as Question;
-
     // Basic question validation
     if (!isQuestionBodyValid(req.body)) {
       res.status(400).send('Invalid question body');
@@ -127,11 +119,11 @@ const questionController = (socket: FakeSOSocket) => {
         res.status(400).send('Invalid file metadata');
         return;
       }
-      
+
       // Ensure each file has a fileId
       question.files = question.files.map(file => ({
         ...file,
-        fileId: file.fileId || new ObjectId().toString()
+        fileId: file.fileId || new ObjectId().toString(),
       }));
     }
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import './index.css';
 import useProfileSettings from '../../hooks/useProfileSettings';
 
@@ -10,7 +9,6 @@ const ProfileSettings: React.FC = () => {
     newBio,
     newPassword,
     confirmNewPassword,
-    successMessage,
     errorMessage,
     showConfirmation,
     pendingAction,
@@ -43,7 +41,6 @@ const ProfileSettings: React.FC = () => {
     <div className='page-container'>
       <div className='profile-card'>
         <h2>Profile</h2>
-        {successMessage && <p className='success-message'>{successMessage}</p>}
         {errorMessage && <p className='error-message'>{errorMessage}</p>}
         {userData ? (
           <>
@@ -124,7 +121,6 @@ const ProfileSettings: React.FC = () => {
                 </button>
               </>
             )}
-
             {/* ---- Danger Zone (Delete User) ---- */}
             {canEditProfile && (
               <>

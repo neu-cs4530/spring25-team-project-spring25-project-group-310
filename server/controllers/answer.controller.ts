@@ -1,6 +1,12 @@
 import express, { RequestHandler, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { Answer, AddAnswerRequest, FakeSOSocket, PopulatedDatabaseAnswer, FileMetaData } from '../types/types';
+import {
+  Answer,
+  AddAnswerRequest,
+  FakeSOSocket,
+  PopulatedDatabaseAnswer,
+  FileMetaData,
+} from '../types/types';
 import { addAnswerToQuestion, saveAnswer } from '../services/answer.service';
 import { populateDocument } from '../utils/database.util';
 
@@ -33,12 +39,7 @@ const answerController = (socket: FakeSOSocket) => {
    * Validates file metadata to ensure it has all required properties.
    */
   const isFileMetadataValid = (files: FileMetaData[]): boolean => {
-    return files.every(file => 
-      file.filename && 
-      file.contentType && 
-      file.size && 
-      file.content
-    );
+    return files.every(file => file.filename && file.contentType && file.size && file.content);
   };
 
   /**
@@ -70,12 +71,11 @@ const answerController = (socket: FakeSOSocket) => {
         res.status(400).send('Invalid file metadata');
         return;
       }
-      
-      
+
       // Ensure each file has a fileId
       ansInfo.files = ansInfo.files.map(file => ({
         ...file,
-        fileId: file.fileId || new ObjectId().toString()
+        fileId: file.fileId || new ObjectId().toString(),
       }));
     }
 

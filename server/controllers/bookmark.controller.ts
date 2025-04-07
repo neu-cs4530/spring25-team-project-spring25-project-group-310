@@ -1,13 +1,14 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { Bookmark, DatabaseBookmark } from '../types/types';
+import { Bookmark, DatabaseBookmark, FakeSOSocket } from '../types/types';
 import { saveBookmark, getBookmarksForUser, deleteBookmark } from '../services/bookmark.service';
 
 /**
  * Controller for bookmark-related endpoints.
  * Uses the user's unique username (from req.user.username) for all operations.
  */
-const bookmarkController = () => {
+const bookmarkController = (socket?: FakeSOSocket) => {
   const router = express.Router();
 
   /**
@@ -36,9 +37,14 @@ const bookmarkController = () => {
 
     try {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const {
-        user: { username },
-      } = req as any;
+      // const {
+      //   user: { username },
+      // } = req as any;
+      const { username } = req.params;
+      if (!username) {
+        res.status(400).send('Invalid request: Username is required');
+        return;
+      }
       const bookmark: Bookmark = { username, questionId };
       const result: DatabaseBookmark | { error: string } = await saveBookmark(bookmark);
       if ('error' in result) {
@@ -57,9 +63,9 @@ const bookmarkController = () => {
    */
   const getBookmarksRoute = async (req: Request, res: Response): Promise<void> => {
     try {
-      const {
-        user: { username },
-      } = req as any;
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      const { username } = req.params;
+
       const result = await getBookmarksForUser(username);
       if ('error' in result) {
         throw new Error(result.error);
@@ -77,27 +83,30 @@ const bookmarkController = () => {
    */
   const deleteBookmarkRoute = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { bookmarkId } = req.params;
-      const {
-        user: { username },
-      } = req as any;
-      if (!ObjectId.isValid(bookmarkId)) {
-        res.status(400).send('Invalid bookmarkId format');
+      const { username, questionId } = req.params;
+
+      if (!ObjectId.isValid(questionId)) {
+        res.status(400).send('Invalid questionId format');
         return;
       }
-      const result = await deleteBookmark(bookmarkId, username);
+
+      const result = await deleteBookmark(questionId, username);
       if ('error' in result) {
-        throw new Error(result.error);
+        console.warn(`Delete bookmark error: ${result.error}`);
+        res.status(404).json({ message: result.error });
+        return;
       }
+
       res.json({ message: 'Bookmark deleted', bookmark: result });
     } catch (err: unknown) {
+      console.error('Unexpected error in deleteBookmarkRoute:', err);
       res.status(500).send(`Error when deleting bookmark: ${(err as Error).message}`);
     }
   };
 
-  router.post('/', addBookmarkRoute);
-  router.get('/', getBookmarksRoute);
-  router.delete('/:bookmarkId', deleteBookmarkRoute);
+  router.post('/:username', addBookmarkRoute);
+  router.get('/:username', getBookmarksRoute);
+  router.delete('/:username/:questionId', deleteBookmarkRoute);
 
   return router;
 };

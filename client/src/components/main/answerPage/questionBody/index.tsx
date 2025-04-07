@@ -71,8 +71,6 @@ const QuestionBody = ({
             alt={file.filename}
             className='attachment-image'
             onError={e => {
-              console.error('Image failed to load:', fileUrl);
-              // Replace the broken image with a fallback element
               const target = e.target as HTMLImageElement;
               target.style.display = 'none';
               const fallback = document.createElement('div');
@@ -104,30 +102,23 @@ const QuestionBody = ({
     if (contentType === 'text/plain') {
       // If we have the content directly available, show it inline
       if (file.content) {
-        try {
-          const textContent = atob(file.content); // Decode base64 to text
-          return (
-            <div key={file.fileId} className='attachment-item'>
-              <div className='text-file-preview'>
-                <div className='text-file-header'>
-                  <a
-                    href={`${process.env.REACT_APP_SERVER_URL}/files/text/question/${questionId}/${index}`}
-                    target='_blank'
-                    rel='noreferrer'
-                    className='file-link'>
-                    <div className='text-icon'></div>
-                    <span className='attachment-filename'>{file.filename}</span>
-                  </a>
-                </div>
+        return (
+          <div key={file.fileId} className='attachment-item'>
+            <div className='text-file-preview'>
+              <div className='text-file-header'>
+                <a
+                  href={`${process.env.REACT_APP_SERVER_URL}/files/text/question/${questionId}/${index}`}
+                  target='_blank'
+                  rel='noreferrer'
+                  className='file-link'>
+                  <div className='text-icon'></div>
+                  <span className='attachment-filename'>{file.filename}</span>
+                </a>
               </div>
             </div>
-          );
-        } catch (e) {
-          // Fallback to link if we can't decode the content
-          const textUrl = `${process.env.REACT_APP_SERVER_URL}/files/text/question/${questionId}/${index}`;
-        }
+          </div>
+        );
       }
-      const textUrl = `${process.env.REACT_APP_SERVER_URL}/files/text/question/${questionId}/${index}`;
     }
 
     // Default for other file types

@@ -294,7 +294,6 @@ const useAnswerForm = () => {
         navigate(`/question/${questionID}`);
       }
     } catch (error) {
-      console.error('Error posting answer:', error);
       setTextErr('Failed to post answer. Please try again.');
     }
   };

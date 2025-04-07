@@ -16,8 +16,8 @@
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
+    "@cypress/instrument-cra": "^1.4.0",
     "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.10",

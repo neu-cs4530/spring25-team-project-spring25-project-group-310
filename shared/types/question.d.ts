@@ -121,7 +121,6 @@ export interface FindQuestionByIdRequest extends Request {
   };
 }
 
-
 /**
  * Interface for the request body when adding a new question.
  * - `body`: The question being added.

@@ -359,7 +359,6 @@ const useNewQuestion = () => {
         navigate('/home');
       }
     } catch (error) {
-      console.error('Error posting question:', error);
       setFileErr('Error posting question. Please try again.');
     }
   };
