@@ -2,7 +2,6 @@
 import mongoose from 'mongoose';
 import CollectionModel from '../../models/collection.model';
 import {
-  saveCollection,
   getCollectionsForUser,
   updateCollection,
   deleteCollection,
@@ -39,7 +38,6 @@ describe('Collection Service', () => {
   describe('saveCollection', () => {
     // it('should save and return the collection', async () => {
     //   mockingoose(CollectionModel).toReturn(mockDatabaseCollection, 'create');
-
     //   const result: CollectionResponse = await saveCollection(mockCollection);
     //   if ('error' in result) {
     //     fail(result.error);
@@ -49,10 +47,8 @@ describe('Collection Service', () => {
     //     expect(result.name).toEqual(mockCollection.name);
     //   }
     // });
-
     // it('should return an error if saving fails', async () => {
     //   mockingoose(CollectionModel).toReturn(new Error('Error saving collection'), 'create');
-
     //   const result: CollectionResponse = await saveCollection(mockCollection);
     //   expect(result).toHaveProperty('error', 'Error when saving a collection');
     // });

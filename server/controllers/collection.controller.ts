@@ -77,7 +77,6 @@ const collectionController = (socket?: FakeSOSocket) => {
       }
       res.json(result);
     } catch (err: unknown) {
-      console.error('Error when fetching collections:', err);
       res.status(500).send(`Error when fetching collections: ${(err as Error).message}`);
     }
   };

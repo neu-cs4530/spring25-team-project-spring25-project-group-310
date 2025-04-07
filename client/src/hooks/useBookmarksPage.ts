@@ -1,9 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import useUserContext from './useUserContext';
 
 const useBookmarksPage = () => {
-  const { socket } = useUserContext();
 
   const [searchParams] = useSearchParams();
   const [titleText, setTitleText] = useState<string>('All Questions');

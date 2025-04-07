@@ -1,9 +1,9 @@
 import request from 'supertest';
+import mongoose from 'mongoose';
 import express from 'express';
 import fileController from '../../controllers/file.controller';
 import QuestionModel from '../../models/questions.model';
 import AnswerModel from '../../models/answers.model';
-import mongoose from 'mongoose';
 
 // Mock mongoose models
 jest.mock('../../models/questions.model');
@@ -14,24 +14,22 @@ describe('File Controller', () => {
   let controller: ReturnType<typeof fileController>;
 
   beforeEach(() => {
-    // Create a fresh express app and controller for each test
     app = express();
     app.use(express.json());
 
     controller = fileController();
     app.use('/files', controller.router);
 
-    // Clear all mocks before each test
     jest.clearAllMocks();
   });
 
   afterEach(() => {
     jest.clearAllMocks();
-    jest.restoreAllMocks(); 
-    app = null as any; 
+    jest.restoreAllMocks();
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    app = null as any;
   });
 
-  // Make sure to clean up after all tests are done
   afterAll(async () => {
     await mongoose.disconnect();
 

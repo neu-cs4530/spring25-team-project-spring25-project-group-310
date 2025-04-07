@@ -96,9 +96,8 @@ const questionController = (socket: FakeSOSocket) => {
   /**
    * Validates file metadata to ensure it has all required properties.
    */
-  const isFileMetadataValid = (files: FileMetaData[]): boolean => {
-    return files.every(file => file.filename && file.contentType && file.size && file.content);
-  };
+  const isFileMetadataValid = (files: FileMetaData[]): boolean =>
+    files.every(file => file.filename && file.contentType && file.size && file.content);
 
   /**
    * Adds a new question to the database.
@@ -174,7 +173,7 @@ const questionController = (socket: FakeSOSocket) => {
 
     const { qid, username } = req.body;
     try {
-      let status = await addVoteToQuestion(qid, username, type);
+      const status = await addVoteToQuestion(qid, username, type);
       if (status && 'error' in status) {
         throw new Error(status.error);
       }

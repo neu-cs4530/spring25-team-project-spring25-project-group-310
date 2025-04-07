@@ -7,6 +7,7 @@ import * as collectionService from '../../services/collection.service';
 
 describe('Collection Controller', () => {
   let app: express.Application;
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   let server: any;
 
   const createMockCollection = (
@@ -51,15 +52,10 @@ describe('Collection Controller', () => {
   });
 
   afterAll(async () => {
-    try {
-      if (mongoose.connection.readyState !== 0) {
-        await mongoose.connection.close();
-      }
-    } catch (error) {
-      console.error('Error closing mongoose connection:', error);
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.connection.close();
     }
 
-    // Final mock cleanup
     jest.clearAllMocks();
     jest.resetAllMocks();
     jest.restoreAllMocks();

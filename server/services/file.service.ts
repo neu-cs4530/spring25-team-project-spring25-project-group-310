@@ -23,7 +23,7 @@ export class FileService {
       filename: file.originalname,
       contentType: file.mimetype,
       size: file.size,
-      content: this.fileToBase64(file),
+      content: this._fileToBase64(file),
     }));
   }
 
@@ -33,10 +33,9 @@ export class FileService {
    * @param file - The file to convert
    * @returns Base64 encoded string
    */
-  private fileToBase64(file: Express.Multer.File): string {
+  private _fileToBase64(file: Express.Multer.File): string {
     return Buffer.from(file.buffer || '').toString('base64');
-  }
-
+}
   /**
    * Retrieve a file by its index from a question or answer.
    *
@@ -53,7 +52,8 @@ export class FileService {
           return null;
         }
         return question.files[fileIndex];
-      } else if (type === 'answer') {
+      }
+      if (type === 'answer') {
         const answer = await AnswerModel.findById(id);
         if (!answer?.files || !answer.files[fileIndex]) {
           return null;

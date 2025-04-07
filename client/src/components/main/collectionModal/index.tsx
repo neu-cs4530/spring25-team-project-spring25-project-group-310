@@ -23,7 +23,6 @@ const CollectionModal: React.FC<CollectionModalProps> = ({ onClose, onCreateColl
       await onCreateCollection(collectionName);
       onClose();
     } catch (err) {
-      console.error('Error creating collection:', err);
       setError('Failed to create collection. Please try again.');
     } finally {
       setIsLoading(false);

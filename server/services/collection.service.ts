@@ -161,7 +161,6 @@ export const removeBookmarkFromCollection = async (
 
     return updatedCollection;
   } catch (error) {
-    console.error('Error in removeBookmarkFromCollection:', error);
     return { error: `Error when removing bookmark from collection: ${(error as Error).message}` };
   }
 };

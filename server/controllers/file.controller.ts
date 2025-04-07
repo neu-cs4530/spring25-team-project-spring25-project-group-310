@@ -65,7 +65,6 @@ const fileController = () => {
       res.setHeader('Content-Disposition', `inline; filename="${file.filename}"`);
       res.send(binary);
     } catch (error) {
-      console.error('Error serving file:', error);
       res.status(500).json({
         error: 'Failed to serve file',
         details: error instanceof Error ? error.message : String(error),
@@ -107,7 +106,6 @@ const fileController = () => {
       res.setHeader('Content-Disposition', `inline; filename="${file.filename}"`);
       res.send(binary);
     } catch (error) {
-      console.error('Error serving PDF:', error);
       res.status(500).json({ error: String(error) });
     }
   });
@@ -146,7 +144,6 @@ const fileController = () => {
       res.setHeader('Content-Disposition', `inline; filename="${file.filename}"`);
       res.send(binary);
     } catch (error) {
-      console.error('Error serving text file:', error);
       res.status(500).json({ error: String(error) });
     }
   });
@@ -185,7 +182,6 @@ const fileController = () => {
       res.setHeader('Content-Disposition', `inline; filename="${file.filename}"`);
       res.send(binary);
     } catch (error) {
-      console.error('Error serving other file:', error);
       res.status(500).json({ error: String(error) });
     }
   });

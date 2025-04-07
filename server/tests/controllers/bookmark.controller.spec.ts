@@ -73,7 +73,7 @@ describe('Bookmark Controller', () => {
       const questionId = new mongoose.Types.ObjectId().toString();
       const bookmarkPayload = { questionId };
 
-      const spy = jest
+      jest
         .spyOn(bookmarkService, 'saveBookmark')
         .mockResolvedValue({ error: 'Error when saving a bookmark' });
 
@@ -106,7 +106,7 @@ describe('Bookmark Controller', () => {
     });
 
     it('should return 500 if getBookmarksForUser service returns an error', async () => {
-      const spy = jest
+      jest
         .spyOn(bookmarkService, 'getBookmarksForUser')
         .mockResolvedValue({ error: 'Error when fetching bookmarks' });
 
@@ -126,7 +126,7 @@ describe('Bookmark Controller', () => {
         createdAt: new Date(),
       };
 
-      const spy = jest.spyOn(bookmarkService, 'deleteBookmark').mockResolvedValue(dbBookmark);
+      jest.spyOn(bookmarkService, 'deleteBookmark').mockResolvedValue(dbBookmark);
 
       const response = await supertest(app).delete(`/bookmark/testUser/${questionId}`);
       expect(response.status).toBe(200);

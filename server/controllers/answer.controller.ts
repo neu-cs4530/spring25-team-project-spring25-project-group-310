@@ -38,9 +38,8 @@ const answerController = (socket: FakeSOSocket) => {
   /**
    * Validates file metadata to ensure it has all required properties.
    */
-  const isFileMetadataValid = (files: FileMetaData[]): boolean => {
-    return files.every(file => file.filename && file.contentType && file.size && file.content);
-  };
+  const isFileMetadataValid = (files: FileMetaData[]): boolean =>
+    files.every(file => file.filename && file.contentType && file.size && file.content);
 
   /**
    * Adds a new answer to a question in the database. The answer request and answer are
@@ -53,6 +52,7 @@ const answerController = (socket: FakeSOSocket) => {
    * @returns A Promise that resolves to void.
    */
   const addAnswer = async (req: AddAnswerRequest, res: Response): Promise<void> => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!isRequestValid(req as any)) {
       res.status(400).send('Invalid request');
       return;
@@ -62,7 +62,7 @@ const answerController = (socket: FakeSOSocket) => {
       return;
     }
 
-    const { qid, ans } = req.body;
+    const { qid } = req.body;
     const ansInfo: Answer = req.body.ans;
 
     // If files are included, validate them
