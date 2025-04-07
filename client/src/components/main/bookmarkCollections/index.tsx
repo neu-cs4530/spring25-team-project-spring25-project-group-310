@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DatabaseCollection } from '@fake-stack-overflow/shared/types/collection';
 import { Bookmark } from '@fake-stack-overflow/shared/types/bookmark';
 import {
   fetchCollections,
@@ -9,7 +8,7 @@ import {
   fetchBookmarksForCollection,
   fetchAllBookmarks,
 } from '../../../services/bookmarkService';
-import { deleteCollection, getBookmarksForCollection } from '../../../services/collectionService';
+import { deleteCollection } from '../../../services/collectionService';
 import './index.css';
 import { getQuestionById } from '../../../services/questionService';
 import useUserContext from '../../../hooks/useUserContext';
@@ -25,7 +24,6 @@ const BookmarkCollections: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [bookmarkDetails, setBookmarkDetails] = useState<{ [key: string]: { title: string } }>({});
   const [error, setError] = useState<string | null>(null);
-  const [debugInfo, setDebugInfo] = useState<string | null>(null);
 
   const user = useUserContext();
   const username = user?.user?.username;

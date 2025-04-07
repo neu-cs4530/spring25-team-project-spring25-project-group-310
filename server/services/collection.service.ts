@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ObjectId } from 'mongodb';
-import { Bookmark, Collection, CollectionResponse, DatabaseCollection } from '../types/types';
+import { Collection, CollectionResponse, DatabaseCollection } from '../types/types';
 import CollectionModel from '../models/collection.model';
 
 /**
@@ -109,14 +109,14 @@ export const addBookmarkToCollection = async (
     const collection = await CollectionModel.findOne({
       _id: collectionId,
       username,
-      bookmarks: bookmarkId // This checks if bookmarkId is already in the bookmarks array
+      bookmarks: bookmarkId, // This checks if bookmarkId is already in the bookmarks array
     });
 
     if (collection) {
-      return { 
+      return {
         message: 'Bookmark already exists in this collection',
         isWarning: true,
-        collection
+        collection,
       };
     }
 
@@ -126,11 +126,11 @@ export const addBookmarkToCollection = async (
       { $addToSet: { bookmarks: bookmarkId } }, // Use $addToSet instead of $push to prevent duplicates
       { new: true },
     );
-    
+
     if (!updatedCollection) {
       return { error: 'Collection not found or failed to add bookmark' };
     }
-    
+
     return updatedCollection;
   } catch (error) {
     return { error: `Error when adding bookmark to collection: ${(error as Error).message}` };
