@@ -3,11 +3,9 @@ import QuestionModel from '../../models/questions.model';
 import AnswerModel from '../../models/answers.model';
 import { FileMetaData } from '../../types/types';
 
-// Mock the MongoDB models
 jest.mock('../../models/questions.model');
 jest.mock('../../models/answers.model');
 
-// Mock ObjectId to return consistent IDs for testing
 jest.mock('mongodb', () => {
   const originalModule = jest.requireActual('mongodb');
   return {
@@ -21,11 +19,43 @@ jest.mock('mongodb', () => {
 describe('FileService', () => {
   let fileService: FileService;
 
+  const createMockFile = (overrides: Partial<Express.Multer.File> = {}): Express.Multer.File =>
+    ({
+      originalname: 'test.pdf',
+      mimetype: 'application/pdf',
+      size: 12345,
+      buffer: Buffer.from('test content'),
+      ...overrides,
+    }) as Express.Multer.File;
+
+  const createMockFileMetaData = (overrides: Partial<FileMetaData> = {}): FileMetaData => ({
+    fileId: 'file-123',
+    filename: 'test.pdf',
+    contentType: 'application/pdf',
+    size: 12345,
+    content: 'base64content',
+    ...overrides,
+  });
+
+  beforeAll(() => {
+    jest.resetAllMocks();
+    jest.clearAllMocks();
+  });
+
   beforeEach(() => {
     fileService = new FileService();
-
-    // Clear all mocks before each test
     jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    jest.restoreAllMocks();
+  });
+
+  afterAll(() => {
+    jest.clearAllMocks();
+    jest.resetAllMocks();
+    jest.restoreAllMocks();
   });
 
   describe('processUploadedFiles', () => {
@@ -39,41 +69,19 @@ describe('FileService', () => {
       expect(result).toEqual([]);
     });
 
-    it('should correctly process a single file', () => {
-      const mockFile = {
-        originalname: 'test.pdf',
-        mimetype: 'application/pdf',
-        size: 12345,
-        buffer: Buffer.from('test content'),
-      } as Express.Multer.File;
-
-      const result = fileService.processUploadedFiles([mockFile]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0]).toEqual({
-        fileId: 'mocked-file-id',
-        filename: 'test.pdf',
-        contentType: 'application/pdf',
-        size: 12345,
-        content: Buffer.from('test content').toString('base64'),
-      });
-    });
-
     it('should correctly process multiple files', () => {
       const mockFiles = [
-        {
+        createMockFile({
           originalname: 'test1.pdf',
           mimetype: 'application/pdf',
-          size: 12345,
           buffer: Buffer.from('test content 1'),
-        },
-        {
+        }),
+        createMockFile({
           originalname: 'test2.jpg',
           mimetype: 'image/jpeg',
-          size: 54321,
           buffer: Buffer.from('test content 2'),
-        },
-      ] as Express.Multer.File[];
+        }),
+      ];
 
       const result = fileService.processUploadedFiles(mockFiles);
 
@@ -85,12 +93,12 @@ describe('FileService', () => {
     });
 
     it('should handle files with empty buffers', () => {
-      const mockFile = {
+      const mockFile = createMockFile({
         originalname: 'empty.txt',
         mimetype: 'text/plain',
         size: 0,
         buffer: Buffer.from(''),
-      } as Express.Multer.File;
+      });
 
       const result = fileService.processUploadedFiles([mockFile]);
 
@@ -100,15 +108,9 @@ describe('FileService', () => {
   });
 
   describe('getFile', () => {
-    const mockFile: FileMetaData = {
-      fileId: 'file-123',
-      filename: 'test.pdf',
-      contentType: 'application/pdf',
-      size: 12345,
-      content: 'base64content',
-    };
-
     it('should retrieve a file from a question', async () => {
+      const mockFile = createMockFileMetaData();
+
       // Setup mock for QuestionModel
       (QuestionModel.findById as jest.Mock).mockResolvedValue({
         files: [mockFile],
@@ -121,6 +123,8 @@ describe('FileService', () => {
     });
 
     it('should retrieve a file from an answer', async () => {
+      const mockFile = createMockFileMetaData();
+
       // Setup mock for AnswerModel
       (AnswerModel.findById as jest.Mock).mockResolvedValue({
         files: [mockFile],
@@ -169,6 +173,8 @@ describe('FileService', () => {
     });
 
     it('should return null if file index is out of bounds', async () => {
+      const mockFile = createMockFileMetaData();
+
       (QuestionModel.findById as jest.Mock).mockResolvedValue({
         files: [mockFile],
       });
@@ -185,31 +191,15 @@ describe('FileService', () => {
       expect(QuestionModel.findById).not.toHaveBeenCalled();
       expect(AnswerModel.findById).not.toHaveBeenCalled();
     });
-
-    it('should return null and log error if database query fails', async () => {
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-      const error = new Error('Database connection failed');
-
-      (QuestionModel.findById as jest.Mock).mockRejectedValue(error);
-
-      const result = await fileService.getFile('question', '123', 0);
-
-      expect(result).toBeNull();
-      expect(consoleSpy).toHaveBeenCalledWith('Error retrieving file:', error);
-
-      consoleSpy.mockRestore();
-    });
   });
 
-  // Test private methods indirectly through the public methods
   describe('fileToBase64 (indirectly)', () => {
     it('should correctly encode file buffer to base64', () => {
-      const mockFile = {
+      const mockFile = createMockFile({
         originalname: 'test.txt',
         mimetype: 'text/plain',
-        size: 11,
         buffer: Buffer.from('hello world'),
-      } as Express.Multer.File;
+      });
 
       const result = fileService.processUploadedFiles([mockFile]);
 

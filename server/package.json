@@ -48,17 +48,16 @@
     "typescript": "^5.7.2"
   },
   "scripts": {
-    "start": "react-scripts -r @cypress/instrument-cra start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "nodemon server.ts",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "lint:fix": "eslint . --fix",
+    "test": "jest -w=1 --coverage --detectOpenHandles --detectLeaks",
+    "debug-test": "jest -w=1 --coverage --detectOpenHandles",
+    "prebuild": "cd ..; npm run build --workspace=shared",
+    "build": "tsc",
+    "start:prod": "node ./dist/server.js",
+    "stryker": "stryker run",
+    "populate-db": "ts-node populate_db.ts mongodb://127.0.0.1:27017/fake_so",
+    "delete-db": "ts-node remove_db.ts mongodb://127.0.0.1:27017/fake_so"
   }
 }

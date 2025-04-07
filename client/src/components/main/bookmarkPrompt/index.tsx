@@ -53,15 +53,7 @@ const BookmarkPrompt: React.FC<BookmarkPromptProps> = ({
       }
       // If only an existing collection is selected
       else if (selectedCollectionId) {
-        const result = await addBookmarkToCollection(
-          selectedCollectionId,
-          questionIdString,
-          username,
-        );
-
-        if (result && typeof result === 'object' && 'isWarning' in result) {
-          console.log(result.message);
-        }
+        await addBookmarkToCollection(selectedCollectionId, questionIdString, username);
       }
 
       onSuccess();

@@ -29,36 +29,41 @@ const BookmarkCollections: React.FC = () => {
   const username = user?.user?.username;
   const navigate = useNavigate();
 
-  const fetchQuestionDetails = async (bookmarkList: (Bookmark | string)[]) => {
-    const details: { [key: string]: { title: string } } = {};
+  const fetchQuestionDetails = useCallback(
+    async (bookmarkList: (Bookmark | string)[]) => {
+      const details: { [key: string]: { title: string } } = {};
 
-    for (const bookmark of bookmarkList) {
-      try {
-        let questionId;
+      for (const bookmark of bookmarkList) {
+        try {
+          let questionId;
 
-        // Handle if bookmark is a string (from collection-specific fetches)
-        if (typeof bookmark === 'string') {
-          questionId = bookmark;
+          // Handle if bookmark is a string (from collection-specific fetches)
+          if (typeof bookmark === 'string') {
+            questionId = bookmark;
+          }
+          // Handle if bookmark is an object (from fetchAllBookmarks)
+          else if (bookmark && bookmark.questionId) {
+            questionId = bookmark.questionId;
+          } else {
+            setError('Bookmark is missing questionId');
+          }
+
+          const questionIdString = String(questionId);
+
+          // eslint-disable-next-line no-await-in-loop
+          const questionData = await getQuestionById(questionIdString, username);
+          details[questionIdString] = {
+            title: questionData.title || 'Untitled Question',
+          };
+        } catch (err) {
+          setError(`Failed to fetch details for question`);
         }
-        // Handle if bookmark is an object (from fetchAllBookmarks)
-        else if (bookmark && bookmark.questionId) {
-          questionId = bookmark.questionId;
-        }
-
-        const questionIdString = String(questionId);
-
-        // eslint-disable-next-line no-await-in-loop
-        const questionData = await getQuestionById(questionIdString, username);
-        details[questionIdString] = {
-          title: questionData.title || 'Untitled Question',
-        };
-      } catch (err) {
-        setError(`Failed to fetch details for question`);
       }
-    }
 
-    setBookmarkDetails(details);
-  };
+      setBookmarkDetails(details);
+    },
+    [username],
+  );
 
   const loadCollections = useCallback(async () => {
     if (!username) {
@@ -108,7 +113,7 @@ const BookmarkCollections: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [username]);
+  }, [username, fetchQuestionDetails]);
 
   const loadBookmarksForCollection = useCallback(
     async (collectionId: string) => {
@@ -144,7 +149,7 @@ const BookmarkCollections: React.FC = () => {
         setIsLoading(false);
       }
     },
-    [username],
+    [username, fetchQuestionDetails],
   );
 
   // First effect to load collections when component mounts

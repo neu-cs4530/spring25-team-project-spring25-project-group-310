@@ -75,8 +75,7 @@ const useAnswerPage = () => {
       const res = await getQuestionById(questionID, user.username);
       setQuestion(res || null);
     };
-
-    fetchData().catch(e => console.log(e));
+    fetchData();
   }, [questionID, user.username]);
 
   useEffect(() => {
