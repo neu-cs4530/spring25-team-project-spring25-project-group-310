@@ -29,38 +29,41 @@ const BookmarkCollections: React.FC = () => {
   const username = user?.user?.username;
   const navigate = useNavigate();
 
-  const fetchQuestionDetails = async (bookmarkList: (Bookmark | string)[]) => {
-    const details: { [key: string]: { title: string } } = {};
+  const fetchQuestionDetails = useCallback(
+    async (bookmarkList: (Bookmark | string)[]) => {
+      const details: { [key: string]: { title: string } } = {};
 
-    for (const bookmark of bookmarkList) {
-      try {
-        let questionId;
+      for (const bookmark of bookmarkList) {
+        try {
+          let questionId;
 
-        // Handle if bookmark is a string (from collection-specific fetches)
-        if (typeof bookmark === 'string') {
-          questionId = bookmark;
+          // Handle if bookmark is a string (from collection-specific fetches)
+          if (typeof bookmark === 'string') {
+            questionId = bookmark;
+          }
+          // Handle if bookmark is an object (from fetchAllBookmarks)
+          else if (bookmark && bookmark.questionId) {
+            questionId = bookmark.questionId;
+          } else {
+            setError('Bookmark is missing questionId');
+          }
+
+          const questionIdString = String(questionId);
+
+          // eslint-disable-next-line no-await-in-loop
+          const questionData = await getQuestionById(questionIdString, username);
+          details[questionIdString] = {
+            title: questionData.title || 'Untitled Question',
+          };
+        } catch (err) {
+          setError(`Failed to fetch details for question`);
         }
-        // Handle if bookmark is an object (from fetchAllBookmarks)
-        else if (bookmark && bookmark.questionId) {
-          questionId = bookmark.questionId;
-        } else {
-          console.error('Bookmark is missing questionId:', bookmark);
-        }
-
-        const questionIdString = String(questionId);
-
-        // eslint-disable-next-line no-await-in-loop
-        const questionData = await getQuestionById(questionIdString, username);
-        details[questionIdString] = {
-          title: questionData.title || 'Untitled Question',
-        };
-      } catch (err) {
-        console.error(`Failed to fetch details for question`, err);
       }
-    }
 
-    setBookmarkDetails(details);
-  };
+      setBookmarkDetails(details);
+    },
+    [username],
+  );
 
   const loadCollections = useCallback(async () => {
     if (!username) {
@@ -79,7 +82,6 @@ const BookmarkCollections: React.FC = () => {
         setSelectedCollection(data[0]._id.toString());
       }
     } catch (err) {
-      console.error('Failed to fetch collections', err);
       setError((err as Error).message);
     } finally {
       setIsLoading(false);
@@ -96,7 +98,6 @@ const BookmarkCollections: React.FC = () => {
       // Make sure each bookmark has a valid questionId
       const validBookmarks = data.filter(bookmark => {
         if (!bookmark.questionId) {
-          console.error('Invalid bookmark found without questionId:', bookmark);
           return false;
         }
         return true;
@@ -108,12 +109,11 @@ const BookmarkCollections: React.FC = () => {
         fetchQuestionDetails(validBookmarks);
       }
     } catch (err) {
-      console.error('Failed to fetch bookmarks', err);
       setError((err as Error).message);
     } finally {
       setIsLoading(false);
     }
-  }, [username]);
+  }, [username, fetchQuestionDetails]);
 
   const loadBookmarksForCollection = useCallback(
     async (collectionId: string) => {
@@ -143,14 +143,13 @@ const BookmarkCollections: React.FC = () => {
           setBookmarks([]);
         }
       } catch (err) {
-        console.error('Failed to fetch bookmarks for collection', err);
         setError((err as Error).message);
         setBookmarks([]);
       } finally {
         setIsLoading(false);
       }
     },
-    [username],
+    [username, fetchQuestionDetails],
   );
 
   // First effect to load collections when component mounts
@@ -173,8 +172,6 @@ const BookmarkCollections: React.FC = () => {
   // Listen for bookmarkAdded events
   useEffect(() => {
     const handleBookmarkAdded = (event: Event) => {
-      const customEvent = event as CustomEvent;
-
       // Reload collections to get the latest data
       loadBookmarks();
       loadCollections();
@@ -202,7 +199,6 @@ const BookmarkCollections: React.FC = () => {
       setNewCollectionName('');
       setIsCreatingCollection(false);
     } catch (err) {
-      console.error('Failed to create collection', err);
       setError((err as Error).message);
     }
   };
@@ -229,26 +225,22 @@ const BookmarkCollections: React.FC = () => {
         }
       }
     } catch (err) {
-      console.error('Failed to delete collection', err);
       setError((err as Error).message);
     }
   };
 
   const handleBookmarkClick = (questionId: string | undefined) => {
     if (!questionId) {
-      console.error('Attempted to click on bookmark with invalid questionId (null/undefined)');
       return;
     }
 
     if (questionId === 'undefined') {
-      console.error('Attempted to click on bookmark with string "undefined" as questionId');
       return;
     }
 
     try {
       navigate(`/question/${questionId}`);
     } catch (err) {
-      console.error('Error navigating:', err);
       window.location.href = `/question/${questionId}`;
     }
   };
@@ -276,7 +268,6 @@ const BookmarkCollections: React.FC = () => {
         await loadBookmarksForCollection(selectedCollection);
       }
     } catch (err) {
-      console.error('Failed to remove bookmark', err);
       setError(err instanceof Error ? err.message : 'Failed to remove bookmark');
 
       // 4. On error, reload the data to keep UI in sync
@@ -297,14 +288,12 @@ const BookmarkCollections: React.FC = () => {
     else if (bookmark && bookmark.questionId) {
       questionId = bookmark.questionId;
     } else {
-      console.warn('Filtering out invalid bookmark:', bookmark);
       return false;
     }
 
     // Validate the question ID
     const questionIdString = String(questionId);
     if (!questionIdString || questionIdString === 'undefined' || questionIdString === 'null') {
-      console.warn('Filtering out bookmark with invalid questionId:', questionIdString);
       return false;
     }
 
@@ -465,14 +454,12 @@ const BookmarkCollections: React.FC = () => {
                     } else if (bookmark && bookmark.questionId) {
                       questionId = bookmark.questionId;
                     } else {
-                      console.error('Invalid bookmark format:', bookmark);
                       return null;
                     }
 
                     // Convert to string and validate
                     const questionIdString = String(questionId);
                     if (!questionIdString) {
-                      console.error('Found bookmark with invalid questionId');
                       return null;
                     }
 

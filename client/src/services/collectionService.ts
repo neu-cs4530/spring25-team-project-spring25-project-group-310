@@ -115,33 +115,6 @@ const deleteCollection = async (collectionId: string, username: string): Promise
 };
 
 /**
- * Adds a bookmark to a collection.
- *
- * @param collectionId The ID of the collection
- * @param bookmarkId The ID of the bookmark to add
- * @returns Promise resolving to the updated collection
- * @throws {Error} If there's an issue adding the bookmark
- */
-const addBookmarkToCollection = async (
-  collectionId: string,
-  bookmarkId: string,
-  username: string,
-): Promise<Collection> => {
-  try {
-    const res = await api.post(`${COLLECTION_API_URL}/${username}/${collectionId}/bookmarks`, {
-      bookmarkId,
-    });
-    return res.data.collection;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      throw new Error(`Error adding bookmark to collection: ${error.response.data}`);
-    } else {
-      throw new Error('Error adding bookmark to collection');
-    }
-  }
-};
-
-/**
  * Removes a bookmark from a collection.
  *
  * @param collectionId The ID of the collection

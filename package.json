@@ -9,8 +9,10 @@
   ],
   "dependencies": {
     "@testing-library/react": "^16.2.0",
+    "@theme-ui/presets": "^0.17.2",
     "react-codemirror2": "^8.0.1",
     "react-icons": "^5.5.0",
+    "theme-ui": "^0.17.2",
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
@@ -22,20 +24,5 @@
     "@types/supertest": "^6.0.3",
     "jest": "^29.7.0",
     "supertest": "^7.1.0"
-  },
-  "scripts": {
-    "start:client": "npm run start --workspace=client",
-    "start:server": "npm run start --workspace=server",
-    "start": "echo 'Please use npm run start:client or npm run start:server'",
-    "build": "npm run build --workspaces",
-    "test": "npm run test --workspaces",
-    "lint": "npm run lint --workspaces",
-    "lint:fix": "npm run lint:fix --workspaces"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   }
 }

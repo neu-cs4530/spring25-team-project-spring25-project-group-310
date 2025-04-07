@@ -32,7 +32,6 @@ const fetchAllBookmarks = async (username: string): Promise<Bookmark[]> => {
     const response = await axios.get(`${API_URL}/bookmark/${username}`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching all bookmarks:', error);
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data || 'Failed to fetch bookmarks');
     }
@@ -152,7 +151,6 @@ const addBookmarkWithoutCollection = async (
     // Return the response data as is, not converting to string
     return response.data;
   } catch (error) {
-    console.error('Error adding bookmark without collection:', error);
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data || 'Failed to add bookmark');
     }
@@ -174,63 +172,19 @@ const removeBookmarkFromCollection = async (
   questionId: string,
   username: string,
 ): Promise<any> => {
-  try {
-    // First, delete the bookmark
-    try {
-      const deleteResponse = await axios.delete(`${API_URL}/bookmark/${username}/${questionId}`);
-    } catch (bookmarkError) {
-      console.log('Bookmark deletion error (may be already deleted):', bookmarkError);
-    }
-
-    // Second, remove from collection
-    try {
-      const collectionResponse = await axios.delete(
-        `${API_URL}/collections/${username}/${collectionId}/bookmarks/${questionId}`,
-      );
-    } catch (collectionError) {
-      console.error('Error removing from collection:', collectionError);
-      throw collectionError;
-    }
-
-    return { success: true, message: 'Bookmark removed' };
-  } catch (error) {
-    console.error('Full error in removeBookmarkFromCollection:', error);
-    throw error;
-  }
+  // Remove from collection
+  await axios.delete(`${API_URL}/collections/${username}/${collectionId}/bookmarks/${questionId}`);
+  return { success: true, message: 'Bookmark removed' };
 };
 
 const removeBookmark = async (username: string, questionId: string): Promise<void> => {
   try {
-    // Convert bookmarkId to string if it's not already
-    const questionIdString = String(questionId);
-
-    console.log(`Removing bookmark for bookmark: ${questionIdString}, user: ${username}`);
-    const response = await axios.delete(`${API_URL}/bookmark/${username}/${questionId}`);
+    await axios.delete(`${API_URL}/bookmark/${username}/${questionId}`);
   } catch (error) {
-    console.error('Error removing bookmark:', error);
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data || 'Failed to remove bookmark');
     }
     throw new Error('Failed to remove bookmark');
-  }
-};
-
-const getBookmarksForCollection = async (
-  collectionId: string,
-  username: string,
-): Promise<DatabaseBookmark[]> => {
-  try {
-    const response = await axios.get(
-      `${API_URL}/collections/${username}/${collectionId}/bookmarks`,
-    );
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        error.response?.data || 'Server failed to fetch bookmarks in this collection',
-      );
-    }
-    throw new Error('Failed to fetch bookmarks in this collection');
   }
 };
 

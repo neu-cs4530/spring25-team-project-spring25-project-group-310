@@ -1,6 +1,5 @@
 import './index.css';
 import useProfileSettings from '../../hooks/useProfileSettings';
-import useUserContext from '../../hooks/useUserContext';
 
 const ProfileSettings: React.FC = () => {
   const {
@@ -27,9 +26,6 @@ const ProfileSettings: React.FC = () => {
     handleUpdateBiography,
     handleDeleteUser,
   } = useProfileSettings();
-
-  const user = useUserContext();
-  const username = user;
 
   if (loading) {
     return (

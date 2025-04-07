@@ -4,20 +4,12 @@ import {
   addBookmarkToCollection,
   createCollection,
 } from '../../../services/bookmarkService';
-import useUserContext from '../../../hooks/useUserContext';
 
 interface BookmarkPromptProps {
   questionId: string;
   onClose: () => void;
   onSuccess: () => void;
   username: string;
-}
-
-interface BookmarkResult {
-  isWarning?: boolean;
-  message?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  collection?: any;
 }
 
 const BookmarkPrompt: React.FC<BookmarkPromptProps> = ({
@@ -32,7 +24,6 @@ const BookmarkPrompt: React.FC<BookmarkPromptProps> = ({
   const [selectedCollectionId, setSelectedCollectionId] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useUserContext();
 
   // Fetch existing collections when component mounts
   useEffect(() => {
@@ -41,7 +32,6 @@ const BookmarkPrompt: React.FC<BookmarkPromptProps> = ({
         const fetchedCollections = await fetchCollections(username);
         setCollections(fetchedCollections);
       } catch (err) {
-        console.error('Error fetching collections:', err);
         setError('Failed to load collections');
       }
     };
@@ -63,22 +53,12 @@ const BookmarkPrompt: React.FC<BookmarkPromptProps> = ({
       }
       // If only an existing collection is selected
       else if (selectedCollectionId) {
-        const result = await addBookmarkToCollection(
-          selectedCollectionId,
-          questionIdString,
-          username,
-        );
-
-        // Type guard check
-        if (result && typeof result === 'object' && 'isWarning' in result) {
-          console.log(result.message); // Log the warning but don't show it as an error
-        }
+        await addBookmarkToCollection(selectedCollectionId, questionIdString, username);
       }
 
       onSuccess();
       onClose();
     } catch (err) {
-      console.error('Bookmark failed:', err);
       setError(err instanceof Error ? err.message : 'Failed to add bookmark');
     } finally {
       setIsLoading(false);

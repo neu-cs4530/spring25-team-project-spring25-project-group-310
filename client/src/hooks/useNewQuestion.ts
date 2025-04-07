@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { validateHyperlink } from '../tool';
 import { addQuestion } from '../services/questionService';
 import useUserContext from './useUserContext';
-import { Question } from '../types/types';
+import { FileMetaData, UIFileMetaData, Question } from '../types/types';
 
 // Define allowed file types and their extensions
 const allowedFileTypes = {
@@ -12,19 +12,9 @@ const allowedFileTypes = {
   text: ['text/plain'],
 };
 
-// Maximum file size in bytes (5MB)
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
-
-// Interface for file with additional metadata
-interface FileWithMetadata {
-  file: File;
-  id: string;
-  preview?: string; // URL for image preview
-  type: 'image' | 'pdf' | 'text'; // File type category
-}
-
+// Maximum file size in bytes (20MB)
+const MAX_FILE_SIZE = 20 * 1024 * 1024;
 /**
- * Custom hook to handle question submission and form validation
  *
  * @returns title - The current value of the title input.
  * @returns text - The current value of the text input.
@@ -43,13 +33,33 @@ const useNewQuestion = () => {
   const [text, setText] = useState<string>('');
   const [tagNames, setTagNames] = useState<string>('');
   const [codeSnippet, setCodeSnippet] = useState<string>('');
-  const [files, setFiles] = useState<FileWithMetadata[]>([]);
+  const [files, setFiles] = useState<UIFileMetaData[]>([]);
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
   const [titleErr, setTitleErr] = useState<string>('');
   const [textErr, setTextErr] = useState<string>('');
   const [tagErr, setTagErr] = useState<string>('');
   const [fileErr, setFileErr] = useState<string>('');
+
+  /**
+   * Convert a file to Base64 string
+   */
+  // eslint-disable-next-line arrow-body-style
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const base64String = reader.result?.toString().split(',')[1];
+        if (base64String) {
+          resolve(base64String);
+        } else {
+          reject(new Error('Failed to convert file to Base64'));
+        }
+      };
+      reader.onerror = error => reject(error);
+    });
+  };
 
   /**
    * Determine file type category from MIME type
@@ -65,7 +75,7 @@ const useNewQuestion = () => {
    * Create preview URLs for image files
    */
   const processFile = useCallback(
-    (file: File): FileWithMetadata | null => {
+    (file: File): UIFileMetaData | null => {
       const fileType = getFileType(file.type);
       if (!fileType) {
         return null;
@@ -73,7 +83,7 @@ const useNewQuestion = () => {
       if (file.size > MAX_FILE_SIZE) {
         return null;
       }
-      const fileWithMetadata: FileWithMetadata = {
+      const fileWithMetadata: UIFileMetaData = {
         file,
         id: `${Date.now()}-${file.name}`,
         type: fileType,
@@ -91,7 +101,7 @@ const useNewQuestion = () => {
    */
   const addFiles = useCallback(
     (selectedFiles: File[]) => {
-      const newValidFiles: FileWithMetadata[] = [];
+      const newValidFiles: UIFileMetaData[] = [];
       const invalidFiles: string[] = [];
       const oversizedFiles: string[] = [];
 
@@ -210,7 +220,6 @@ const useNewQuestion = () => {
 
   /**
    * Replace a file with a new one.
-   * Wrapped in useCallback with processFile dependency.
    */
   const replaceFile = useCallback(
     (id: string, newFile: File) => {
@@ -307,44 +316,44 @@ const useNewQuestion = () => {
   const postQuestion = async () => {
     if (!validateForm()) return;
 
-    const tagnames = tagNames.split(' ').filter(tagName => tagName.trim() !== '');
-    const tags = tagnames.map(tagName => ({
-      name: tagName,
-      description: 'user added tag',
-    }));
-
-    const question: Question = {
-      title,
-      text,
-      codeSnippet,
-      tags,
-      askedBy: user.username,
-      askDateTime: new Date(),
-      answers: [],
-      upVotes: [],
-      downVotes: [],
-      views: [],
-      comments: [],
-    };
-
-    const formData = new FormData();
-    formData.append('questionData', JSON.stringify(question));
-
-    files.forEach(fileData => {
-      formData.append('files', fileData.file);
-      formData.append(
-        'fileMetadata',
-        JSON.stringify({
-          id: fileData.id,
-          filename: fileData.file.name,
-          type: fileData.type,
-          size: fileData.file.size,
-        }),
-      );
-    });
-
     try {
-      const res = await addQuestion(formData);
+      const tagnames = tagNames.split(' ').filter(tagName => tagName.trim() !== '');
+      const tags = tagnames.map(tagName => ({
+        name: tagName,
+        description: 'user added tag',
+      }));
+
+      // Create file metadata for the backend
+      const fileMetadataPromises = files.map(async fileData => {
+        const base64Content = await fileToBase64(fileData.file);
+        return {
+          fileId: fileData.id,
+          filename: fileData.file.name,
+          contentType: fileData.file.type,
+          size: fileData.file.size,
+          content: base64Content,
+        } as FileMetaData;
+      });
+
+      const fileMetadata = await Promise.all(fileMetadataPromises);
+
+      const question: Question = {
+        title,
+        text,
+        codeSnippet: codeSnippet || '',
+        tags,
+        askedBy: user.username,
+        askDateTime: new Date(),
+        answers: [],
+        upVotes: [],
+        downVotes: [],
+        views: [],
+        comments: [],
+        files: fileMetadata.length > 0 ? fileMetadata : undefined,
+      };
+
+      const res = await addQuestion(question);
+
       if (res && res._id) {
         cleanupFilePreviewUrls();
         navigate('/home');

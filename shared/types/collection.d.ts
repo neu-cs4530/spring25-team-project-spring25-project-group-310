@@ -38,10 +38,13 @@ export interface DatabaseCollection extends Collection {
  * Type representing possible responses for a Collection-related operation.
  * - Either a `DatabaseCollection` object or an error message.
  */
-export type CollectionResponse = DatabaseCollection | { 
-  error: string;
-} | {
-  message: string;
-  isWarning: boolean;
-  collection: DatabaseCollection;
-};
+export type CollectionResponse =
+  | DatabaseCollection
+  | {
+      error: string;
+    }
+  | {
+      message: string;
+      isWarning: boolean;
+      collection: DatabaseCollection;
+    };

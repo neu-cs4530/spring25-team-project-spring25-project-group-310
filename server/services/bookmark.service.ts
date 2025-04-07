@@ -61,7 +61,6 @@ export const deleteBookmark = async (
 
     return deletedBookmark || { error: 'Bookmark not found' };
   } catch (error) {
-    console.error('Error in deleteBookmark:', error);
     return { error: 'Error when deleting bookmark' };
   }
 };

@@ -72,17 +72,10 @@ const useAnswerPage = () => {
      * Function to fetch the question data based on the question ID.
      */
     const fetchData = async () => {
-      try {
-        const res = await getQuestionById(questionID, user.username);
-        setQuestion(res || null);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error fetching question:', error);
-      }
+      const res = await getQuestionById(questionID, user.username);
+      setQuestion(res || null);
     };
-
-    // eslint-disable-next-line no-console
-    fetchData().catch(e => console.log(e));
+    fetchData();
   }, [questionID, user.username]);
 
   useEffect(() => {

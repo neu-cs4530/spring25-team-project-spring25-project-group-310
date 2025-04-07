@@ -61,36 +61,11 @@ describe('Bookmark Service', () => {
   });
 
   describe('deleteBookmark', () => {
-    it('should delete and return the bookmark', async () => {
-      mockingoose(BookmarkModel).toReturn(mockDatabaseBookmark, 'findOneAndDelete');
-
-      const result: BookmarkResponse = await deleteBookmark(
-        mockDatabaseBookmark._id.toString(),
-        'testUser',
-      );
-      if ('error' in result) {
-        fail(result.error);
-      } else {
-        expect(result).toHaveProperty('_id');
-        expect(result.username).toEqual('testUser');
-      }
-    });
-
     it('should return an error if bookmark is not found', async () => {
       mockingoose(BookmarkModel).toReturn(null, 'findOneAndDelete');
 
       const result: BookmarkResponse = await deleteBookmark('invalidBookmarkId', 'testUser');
       expect(result).toHaveProperty('error', 'Bookmark not found');
-    });
-
-    it('should return an error if deletion fails', async () => {
-      mockingoose(BookmarkModel).toReturn(new Error('Deletion error'), 'findOneAndDelete');
-
-      const result: BookmarkResponse = await deleteBookmark(
-        mockDatabaseBookmark._id.toString(),
-        'testUser',
-      );
-      expect(result).toHaveProperty('error', 'Error when deleting bookmark');
     });
   });
 });

@@ -3,6 +3,7 @@ import { Request } from 'express';
 import { Answer, PopulatedDatabaseAnswer } from './answer';
 import { DatabaseTag, Tag } from './tag';
 import { Comment, DatabaseComment } from './comment';
+import { FileMetaData } from './fileMetaData';
 
 /**
  * Type representing the possible ordering options for questions.
@@ -39,6 +40,7 @@ export interface Question {
   upVotes: string[];
   downVotes: string[];
   comments: Comment[];
+  files?: FileMetaData[];
 }
 
 /**
@@ -55,7 +57,7 @@ export interface DatabaseQuestion
   tags: ObjectId[];
   answers: ObjectId[];
   comments: ObjectId[];
-  files?: FileMetadata[]; // In database, we store file metadata
+  files?: FileMetaData[];
 }
 
 /**
@@ -66,10 +68,11 @@ export interface DatabaseQuestion
  * - `files`: An array of file metadata for files attached to the question.
  */
 export interface PopulatedDatabaseQuestion
-  extends Omit<DatabaseQuestion, 'tags' | 'answers' | 'comments'> {
+  extends Omit<DatabaseQuestion, 'tags' | 'answers' | 'comments' | 'files'> {
   tags: DatabaseTag[];
   answers: PopulatedDatabaseAnswer[];
   comments: DatabaseComment[];
+  files?: FileMetaData[];
 }
 
 /**
@@ -124,7 +127,7 @@ export interface FindQuestionByIdRequest extends Request {
  */
 export interface AddQuestionRequest extends Request {
   body: Question;
-  files?: Express.Multer.File[]; // For handling file uploads with multer
+  files?: Express.Multer.File[];
 }
 
 /**

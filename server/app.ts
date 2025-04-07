@@ -21,6 +21,7 @@ import gameController from './controllers/game.controller';
 import collectionController from './controllers/collection.controller';
 import bookmarkController from './controllers/bookmark.controller';
 import { Socket } from 'socket.io-client';
+import fileController from './controllers/file.controller';
 
 dotenv.config();
 
@@ -70,12 +71,15 @@ app.use(
   }),
 );
 
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 app.get('/', (_: Request, res: Response) => {
   res.send('hello world');
   res.end();
 });
+
+const fileRoutes = fileController();
 
 app.use('/question', questionController(socket));
 app.use('/tag', tagController());
@@ -87,6 +91,7 @@ app.use('/chat', chatController(socket));
 app.use('/collections', collectionController(socket));
 app.use('/bookmark', bookmarkController(socket));
 app.use('/games', gameController(socket));
+app.use('/files', fileRoutes.router);
 
 // Export the app instance
 export { app, server, startServer };

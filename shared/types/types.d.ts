@@ -9,3 +9,4 @@ export * from './tag';
 export * from './user';
 export * from './bookmark';
 export * from './collection';
+export * from './fileMetaData';

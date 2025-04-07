@@ -26,22 +26,18 @@ const AnswerPage = () => {
     const checkIfBookmarked = async () => {
       if (!questionID || !username) return;
 
-      try {
-        // Convert questionID to string for consistent comparison
-        const questionIdString = String(questionID);
+      // Convert questionID to string for consistent comparison
+      const questionIdString = String(questionID);
 
-        // Fetch all bookmarks for the user
-        const bookmarks = await fetchAllBookmarks(username);
+      // Fetch all bookmarks for the user
+      const bookmarks = await fetchAllBookmarks(username);
 
-        // Check if this question is already in the bookmarks
-        const isAlreadyBookmarked = bookmarks.some(
-          bookmark => bookmark.questionId === questionIdString,
-        );
+      // Check if this question is already in the bookmarks
+      const isAlreadyBookmarked = bookmarks.some(
+        bookmark => bookmark.questionId === questionIdString,
+      );
 
-        setIsBookmarked(isAlreadyBookmarked);
-      } catch (error) {
-        console.error('Error checking bookmark status:', error);
-      }
+      setIsBookmarked(isAlreadyBookmarked);
     };
 
     checkIfBookmarked();
@@ -58,31 +54,27 @@ const AnswerPage = () => {
       return;
     }
 
-    try {
-      // Make sure questionID is a string
-      const questionIdString = String(questionID);
+    // Make sure questionID is a string
+    const questionIdString = String(questionID);
 
-      // Add bookmark to default collection
-      await addBookmarkWithoutCollection(questionIdString, username);
+    // Add bookmark to default collection
+    await addBookmarkWithoutCollection(questionIdString, username);
 
-      // Update local state
-      setIsBookmarked(true);
+    // Update local state
+    setIsBookmarked(true);
 
-      // Dispatch event to notify profile settings to refresh
-      window.dispatchEvent(
-        new CustomEvent('bookmarkAdded', {
-          detail: {
-            questionId: questionIdString,
-            username,
-            title: question.title,
-          },
-        }),
-      );
+    // Dispatch event to notify profile settings to refresh
+    window.dispatchEvent(
+      new CustomEvent('bookmarkAdded', {
+        detail: {
+          questionId: questionIdString,
+          username,
+          title: question.title,
+        },
+      }),
+    );
 
-      setIsBookmarkModalOpen(true);
-    } catch (error) {
-      console.error('Failed to bookmark question:', error);
-    }
+    setIsBookmarkModalOpen(true);
   };
 
   const handleBookmarkClose = () => {
@@ -123,6 +115,8 @@ const AnswerPage = () => {
         askby={question.askedBy}
         meta={getMetaData(new Date(question.askDateTime))}
         codeSnippet={question.codeSnippet}
+        files={question.files}
+        questionId={String(question._id)}
       />
       <CommentSection
         comments={question.comments}
@@ -136,6 +130,8 @@ const AnswerPage = () => {
           meta={getMetaData(new Date(a.ansDateTime))}
           comments={a.comments}
           codeSnippet={a.codeSnippet}
+          files={a.files}
+          answerId={String(a._id)}
           handleAddComment={(comment: Comment) =>
             handleNewComment(comment, 'answer', String(a._id))
           }

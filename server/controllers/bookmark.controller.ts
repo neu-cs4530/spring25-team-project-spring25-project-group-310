@@ -36,10 +36,6 @@ const bookmarkController = (socket?: FakeSOSocket) => {
     }
 
     try {
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-      // const {
-      //   user: { username },
-      // } = req as any;
       const { username } = req.params;
       if (!username) {
         res.status(400).send('Invalid request: Username is required');
@@ -92,14 +88,12 @@ const bookmarkController = (socket?: FakeSOSocket) => {
 
       const result = await deleteBookmark(questionId, username);
       if ('error' in result) {
-        console.warn(`Delete bookmark error: ${result.error}`);
         res.status(404).json({ message: result.error });
         return;
       }
 
       res.json({ message: 'Bookmark deleted', bookmark: result });
     } catch (err: unknown) {
-      console.error('Unexpected error in deleteBookmarkRoute:', err);
       res.status(500).send(`Error when deleting bookmark: ${(err as Error).message}`);
     }
   };
