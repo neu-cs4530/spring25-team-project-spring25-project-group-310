@@ -35,7 +35,7 @@ export class FileService {
    */
   private _fileToBase64(file: Express.Multer.File): string {
     return Buffer.from(file.buffer || '').toString('base64');
-}
+  }
   /**
    * Retrieve a file by its index from a question or answer.
    *

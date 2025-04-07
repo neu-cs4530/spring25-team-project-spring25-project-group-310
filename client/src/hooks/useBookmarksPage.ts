@@ -2,10 +2,9 @@ import { useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 const useBookmarksPage = () => {
-
   const [searchParams] = useSearchParams();
-  const [titleText, setTitleText] = useState<string>('All Questions');
-  const [search, setSearch] = useState<string>('');
+  const [, setTitleText] = useState<string>('All Questions');
+  const [, setSearch] = useState<string>('');
 
   useEffect(() => {
     let pageTitle = 'All Bookmarks/Collections';
