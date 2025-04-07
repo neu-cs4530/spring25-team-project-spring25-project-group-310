@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookmark } from '@fortawesome/free-solid-svg-icons';
 import { getMetaData } from '../../../tool';
@@ -10,21 +10,87 @@ import QuestionBody from './questionBody';
 import VoteComponent from '../voteComponent';
 import CommentSection from '../commentSection';
 import useAnswerPage from '../../../hooks/useAnswerPage';
+import BookmarkPrompt from '../bookmarkPrompt';
+import { addBookmarkWithoutCollection, fetchAllBookmarks } from '../../../services/bookmarkService';
+import useUserContext from '../../../hooks/useUserContext';
 
-/**
- * AnswerPage component that displays the full content of a question along with its answers.
- * It also includes the functionality to vote, ask a new question, and post a new answer.
- */
 const AnswerPage = () => {
   const { questionID, question, handleNewComment, handleNewAnswer } = useAnswerPage();
+  const [isBookmarkModalOpen, setIsBookmarkModalOpen] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const { user: currentUser } = useUserContext();
+  const { username } = currentUser;
+
+  // Check if the question is already bookmarked when component mounts
+  useEffect(() => {
+    const checkIfBookmarked = async () => {
+      if (!questionID || !username) return;
+
+      try {
+        // Convert questionID to string for consistent comparison
+        const questionIdString = String(questionID);
+
+        // Fetch all bookmarks for the user
+        const bookmarks = await fetchAllBookmarks(username);
+
+        // Check if this question is already in the bookmarks
+        const isAlreadyBookmarked = bookmarks.some(
+          bookmark => bookmark.questionId === questionIdString,
+        );
+
+        setIsBookmarked(isAlreadyBookmarked);
+      } catch (error) {
+        console.error('Error checking bookmark status:', error);
+      }
+    };
+
+    checkIfBookmarked();
+  }, [questionID, username]);
 
   if (!question) {
     return null;
   }
 
-  const handleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
+  const handleBookmarkClick = async () => {
+    // If already bookmarked, just open the organization dialog
+    if (isBookmarked) {
+      setIsBookmarkModalOpen(true);
+      return;
+    }
+
+    try {
+      // Make sure questionID is a string
+      const questionIdString = String(questionID);
+
+      // Add bookmark to default collection
+      await addBookmarkWithoutCollection(questionIdString, username);
+
+      // Update local state
+      setIsBookmarked(true);
+
+      // Dispatch event to notify profile settings to refresh
+      window.dispatchEvent(
+        new CustomEvent('bookmarkAdded', {
+          detail: {
+            questionId: questionIdString,
+            username,
+            title: question.title,
+          },
+        }),
+      );
+
+      setIsBookmarkModalOpen(true);
+    } catch (error) {
+      console.error('Failed to bookmark question:', error);
+    }
+  };
+
+  const handleBookmarkClose = () => {
+    setIsBookmarkModalOpen(false);
+  };
+
+  const handleBookmarkSuccess = () => {
+    setIsBookmarked(true);
   };
 
   return (
@@ -32,12 +98,24 @@ const AnswerPage = () => {
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <VoteComponent question={question} />
         <button
-          className={isBookmarked ? 'bookmark_button' : 'bookmark_button_bookmarked'}
-          onClick={handleBookmark}
-          style={{ marginLeft: '10px' }}>
+          className={`bookmark_button ${isBookmarked ? 'bookmarked' : ''}`}
+          onClick={handleBookmarkClick}
+          style={{ marginLeft: '10px' }}
+          title={isBookmarked ? 'Organize bookmark' : 'Bookmark this question'}>
           <FontAwesomeIcon icon={faBookmark} />
         </button>
       </div>
+
+      {/* Bookmark Prompt Modal */}
+      {isBookmarkModalOpen && (
+        <BookmarkPrompt
+          questionId={String(question._id)}
+          onClose={handleBookmarkClose}
+          onSuccess={handleBookmarkSuccess}
+          username={currentUser.username}
+        />
+      )}
+
       <AnswerHeader ansCount={question.answers.length} title={question.title} />
       <QuestionBody
         views={question.views.length}

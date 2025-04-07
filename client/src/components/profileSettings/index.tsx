@@ -1,6 +1,6 @@
-import React from 'react';
 import './index.css';
 import useProfileSettings from '../../hooks/useProfileSettings';
+import useUserContext from '../../hooks/useUserContext';
 
 const ProfileSettings: React.FC = () => {
   const {
@@ -10,7 +10,6 @@ const ProfileSettings: React.FC = () => {
     newBio,
     newPassword,
     confirmNewPassword,
-    successMessage,
     errorMessage,
     showConfirmation,
     pendingAction,
@@ -29,6 +28,9 @@ const ProfileSettings: React.FC = () => {
     handleDeleteUser,
   } = useProfileSettings();
 
+  const user = useUserContext();
+  const username = user;
+
   if (loading) {
     return (
       <div className='page-container'>
@@ -43,7 +45,6 @@ const ProfileSettings: React.FC = () => {
     <div className='page-container'>
       <div className='profile-card'>
         <h2>Profile</h2>
-        {successMessage && <p className='success-message'>{successMessage}</p>}
         {errorMessage && <p className='error-message'>{errorMessage}</p>}
         {userData ? (
           <>
@@ -124,7 +125,6 @@ const ProfileSettings: React.FC = () => {
                 </button>
               </>
             )}
-
             {/* ---- Danger Zone (Delete User) ---- */}
             {canEditProfile && (
               <>

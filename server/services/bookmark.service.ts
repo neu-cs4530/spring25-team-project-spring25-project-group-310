@@ -38,19 +38,30 @@ export const getBookmarksForUser = async (
  * @returns {Promise<BookmarkResponse>} - The deleted bookmark or an error message.
  */
 export const deleteBookmark = async (
-  bookmarkId: string,
+  questionId: string,
   username: string,
 ): Promise<BookmarkResponse> => {
   try {
-    const deletedBookmark: DatabaseBookmark | null = await BookmarkModel.findOneAndDelete({
-      _id: bookmarkId,
+    // Try to find the bookmark first
+    const existingBookmark = await BookmarkModel.findOne({
+      questionId,
       username,
     });
-    if (!deletedBookmark) {
+
+    // If no bookmark is found, return an error
+    if (!existingBookmark) {
       return { error: 'Bookmark not found' };
     }
-    return deletedBookmark;
+
+    // Delete the bookmark
+    const deletedBookmark = await BookmarkModel.findOneAndDelete({
+      questionId,
+      username,
+    });
+
+    return deletedBookmark || { error: 'Bookmark not found' };
   } catch (error) {
+    console.error('Error in deleteBookmark:', error);
     return { error: 'Error when deleting bookmark' };
   }
 };

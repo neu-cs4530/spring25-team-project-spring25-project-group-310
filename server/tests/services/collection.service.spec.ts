@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import mongoose from 'mongoose';
 import CollectionModel from '../../models/collection.model';
 import {

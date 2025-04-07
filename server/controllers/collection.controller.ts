@@ -1,9 +1,11 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { Collection } from '../types/types';
+import { Collection, FakeSOSocket } from '../types/types';
 import {
   saveCollection,
   getCollectionsForUser,
+  getBookmarksForCollection,
   updateCollection,
   deleteCollection,
   addBookmarkToCollection,
@@ -14,7 +16,7 @@ import {
  * Controller for collection-related endpoints.
  * Uses the user's unique username (from req.user.username) for all operations.
  */
-const collectionController = () => {
+const collectionController = (socket?: FakeSOSocket) => {
   const router = express.Router();
 
   /**
@@ -36,10 +38,13 @@ const collectionController = () => {
     }
     try {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const {
-        user: { username },
-      } = req as any;
+      const { username } = req.params;
+      if (!username) {
+        res.status(400).send('Invalid request: Username is required');
+        return;
+      }
       const { name } = req.body;
+
       const newCollection: Collection = {
         username,
         name,
@@ -61,18 +66,18 @@ const collectionController = () => {
    * @param req The request object.
    * @param res The response object.
    */
+  // In your collection controller
   const getCollectionsRoute = async (req: Request, res: Response): Promise<void> => {
     try {
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-      const {
-        user: { username },
-      } = req as any;
+      const { username } = req.params; // Extract username from route parameters
+
       const result = await getCollectionsForUser(username);
       if ('error' in result) {
         throw new Error(result.error);
       }
       res.json(result);
     } catch (err: unknown) {
+      console.error('Error when fetching collections:', err);
       res.status(500).send(`Error when fetching collections: ${(err as Error).message}`);
     }
   };
@@ -114,16 +119,13 @@ const collectionController = () => {
    * @param res The response object.
    */
   const deleteCollectionRoute = async (req: Request, res: Response): Promise<void> => {
-    const { collectionId } = req.params;
+    const { collectionId, username } = req.params;
     if (!ObjectId.isValid(collectionId)) {
       res.status(400).send('Invalid collectionId format');
       return;
     }
     try {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const {
-        user: { username },
-      } = req as any;
       const result = await deleteCollection(collectionId, username);
       if ('error' in result) {
         throw new Error(result.error);
@@ -140,7 +142,7 @@ const collectionController = () => {
    * @param res The response object.
    */
   const addBookmarkToCollectionRoute = async (req: Request, res: Response): Promise<void> => {
-    const { collectionId } = req.params;
+    const { collectionId, username } = req.params;
     const { bookmarkId } = req.body;
     if (!bookmarkId) {
       res.status(400).send('BookmarkId is required');
@@ -151,14 +153,21 @@ const collectionController = () => {
       return;
     }
     try {
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-      const {
-        user: { username },
-      } = req as any;
       const result = await addBookmarkToCollection(collectionId, bookmarkId, username);
+
+      // if ('message' in result && 'isWarning' in result) {
+      //   res.status(200).json({
+      //     message: result.message,
+      //     isWarning: true,
+      //     collection: result.collection
+      //   });
+      //   return;
+      // }
+
       if ('error' in result) {
         throw new Error(result.error);
       }
+
       res.json({ message: 'Bookmark added to collection', collection: result });
     } catch (err: unknown) {
       res.status(500).send(`Error when adding bookmark to collection: ${(err as Error).message}`);
@@ -171,16 +180,12 @@ const collectionController = () => {
    * @param res The response object.
    */
   const removeBookmarkFromCollectionRoute = async (req: Request, res: Response): Promise<void> => {
-    const { collectionId, bookmarkId } = req.params;
+    const { collectionId, bookmarkId, username } = req.params; // Get username from params
     if (!ObjectId.isValid(collectionId) || !ObjectId.isValid(bookmarkId)) {
       res.status(400).send('Invalid collectionId or bookmarkId format');
       return;
     }
     try {
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-      const {
-        user: { username },
-      } = req as any;
       const result = await removeBookmarkFromCollection(collectionId, bookmarkId, username);
       if ('error' in result) {
         throw new Error(result.error);
@@ -193,12 +198,35 @@ const collectionController = () => {
     }
   };
 
-  router.post('/', createCollectionRoute);
-  router.get('/', getCollectionsRoute);
-  router.put('/:collectionId', updateCollectionRoute);
-  router.delete('/:collectionId', deleteCollectionRoute);
-  router.post('/:collectionId/bookmarks', addBookmarkToCollectionRoute);
-  router.delete('/:collectionId/bookmarks/:bookmarkId', removeBookmarkFromCollectionRoute);
+  /**
+   * Retrieves all bookmarks for a given collection.
+   * @param req The request object.
+   * @param res The response object.
+   * @returns void
+   */
+  const getBookmarksInCollection = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { collectionId } = req.params;
+      const result = await getBookmarksForCollection(collectionId);
+      if ('error' in result) {
+        throw new Error(result.error);
+      }
+      res.json(result);
+    } catch (err: unknown) {
+      res.status(500).send(`Error when fetching bookmarks: ${(err as Error).message}`);
+    }
+  };
+
+  router.post('/:username', createCollectionRoute);
+  router.get('/:username', getCollectionsRoute);
+  router.put('/:username/:collectionId', updateCollectionRoute);
+  router.delete('/:username/:collectionId', deleteCollectionRoute);
+  router.post('/:username/:collectionId/bookmarks', addBookmarkToCollectionRoute);
+  router.delete(
+    '/:username/:collectionId/bookmarks/:bookmarkId',
+    removeBookmarkFromCollectionRoute,
+  );
+  router.get('/:username/:collectionId', getBookmarksInCollection);
 
   return router;
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Heading, Flex, Text, Button } from 'theme-ui';
 import { useTheme, ThemeType } from '../../../hooks/useTheme';
 import themePresets from '../../theme/ThemePresets';
-import useAccessibilitySettings from '../../../hooks/useAccessibility';
+import { useAccessibilitySettings } from '../../../hooks/useAccessibility';
 
 // Use the same ThemePreviewCard component from the original ThemeSelector
 const ThemePreviewCard = ({
