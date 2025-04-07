@@ -1,7 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import express, { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { Socket } from 'socket.io';
 import { Collection, FakeSOSocket } from '../types/types';
 import {
   saveCollection,
@@ -39,10 +38,6 @@ const collectionController = (socket?: FakeSOSocket) => {
     }
     try {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      console.log('Request user object:', req.body.name);
-      // const {
-      //   user: { username },
-      // } = req as any;
       const { username } = req.params;
       if (!username) {
         res.status(400).send('Invalid request: Username is required');
@@ -50,8 +45,6 @@ const collectionController = (socket?: FakeSOSocket) => {
       }
       const { name } = req.body;
 
-      console.log('Creating collection for username:', username);
-      console.log('Collection name:', name);
       const newCollection: Collection = {
         username,
         name,
@@ -160,11 +153,21 @@ const collectionController = (socket?: FakeSOSocket) => {
       return;
     }
     try {
-      /* eslint-disable @typescript-eslint/no-explicit-any */
       const result = await addBookmarkToCollection(collectionId, bookmarkId, username);
+
+      // if ('message' in result && 'isWarning' in result) {
+      //   res.status(200).json({
+      //     message: result.message,
+      //     isWarning: true,
+      //     collection: result.collection
+      //   });
+      //   return;
+      // }
+
       if ('error' in result) {
         throw new Error(result.error);
       }
+
       res.json({ message: 'Bookmark added to collection', collection: result });
     } catch (err: unknown) {
       res.status(500).send(`Error when adding bookmark to collection: ${(err as Error).message}`);
@@ -177,16 +180,12 @@ const collectionController = (socket?: FakeSOSocket) => {
    * @param res The response object.
    */
   const removeBookmarkFromCollectionRoute = async (req: Request, res: Response): Promise<void> => {
-    const { collectionId, bookmarkId } = req.params;
+    const { collectionId, bookmarkId, username } = req.params; // Get username from params
     if (!ObjectId.isValid(collectionId) || !ObjectId.isValid(bookmarkId)) {
       res.status(400).send('Invalid collectionId or bookmarkId format');
       return;
     }
     try {
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-      const {
-        user: { username },
-      } = req as any;
       const result = await removeBookmarkFromCollection(collectionId, bookmarkId, username);
       if ('error' in result) {
         throw new Error(result.error);

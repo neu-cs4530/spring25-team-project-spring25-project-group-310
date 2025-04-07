@@ -4,6 +4,11 @@ import { Bookmark, DatabaseBookmark } from '@fake-stack-overflow/shared/types/bo
 
 const API_URL = `${process.env.REACT_APP_SERVER_URL}`;
 
+interface BookmarkAddResult extends DatabaseCollection {
+  isWarning?: boolean;
+  message?: string;
+}
+
 /**
  * Fetches all collections for the current user
  * @returns Promise resolving to an array of collections
@@ -24,7 +29,6 @@ const fetchAllBookmarks = async (username: string): Promise<Bookmark[]> => {
   }
 
   try {
-    console.log(`Fetching all bookmarks for user: ${username}`);
     const response = await axios.get(`${API_URL}/bookmark/${username}`);
     return response.data;
   } catch (error) {
@@ -100,14 +104,18 @@ const addBookmarkToCollection = async (
   collectionId: string,
   bookmarkId: string,
   username: string,
-): Promise<DatabaseCollection> => {
+): Promise<BookmarkAddResult> => {
   try {
+    // Convert bookmarkId to string if it's not already
+    const bookmarkIdString = String(bookmarkId);
+
     const response = await axios.post(
       `${API_URL}/collections/${username}/${collectionId}/bookmarks`,
       {
-        bookmarkId,
+        bookmarkId: bookmarkIdString,
       },
     );
+
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -135,13 +143,14 @@ const addBookmarkWithoutCollection = async (
   }
 
   try {
-    console.log(
-      `Adding bookmark without collection for question: ${questionId}, user: ${username}`,
-    );
-    const response = await axios.post(`${API_URL}/bookmark/${username}`, { questionId });
+    // Convert questionId to string if it's not already
+    const questionIdString = String(questionId);
+    const response = await axios.post(`${API_URL}/bookmark/${username}`, {
+      questionId: questionIdString,
+    });
 
-    console.log('Bookmark added successfully:', response.data);
-    return response.data.toString();
+    // Return the response data as is, not converting to string
+    return response.data;
   } catch (error) {
     console.error('Error adding bookmark without collection:', error);
     if (axios.isAxiosError(error)) {
@@ -153,31 +162,50 @@ const addBookmarkWithoutCollection = async (
 
 /**
  * Removes a bookmark from a collection
- * @param collectionId ID of the collection
- * @param questionId ID of the question to remove
+ * @param collectionId The ID of the collection
+ * @param questionId The ID of the question to remove
+ * @param username The username of the current user
  * @returns Promise resolving to the updated collection
  */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const removeBookmarkFromCollection = async (
   collectionId: string,
-  bookmarkId: string,
-): Promise<DatabaseCollection> => {
+  questionId: string,
+  username: string,
+): Promise<any> => {
   try {
-    const response = await axios.delete(
-      `${API_URL}/collections/${collectionId}/bookmark/${bookmarkId}`,
-    );
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data || 'Failed to remove bookmark from collection');
+    // First, delete the bookmark
+    try {
+      const deleteResponse = await axios.delete(`${API_URL}/bookmark/${username}/${questionId}`);
+    } catch (bookmarkError) {
+      console.log('Bookmark deletion error (may be already deleted):', bookmarkError);
     }
-    throw new Error('Failed to remove bookmark from collection');
+
+    // Second, remove from collection
+    try {
+      const collectionResponse = await axios.delete(
+        `${API_URL}/collections/${username}/${collectionId}/bookmarks/${questionId}`,
+      );
+    } catch (collectionError) {
+      console.error('Error removing from collection:', collectionError);
+      throw collectionError;
+    }
+
+    return { success: true, message: 'Bookmark removed' };
+  } catch (error) {
+    console.error('Full error in removeBookmarkFromCollection:', error);
+    throw error;
   }
 };
 
-const removeBookmark = async (username: string, bookmarkId: string): Promise<void> => {
+const removeBookmark = async (username: string, questionId: string): Promise<void> => {
   try {
-    console.log(`Removing bookmark for bookmark: ${bookmarkId}, user: ${username}`);
-    await axios.delete(`${API_URL}/bookmark/${username}/${bookmarkId}`);
+    // Convert bookmarkId to string if it's not already
+    const questionIdString = String(questionId);
+
+    console.log(`Removing bookmark for bookmark: ${questionIdString}, user: ${username}`);
+    const response = await axios.delete(`${API_URL}/bookmark/${username}/${questionId}`);
   } catch (error) {
     console.error('Error removing bookmark:', error);
     if (axios.isAxiosError(error)) {

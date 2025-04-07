@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DatabaseCollection } from '@fake-stack-overflow/shared/types/collection';
 import { Bookmark } from '@fake-stack-overflow/shared/types/bookmark';
 import {
@@ -16,7 +17,7 @@ import useUserContext from '../../../hooks/useUserContext';
 const BookmarkCollections: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [collections, setCollections] = useState<any[]>([]);
-  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
+  const [bookmarks, setBookmarks] = useState<(Bookmark | string)[]>([]);
   const [newCollectionName, setNewCollectionName] = useState<string>('');
   const [selectedCollection, setSelectedCollection] = useState<string | null>(null);
   const [isCreatingCollection, setIsCreatingCollection] = useState<boolean>(false);
@@ -28,8 +29,41 @@ const BookmarkCollections: React.FC = () => {
 
   const user = useUserContext();
   const username = user?.user?.username;
+  const navigate = useNavigate();
 
-  // Load collections using the same approach as ProfileSettings
+  const fetchQuestionDetails = async (bookmarkList: (Bookmark | string)[]) => {
+    const details: { [key: string]: { title: string } } = {};
+
+    for (const bookmark of bookmarkList) {
+      try {
+        let questionId;
+
+        // Handle if bookmark is a string (from collection-specific fetches)
+        if (typeof bookmark === 'string') {
+          questionId = bookmark;
+        }
+        // Handle if bookmark is an object (from fetchAllBookmarks)
+        else if (bookmark && bookmark.questionId) {
+          questionId = bookmark.questionId;
+        } else {
+          console.error('Bookmark is missing questionId:', bookmark);
+        }
+
+        const questionIdString = String(questionId);
+
+        // eslint-disable-next-line no-await-in-loop
+        const questionData = await getQuestionById(questionIdString, username);
+        details[questionIdString] = {
+          title: questionData.title || 'Untitled Question',
+        };
+      } catch (err) {
+        console.error(`Failed to fetch details for question`, err);
+      }
+    }
+
+    setBookmarkDetails(details);
+  };
+
   const loadCollections = useCallback(async () => {
     if (!username) {
       setError('Not logged in. Please log in to view your bookmarks.');
@@ -39,9 +73,7 @@ const BookmarkCollections: React.FC = () => {
 
     try {
       setIsLoading(true);
-      console.log('Loading collections for user:', username);
       const data = await fetchCollections(username);
-      console.log('Fetched collections:', data);
       setCollections(data);
 
       // If collections exist, select the first one by default
@@ -57,40 +89,33 @@ const BookmarkCollections: React.FC = () => {
   }, [username, selectedCollection]);
 
   const loadBookmarks = useCallback(async () => {
-    if (!selectedCollection || !username) return;
+    if (!username) return;
 
     try {
       setIsLoading(true);
-      console.log('Loading bookmarks for collection:', selectedCollection, 'user:', username);
       const data = await fetchAllBookmarks(username);
-      console.log('Fetched bookmarks:', data);
-      setBookmarks(data);
+
+      // Make sure each bookmark has a valid questionId
+      const validBookmarks = data.filter(bookmark => {
+        if (!bookmark.questionId) {
+          console.error('Invalid bookmark found without questionId:', bookmark);
+          return false;
+        }
+        return true;
+      });
+
+      setBookmarks(validBookmarks);
+
+      if (validBookmarks.length > 0) {
+        fetchQuestionDetails(validBookmarks);
+      }
     } catch (err) {
       console.error('Failed to fetch bookmarks', err);
       setError((err as Error).message);
     } finally {
       setIsLoading(false);
     }
-  }, [selectedCollection, username]);
-
-  const fetchQuestionDetails = async (bookmarkList: Bookmark[]) => {
-    const details: { [key: string]: { title: string } } = {};
-
-    for (const bookmark of bookmarks) {
-      try {
-        console.log('bookmark id:', bookmark.questionId);
-        // eslint-disable-next-line no-await-in-loop
-        const questionData = await getQuestionById(bookmark.questionId, username);
-        details[bookmark.questionId] = {
-          title: questionData.title,
-        };
-      } catch (err) {
-        console.error(`Failed to fetch details for question ${bookmark.questionId}`, err);
-      }
-    }
-
-    setBookmarkDetails(details);
-  };
+  }, [username]);
 
   const loadBookmarksForCollection = useCallback(
     async (collectionId: string) => {
@@ -98,13 +123,29 @@ const BookmarkCollections: React.FC = () => {
 
       try {
         setIsLoading(true);
-        console.log('Loading bookmarks for collection:', collectionId, 'user:', username);
         const data = await fetchBookmarksForCollection(collectionId, username);
-        console.log('Fetched bookmarks:', data);
-        setBookmarks(data);
-        fetchQuestionDetails(data);
+
+        // Handle data regardless of its type (Array<string> or Array<Bookmark>)
+        if (data.length > 0) {
+          // Check data type - if it's an array of strings
+          if (typeof data[0] === 'string') {
+            // No need to transform, just set directly as the new state format supports strings
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            setBookmarks(data as any[]);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            fetchQuestionDetails(data as any[]);
+          } else {
+            // It's an array of bookmark objects
+            const validBookmarks = data.filter((bookmark: Bookmark) => !!bookmark.questionId);
+            setBookmarks(validBookmarks);
+            fetchQuestionDetails(validBookmarks);
+          }
+        } else {
+          // Empty array
+          setBookmarks([]);
+        }
       } catch (err) {
-        console.error('Failed to fetch bookmarks', err);
+        console.error('Failed to fetch bookmarks for collection', err);
         setError((err as Error).message);
         setBookmarks([]);
       } finally {
@@ -114,28 +155,27 @@ const BookmarkCollections: React.FC = () => {
     [username],
   );
 
-  // Initialize data loading
+  // First effect to load collections when component mounts
   useEffect(() => {
     loadCollections();
   }, [loadCollections]);
 
-  // Load bookmarks when collection changes
+  // Second effect to load all bookmarks when component mounts
+  useEffect(() => {
+    loadBookmarks();
+  }, [loadBookmarks]);
+
+  // Third effect to load collection-specific bookmarks when a collection is selected
   useEffect(() => {
     if (selectedCollection) {
       loadBookmarksForCollection(selectedCollection);
-      if (bookmarks.length > 0) {
-        console.log('Bookmarks loaded:', bookmarks);
-        console.log('First bookmark questionId:', bookmarks[0].questionId);
-        console.log('First bookmark questionId type:', typeof bookmarks[0].questionId);
-      }
     }
-  }, [selectedCollection, loadBookmarksForCollection, loadBookmarks]);
+  }, [selectedCollection, loadBookmarksForCollection]);
 
   // Listen for bookmarkAdded events
   useEffect(() => {
     const handleBookmarkAdded = (event: Event) => {
       const customEvent = event as CustomEvent;
-      console.log('Bookmark added event received:', customEvent.detail);
 
       // Reload collections to get the latest data
       loadBookmarks();
@@ -159,9 +199,7 @@ const BookmarkCollections: React.FC = () => {
     if (!newCollectionName.trim() || !username) return;
 
     try {
-      console.log('Creating collection for user:', username);
       const newCollection = await createCollection(newCollectionName, username);
-      console.log('Created collection:', newCollection);
       setCollections([...collections, newCollection]);
       setNewCollectionName('');
       setIsCreatingCollection(false);
@@ -198,42 +236,89 @@ const BookmarkCollections: React.FC = () => {
     }
   };
 
-  const handleBookmarkClick = (questionId: string) => {
-    console.log('Clicked on bookmark with question ID:', questionId);
+  const handleBookmarkClick = (questionId: string | undefined) => {
     if (!questionId) {
-      console.error('Attempted to click on bookmark with invalid questionId');
+      console.error('Attempted to click on bookmark with invalid questionId (null/undefined)');
+      return;
+    }
+
+    if (questionId === 'undefined') {
+      console.error('Attempted to click on bookmark with string "undefined" as questionId');
       return;
     }
 
     try {
-      window.open(`/question/${questionId}`, '_blank');
+      navigate(`/question/${questionId}`);
     } catch (err) {
       console.error('Error navigating:', err);
-      setError(`Error navigating: ${(err as Error).message}`);
+      window.location.href = `/question/${questionId}`;
     }
   };
 
   const handleRemoveBookmark = async (questionId: string) => {
-    if (!selectedCollection) return;
+    if (!selectedCollection || !username) return;
 
     try {
-      console.log('Removing bookmark:', questionId, 'from collection:', selectedCollection);
-      await removeBookmarkFromCollection(selectedCollection, questionId);
+      // 1. Immediately update local state for better UX
+      const updatedBookmarks = bookmarks.filter(bookmark => {
+        if (typeof bookmark === 'string') {
+          return bookmark !== questionId;
+        }
+        return bookmark.questionId !== questionId;
+      });
+      setBookmarks(updatedBookmarks);
 
-      // Remove the bookmark from the current list
-      setBookmarks(bookmarks.filter(b => b.questionId !== questionId));
+      // 2. Remove from server
+      await removeBookmarkFromCollection(selectedCollection, questionId, username);
 
-      // Refresh collections to update count
-      loadCollections();
+      // 3. Force reload of collections and bookmarks
+      await loadCollections();
+
+      if (selectedCollection) {
+        await loadBookmarksForCollection(selectedCollection);
+      }
     } catch (err) {
       console.error('Failed to remove bookmark', err);
-      setError((err as Error).message);
+      setError(err instanceof Error ? err.message : 'Failed to remove bookmark');
+
+      // 4. On error, reload the data to keep UI in sync
+      loadBookmarksForCollection(selectedCollection);
     }
   };
 
   const filteredBookmarks = bookmarks.filter(bookmark => {
     if (!searchTerm) return true;
-    return bookmark.questionId.toLowerCase().includes(searchTerm.toLowerCase());
+
+    let questionId;
+
+    // Handle if bookmark is a string
+    if (typeof bookmark === 'string') {
+      questionId = bookmark;
+    }
+    // Handle if bookmark is an object
+    else if (bookmark && bookmark.questionId) {
+      questionId = bookmark.questionId;
+    } else {
+      console.warn('Filtering out invalid bookmark:', bookmark);
+      return false;
+    }
+
+    // Validate the question ID
+    const questionIdString = String(questionId);
+    if (!questionIdString || questionIdString === 'undefined' || questionIdString === 'null') {
+      console.warn('Filtering out bookmark with invalid questionId:', questionIdString);
+      return false;
+    }
+
+    // Convert for case-insensitive search
+    const lowerQuestionId = questionIdString.toLowerCase();
+    const searchTermLower = searchTerm.toLowerCase();
+
+    // Get title if available
+    const title = bookmarkDetails[questionIdString]?.title?.toLowerCase() || '';
+
+    // Match either the ID or title
+    return lowerQuestionId.includes(searchTermLower) || title.includes(searchTermLower);
   });
 
   const selectedCollectionData = collections.find(c => c._id.toString() === selectedCollection);
@@ -374,41 +459,59 @@ const BookmarkCollections: React.FC = () => {
               {/* Bookmarks List */}
               <div className='bookmarks-list'>
                 {filteredBookmarks.length > 0 ? (
-                  filteredBookmarks.map(bookmark => (
-                    // Make sure we have a valid ID
-                    // const questionId = bookmark.questionId ? String(bookmark.questionId) : '';
-                    // console.log(bookmark.questionId, 'questionId:', questionId);
+                  filteredBookmarks.map((bookmark, index) => {
+                    // Determine questionId based on bookmark type
+                    let questionId;
+                    if (typeof bookmark === 'string') {
+                      questionId = bookmark;
+                    } else if (bookmark && bookmark.questionId) {
+                      questionId = bookmark.questionId;
+                    } else {
+                      console.error('Invalid bookmark format:', bookmark);
+                      return null;
+                    }
 
-                    // // Skip rendering if ID is invalid
-                    // if (!questionId) {
-                    //   console.error('Found bookmark with invalid questionId:', bookmark);
-                    //   return null;
-                    // }
+                    // Convert to string and validate
+                    const questionIdString = String(questionId);
+                    if (!questionIdString) {
+                      console.error('Found bookmark with invalid questionId');
+                      return null;
+                    }
 
-                    <div key={bookmark.questionId} className='bookmark-card'>
-                      <div
-                        className='bookmark-content'
-                        onClick={() => handleBookmarkClick(bookmark.questionId)}>
-                        <h3>Question: {bookmark.questionId}</h3>
-                        <div className='bookmark-meta'>
-                          {bookmark.createdAt && (
-                            <span className='bookmark-date'>
-                              Added: {new Date(bookmark.createdAt).toLocaleDateString()}
+                    const uniqueKey = `bookmark-${index}-${questionIdString}`;
+                    return (
+                      <div key={uniqueKey} className='bookmark-card'>
+                        <div
+                          className='bookmark-content'
+                          onClick={() => {
+                            handleBookmarkClick(questionIdString);
+                          }}>
+                          <h3>
+                            {bookmarkDetails[questionIdString]?.title ||
+                              `Question ID: ${questionIdString}`}
+                          </h3>
+                          <div className='bookmark-meta'>
+                            {typeof bookmark !== 'string' && bookmark.createdAt && (
+                              <span className='bookmark-date'>
+                                Added: {new Date(bookmark.createdAt).toLocaleDateString()}
+                              </span>
+                            )}
+                            <span className='bookmark-user'>
+                              By: {typeof bookmark !== 'string' ? bookmark.username : username}
                             </span>
-                          )}
-                          <span className='bookmark-user'>By: {bookmark.username}</span>
+                          </div>
                         </div>
+                        <button
+                          className='remove-btn'
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleRemoveBookmark(questionIdString);
+                          }}>
+                          Remove
+                        </button>
                       </div>
-                      <button
-                        className='remove-btn'
-                        onClick={e => {
-                          e.stopPropagation();
-                          handleRemoveBookmark(bookmark.questionId);
-                        }}>
-                        Remove
-                      </button>
-                    </div>
-                  ))
+                    );
+                  })
                 ) : (
                   <div className='empty-bookmarks'>
                     {searchTerm ? (

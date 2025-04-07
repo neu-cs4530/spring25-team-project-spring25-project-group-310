@@ -13,7 +13,19 @@ interface BookmarkPromptProps {
   username: string;
 }
 
-const BookmarkPrompt: React.FC<BookmarkPromptProps> = ({ questionId, onClose, onSuccess }) => {
+interface BookmarkResult {
+  isWarning?: boolean;
+  message?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  collection?: any;
+}
+
+const BookmarkPrompt: React.FC<BookmarkPromptProps> = ({
+  questionId,
+  onClose,
+  onSuccess,
+  username,
+}) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [collections, setCollections] = useState<any[]>([]);
   const [collectionName, setCollectionName] = useState('');
@@ -21,7 +33,6 @@ const BookmarkPrompt: React.FC<BookmarkPromptProps> = ({ questionId, onClose, on
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useUserContext();
-  const { username } = user;
 
   // Fetch existing collections when component mounts
   useEffect(() => {
@@ -31,6 +42,7 @@ const BookmarkPrompt: React.FC<BookmarkPromptProps> = ({ questionId, onClose, on
         setCollections(fetchedCollections);
       } catch (err) {
         console.error('Error fetching collections:', err);
+        setError('Failed to load collections');
       }
     };
     loadCollections();
@@ -39,14 +51,28 @@ const BookmarkPrompt: React.FC<BookmarkPromptProps> = ({ questionId, onClose, on
   const handleBookmark = async () => {
     setIsLoading(true);
     setError('');
+
     try {
+      // Ensure questionId is a string
+      const questionIdString = String(questionId);
+
       if (collectionName.trim() && !selectedCollectionId) {
-        const newCollection = await createCollection(collectionName.trim(), user.username);
-        await addBookmarkToCollection(newCollection._id.toString(), questionId, user.username);
+        // Create a new collection and add bookmark to it
+        const newCollection = await createCollection(collectionName.trim(), username);
+        await addBookmarkToCollection(newCollection._id.toString(), questionIdString, username);
       }
       // If only an existing collection is selected
       else if (selectedCollectionId) {
-        await addBookmarkToCollection(selectedCollectionId, questionId, user.username);
+        const result = await addBookmarkToCollection(
+          selectedCollectionId,
+          questionIdString,
+          username,
+        );
+
+        // Type guard check
+        if (result && typeof result === 'object' && 'isWarning' in result) {
+          console.log(result.message); // Log the warning but don't show it as an error
+        }
       }
 
       onSuccess();
@@ -77,7 +103,7 @@ const BookmarkPrompt: React.FC<BookmarkPromptProps> = ({ questionId, onClose, on
         ))}
       </select>
 
-      <div style={{ margin: '10px 0', textAlign: 'center' }}>— New Collection —</div>
+      <div style={{ margin: '10px 0', textAlign: 'center' }}>— OR —</div>
       <input
         type='text'
         value={collectionName}
@@ -91,7 +117,7 @@ const BookmarkPrompt: React.FC<BookmarkPromptProps> = ({ questionId, onClose, on
       {error && <p className='error-message'>{error}</p>}
       <div className='modal-actions'>
         <button onClick={handleBookmark} className='login-button' disabled={isLoading}>
-          {isLoading ? 'Creating Collection...' : 'Create a Collection'}
+          {isLoading ? 'Saving...' : 'Save Bookmark'}
         </button>
         <button onClick={onClose} className='cancel-button' disabled={isLoading}>
           Cancel

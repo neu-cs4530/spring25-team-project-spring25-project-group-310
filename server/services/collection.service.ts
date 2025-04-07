@@ -105,20 +105,37 @@ export const addBookmarkToCollection = async (
   username: string,
 ): Promise<CollectionResponse> => {
   try {
+    // First, check if the bookmark is already in the collection
+    const collection = await CollectionModel.findOne({
+      _id: collectionId,
+      username,
+      bookmarks: bookmarkId // This checks if bookmarkId is already in the bookmarks array
+    });
+
+    if (collection) {
+      return { 
+        message: 'Bookmark already exists in this collection',
+        isWarning: true,
+        collection
+      };
+    }
+
+    // If not already in collection, add it
     const updatedCollection: DatabaseCollection | null = await CollectionModel.findOneAndUpdate(
       { _id: collectionId, username },
-      { $push: { bookmarks: bookmarkId } },
+      { $addToSet: { bookmarks: bookmarkId } }, // Use $addToSet instead of $push to prevent duplicates
       { new: true },
     );
+    
     if (!updatedCollection) {
       return { error: 'Collection not found or failed to add bookmark' };
     }
+    
     return updatedCollection;
   } catch (error) {
     return { error: `Error when adding bookmark to collection: ${(error as Error).message}` };
   }
 };
-
 /**
  * Removes a bookmark from a collection.
  * @param {string} collectionId - The ID of the collection.
@@ -137,11 +154,14 @@ export const removeBookmarkFromCollection = async (
       { $pull: { bookmarks: bookmarkId } },
       { new: true },
     );
+
     if (!updatedCollection) {
       return { error: 'Collection not found or failed to remove bookmark' };
     }
+
     return updatedCollection;
   } catch (error) {
+    console.error('Error in removeBookmarkFromCollection:', error);
     return { error: `Error when removing bookmark from collection: ${(error as Error).message}` };
   }
 };

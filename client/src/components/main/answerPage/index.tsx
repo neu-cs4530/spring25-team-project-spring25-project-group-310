@@ -27,14 +27,18 @@ const AnswerPage = () => {
       if (!questionID || !username) return;
 
       try {
+        // Convert questionID to string for consistent comparison
+        const questionIdString = String(questionID);
+
         // Fetch all bookmarks for the user
         const bookmarks = await fetchAllBookmarks(username);
 
         // Check if this question is already in the bookmarks
-        const isAlreadyBookmarked = bookmarks.some(bookmark => bookmark.questionId === questionID);
+        const isAlreadyBookmarked = bookmarks.some(
+          bookmark => bookmark.questionId === questionIdString,
+        );
 
         setIsBookmarked(isAlreadyBookmarked);
-        console.log(`Question ${questionID} bookmark status:`, isAlreadyBookmarked);
       } catch (error) {
         console.error('Error checking bookmark status:', error);
       }
@@ -55,10 +59,11 @@ const AnswerPage = () => {
     }
 
     try {
-      console.log('Bookmarking question:', questionID, 'for user:', username);
+      // Make sure questionID is a string
+      const questionIdString = String(questionID);
 
       // Add bookmark to default collection
-      await addBookmarkWithoutCollection(questionID, username);
+      await addBookmarkWithoutCollection(questionIdString, username);
 
       // Update local state
       setIsBookmarked(true);
@@ -67,14 +72,12 @@ const AnswerPage = () => {
       window.dispatchEvent(
         new CustomEvent('bookmarkAdded', {
           detail: {
-            questionId: questionID,
+            questionId: questionIdString,
             username,
             title: question.title,
           },
         }),
       );
-
-      console.log('Bookmark added successfully, opening modal for collection selection');
 
       setIsBookmarkModalOpen(true);
     } catch (error) {

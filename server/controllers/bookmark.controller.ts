@@ -83,25 +83,30 @@ const bookmarkController = (socket?: FakeSOSocket) => {
    */
   const deleteBookmarkRoute = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { username, bookmarkId } = req.params;
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-      if (!ObjectId.isValid(bookmarkId)) {
-        res.status(400).send('Invalid bookmarkId format');
+      const { username, questionId } = req.params;
+
+      if (!ObjectId.isValid(questionId)) {
+        res.status(400).send('Invalid questionId format');
         return;
       }
-      const result = await deleteBookmark(bookmarkId, username);
+
+      const result = await deleteBookmark(questionId, username);
       if ('error' in result) {
-        throw new Error(result.error);
+        console.warn(`Delete bookmark error: ${result.error}`);
+        res.status(404).json({ message: result.error });
+        return;
       }
+
       res.json({ message: 'Bookmark deleted', bookmark: result });
     } catch (err: unknown) {
+      console.error('Unexpected error in deleteBookmarkRoute:', err);
       res.status(500).send(`Error when deleting bookmark: ${(err as Error).message}`);
     }
   };
 
   router.post('/:username', addBookmarkRoute);
   router.get('/:username', getBookmarksRoute);
-  router.delete('/:username/:bookmarkId', deleteBookmarkRoute);
+  router.delete('/:username/:questionId', deleteBookmarkRoute);
 
   return router;
 };
