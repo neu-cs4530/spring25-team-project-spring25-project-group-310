@@ -1,0 +1,109 @@
+.theme-preview-card {
+    width: 120px;
+    height: 180px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+    margin: 8px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .theme-preview-card.active {
+    border: 3px solid var(--primary-color);
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  }
+  
+  .theme-preview-header {
+    height: 20px;
+    cursor: pointer;
+  }
+  
+  .theme-preview-content {
+    padding: 8px;
+    flex: 1;
+    cursor: pointer;
+  }
+  
+  .theme-preview-title {
+    font-size: 10px;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  
+  .theme-preview-button {
+    width: 40px;
+    height: 12px;
+    border-radius: 3px;
+    margin-bottom: 4px;
+  }
+  
+  .theme-preview-line {
+    height: 4px;
+    border-radius: 2px;
+    margin-bottom: 4px;
+  }
+  
+  .theme-preview-line-1 {
+    width: 80%;
+  }
+  
+  .theme-preview-line-2 {
+    width: 60%;
+  }
+  
+  /* Theme voting container */
+  .theme-vote-container {
+    border-top: 1px solid var(--border-color);
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Theme vote buttons */
+  .theme-vote-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+  
+  .theme-vote-button-upvoted {
+    color: var(--primary-color, #0095ff);
+  }
+  
+  .theme-vote-button-downvoted {
+    color: var(--negative-color, #f44336);
+  }
+  
+  .theme-vote-button:hover {
+    opacity: 0.8;
+  }
+  
+  .theme-vote-button:focus {
+    outline: none;
+  }
+  
+  .theme-vote-button:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+  
+  .theme-vote-count {
+    margin: 0 8px;
+    font-size: 12px;
+    min-width: 20px;
+    text-align: center;
+  }
+  
+  /* Login message for non-logged-in users */
+  .theme-vote-login-message {
+    font-size: 10px;
+    text-align: center;
+    color: var(--muted-text);
+  }
