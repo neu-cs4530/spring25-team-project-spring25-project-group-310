@@ -4,7 +4,6 @@ import { Bookmark } from '@fake-stack-overflow/shared/types/bookmark';
 import {
   fetchCollections,
   createCollection,
-  removeBookmarkFromCollection,
   fetchBookmarksForCollection,
   fetchAllBookmarks,
 } from '../../../services/bookmarkService';
@@ -245,36 +244,6 @@ const BookmarkCollections: React.FC = () => {
     }
   };
 
-  const handleRemoveBookmark = async (questionId: string) => {
-    if (!selectedCollection || !username) return;
-
-    try {
-      // 1. Immediately update local state for better UX
-      const updatedBookmarks = bookmarks.filter(bookmark => {
-        if (typeof bookmark === 'string') {
-          return bookmark !== questionId;
-        }
-        return bookmark.questionId !== questionId;
-      });
-      setBookmarks(updatedBookmarks);
-
-      // 2. Remove from server
-      await removeBookmarkFromCollection(selectedCollection, questionId, username);
-
-      // 3. Force reload of collections and bookmarks
-      await loadCollections();
-
-      if (selectedCollection) {
-        await loadBookmarksForCollection(selectedCollection);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to remove bookmark');
-
-      // 4. On error, reload the data to keep UI in sync
-      loadBookmarksForCollection(selectedCollection);
-    }
-  };
-
   const filteredBookmarks = bookmarks.filter(bookmark => {
     if (!searchTerm) return true;
 
@@ -486,14 +455,6 @@ const BookmarkCollections: React.FC = () => {
                             </span>
                           </div>
                         </div>
-                        <button
-                          className='remove-btn'
-                          onClick={e => {
-                            e.stopPropagation();
-                            handleRemoveBookmark(questionIdString);
-                          }}>
-                          Remove
-                        </button>
                       </div>
                     );
                   })

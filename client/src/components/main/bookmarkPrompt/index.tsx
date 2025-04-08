@@ -10,6 +10,7 @@ interface BookmarkPromptProps {
   onClose: () => void;
   onSuccess: () => void;
   username: string;
+  isNewBookmark?: boolean;
 }
 
 const BookmarkPrompt: React.FC<BookmarkPromptProps> = ({
@@ -17,6 +18,7 @@ const BookmarkPrompt: React.FC<BookmarkPromptProps> = ({
   onClose,
   onSuccess,
   username,
+  isNewBookmark = false,
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [collections, setCollections] = useState<any[]>([]);
@@ -24,6 +26,7 @@ const BookmarkPrompt: React.FC<BookmarkPromptProps> = ({
   const [selectedCollectionId, setSelectedCollectionId] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(isNewBookmark);
 
   // Fetch existing collections when component mounts
   useEffect(() => {
@@ -64,6 +67,28 @@ const BookmarkPrompt: React.FC<BookmarkPromptProps> = ({
       setIsLoading(false);
     }
   };
+
+  const handleManage = () => {
+    setShowConfirmation(false);
+  };
+
+  if (showConfirmation) {
+    return (
+      <div className='bookmark-confirmation-modal'>
+        <div className='bookmark-confirmation-content'>
+          <p>Added to &quot;All Bookmarks&quot;</p>{' '}
+          <div className='bookmark-confirmation-actions'>
+            <button onClick={handleManage} className='bookmark-manage-button'>
+              Manage
+            </button>
+            <button onClick={onClose} className='bookmark-close-button'>
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='collection-modal'>
