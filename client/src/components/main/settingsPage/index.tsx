@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Box, Heading, Flex, Text, Button } from 'theme-ui';
 import { useTheme, ThemeType } from '../../../hooks/useTheme';
 import themePresets from '../../theme/ThemePresets';
@@ -227,7 +227,10 @@ const SettingsPage: React.FC = () => {
   } = useAccessibilitySettings();
 
   // Available themes - use the same list as in your original ThemeSelector
-  const availableThemes: ThemeType[] = ['light', 'dark', 'deep', 'funk', 'tosh', 'swiss'];
+  const availableThemes = useMemo<ThemeType[]>(
+    () => ['light', 'dark', 'deep', 'funk', 'tosh', 'swiss'],
+    [],
+  );
 
   // State for theme votes
   const [themeVotes, setThemeVotes] = useState<
@@ -236,7 +239,7 @@ const SettingsPage: React.FC = () => {
   const [isLoadingVotes, setIsLoadingVotes] = useState<boolean>(true);
 
   // Fetch theme votes
-  const fetchVotes = async () => {
+  const fetchVotes = useCallback(async () => {
     try {
       setIsLoadingVotes(true);
       const votes = await getThemeVotes();
@@ -262,16 +265,17 @@ const SettingsPage: React.FC = () => {
 
       setThemeVotes(votesRecord);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error fetching theme votes:', error);
     } finally {
       setIsLoadingVotes(false);
     }
-  };
+  }, [availableThemes]);
 
   // Fetch votes when component mounts
   useEffect(() => {
     fetchVotes();
-  }, []);
+  }, [fetchVotes]);
 
   // Listen for theme vote updates
   useEffect(() => {
