@@ -245,6 +245,7 @@ const BookmarkCollections: React.FC = () => {
     }
   };
 
+  // eslint-disable-next-line
   const handleRemoveBookmark = async (questionId: string) => {
     if (!selectedCollection || !username) return;
 
@@ -486,14 +487,6 @@ const BookmarkCollections: React.FC = () => {
                             </span>
                           </div>
                         </div>
-                        <button
-                          className='remove-btn'
-                          onClick={e => {
-                            e.stopPropagation();
-                            handleRemoveBookmark(questionIdString);
-                          }}>
-                          Remove
-                        </button>
                       </div>
                     );
                   })

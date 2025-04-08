@@ -6,22 +6,12 @@
   margin: 2% 0 2% 2%;
 }
 
-.bookmark_button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.5rem;
-  color: var(--accent-color);
-  transition: color 0.3s;
+.bookmark_button svg {
+  color: white !important;
 }
 
-.bookmark_button_bookmarked {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.5rem;
-  color: var(--button-active);
-  transition: color 0.3s;
+.bookmark_button_bookmarked svg {
+  color: #0095ff !important;
 }
 
 .bookmark_button:hover {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './index.css'; // Ensure you have access to the same styling
+import './index.css';
 
 interface CollectionModalProps {
   onClose: () => void;
