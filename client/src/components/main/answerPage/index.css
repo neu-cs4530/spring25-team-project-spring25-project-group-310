@@ -210,6 +210,12 @@
   .answer-button {
     width: 100%;
   }
+.bookmark_button svg {
+  color: white !important;
+}
+
+.bookmark_button_bookmarked svg {
+  color: #0095ff !important;
 }
 
 /* Dark mode enhancements */
