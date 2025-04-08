@@ -105,8 +105,6 @@ const ThemeVoteComponent = ({
         />
       </Flex>
 
-      {/* Single score display in the middle */}
-      {/* eslint-disable-next-line no-nested-ternary */}
       <Text sx={{ fontSize: 1, mx: 1, minWidth: '20px', textAlign: 'center' }}>{score}</Text>
 
       <Flex

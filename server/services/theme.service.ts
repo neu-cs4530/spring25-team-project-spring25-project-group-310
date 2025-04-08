@@ -1,6 +1,6 @@
+import { QueryOptions } from 'mongoose';
 import { ThemeVoteResponse } from '../types/types';
 import ThemeVoteModel from '../models/theme.model';
-import { QueryOptions } from 'mongoose';
 
 /**
  * Ensures that a theme has a vote record in the database.

@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import { Schema } from 'mongoose';
 
 /**
  * Mongoose schema for the ThemeVote collection.

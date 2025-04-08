@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
-import { ThemeVoteRequest } from '../types/types';
+import { ThemeVoteRequest, FakeSOSocket, ThemeVoteUpdatePayload } from '../types/types';
 import { addVoteToTheme, getAllThemeVotes } from '../services/theme.service';
-import { FakeSOSocket, ThemeVoteUpdatePayload } from '../types/types';
 
 /**
  * Controller for theme-related endpoints.
@@ -13,25 +12,21 @@ const themeVoteController = (socket?: FakeSOSocket) => {
   if (socket) {
     socket.on('connection', clientSocket => {
       clientSocket.on('themeVote', async data => {
-        try {
-          const { theme, voteType, username } = data;
-          if (!theme || !voteType || !username) return;
+        const { theme, voteType, username } = data;
+        if (!theme || !voteType || !username) return;
 
-          const status = await addVoteToTheme(
+        const status = await addVoteToTheme(
+          theme,
+          username,
+          voteType === 'up' ? 'upvote' : 'downvote',
+        );
+
+        if (!('error' in status)) {
+          socket.emit('themeVoteUpdate', {
             theme,
-            username,
-            voteType === 'up' ? 'upvote' : 'downvote',
-          );
-
-          if (!('error' in status)) {
-            socket.emit('themeVoteUpdate', {
-              theme,
-              upVotes: status.upVotes,
-              downVotes: status.downVotes,
-            });
-          }
-        } catch (error) {
-          console.error('Error processing theme vote:', error);
+            upVotes: status.upVotes,
+            downVotes: status.downVotes,
+          });
         }
       });
     });

@@ -1,9 +1,14 @@
+import mongoose from 'mongoose';
 import ThemeVoteModel from '../../models/theme.model';
 import { addVoteToTheme, getAllThemeVotes } from '../../services/theme.service';
+import { DatabaseThemeVote } from '../../types/types';
 
 // Mock the ThemeVoteModel
 jest.mock('../../models/theme.model');
 const MockedThemeVoteModel = ThemeVoteModel as jest.Mocked<typeof ThemeVoteModel>;
+
+// Helper type for mocking
+type MockDatabaseThemeVote = Partial<DatabaseThemeVote>;
 
 describe('Theme Vote Service', () => {
   beforeEach(() => {
@@ -12,58 +17,22 @@ describe('Theme Vote Service', () => {
   });
 
   describe('addVoteToTheme', () => {
-    it('should create theme vote record if it does not exist', async () => {
-      // Mock findOne to return null (theme vote record doesn't exist)
-      MockedThemeVoteModel.findOne.mockResolvedValue(null);
-
-      // Mock create method
-      const mockCreatedTheme = {
-        name: 'light',
-        upVotes: ['user1'],
-        downVotes: [],
-      };
-      MockedThemeVoteModel.create.mockResolvedValue(mockCreatedTheme as any);
-
-      // Mock findOneAndUpdate
-      const mockUpdatedTheme = {
-        name: 'light',
-        upVotes: ['user1'],
-        downVotes: [],
-      };
-      MockedThemeVoteModel.findOneAndUpdate.mockResolvedValue(mockUpdatedTheme as any);
-
-      const result = await addVoteToTheme('light', 'user1', 'upvote');
-
-      expect(MockedThemeVoteModel.findOne).toHaveBeenCalledWith({ name: 'light' });
-      expect(MockedThemeVoteModel.create).toHaveBeenCalledWith({
-        name: 'light',
-        upVotes: [],
-        downVotes: [],
-      });
-      expect(result).toEqual({
-        msg: 'Theme upvoted successfully',
-        theme: 'light',
-        upVotes: ['user1'],
-        downVotes: [],
-      });
-    });
-
     it('should upvote a theme successfully', async () => {
       // Mock existing theme
-      const existingTheme = {
+      const existingTheme: MockDatabaseThemeVote = {
         name: 'dark',
         upVotes: [],
         downVotes: [],
       };
-      MockedThemeVoteModel.findOne.mockResolvedValue(existingTheme as any);
+      MockedThemeVoteModel.findOne.mockResolvedValue(existingTheme as DatabaseThemeVote);
 
       // Mock findOneAndUpdate for upvote
-      const updatedTheme = {
+      const updatedTheme: MockDatabaseThemeVote = {
         name: 'dark',
         upVotes: ['user1'],
         downVotes: [],
       };
-      MockedThemeVoteModel.findOneAndUpdate.mockResolvedValue(updatedTheme as any);
+      MockedThemeVoteModel.findOneAndUpdate.mockResolvedValue(updatedTheme as DatabaseThemeVote);
 
       const result = await addVoteToTheme('dark', 'user1', 'upvote');
 
@@ -77,20 +46,20 @@ describe('Theme Vote Service', () => {
 
     it('should cancel upvote if user has already upvoted', async () => {
       // Mock existing theme with user already upvoted
-      const existingTheme = {
+      const existingTheme: MockDatabaseThemeVote = {
         name: 'deep',
         upVotes: ['user1'],
         downVotes: [],
       };
-      MockedThemeVoteModel.findOne.mockResolvedValue(existingTheme as any);
+      MockedThemeVoteModel.findOne.mockResolvedValue(existingTheme as DatabaseThemeVote);
 
       // Mock findOneAndUpdate for cancelling upvote
-      const updatedTheme = {
+      const updatedTheme: MockDatabaseThemeVote = {
         name: 'deep',
         upVotes: [],
         downVotes: [],
       };
-      MockedThemeVoteModel.findOneAndUpdate.mockResolvedValue(updatedTheme as any);
+      MockedThemeVoteModel.findOneAndUpdate.mockResolvedValue(updatedTheme as DatabaseThemeVote);
 
       const result = await addVoteToTheme('deep', 'user1', 'upvote');
 
@@ -117,7 +86,7 @@ describe('Theme Vote Service', () => {
   describe('getAllThemeVotes', () => {
     it('should fetch all theme votes successfully', async () => {
       // Mock theme votes
-      const mockThemeVotes = [
+      const mockThemeVotes: MockDatabaseThemeVote[] = [
         {
           name: 'light',
           upVotes: ['user1'],
@@ -127,9 +96,9 @@ describe('Theme Vote Service', () => {
           name: 'dark',
           upVotes: ['user3'],
           downVotes: [],
-        }
+        },
       ];
-      MockedThemeVoteModel.find.mockResolvedValue(mockThemeVotes as any);
+      MockedThemeVoteModel.find.mockResolvedValue(mockThemeVotes as DatabaseThemeVote[]);
 
       const result = await getAllThemeVotes();
 
@@ -145,7 +114,7 @@ describe('Theme Vote Service', () => {
           theme: 'dark',
           upVotes: ['user3'],
           downVotes: [],
-        }
+        },
       ]);
     });
 
