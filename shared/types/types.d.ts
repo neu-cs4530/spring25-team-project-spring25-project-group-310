@@ -10,4 +10,4 @@ export * from './user';
 export * from './bookmark';
 export * from './collection';
 export * from './fileMetaData';
-export * from './theme'
+export * from './theme';

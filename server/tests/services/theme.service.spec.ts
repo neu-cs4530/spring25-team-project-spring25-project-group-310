@@ -1,13 +1,10 @@
-import mongoose from 'mongoose';
 import ThemeVoteModel from '../../models/theme.model';
 import { addVoteToTheme, getAllThemeVotes } from '../../services/theme.service';
 import { DatabaseThemeVote } from '../../types/types';
 
-// Mock the ThemeVoteModel
 jest.mock('../../models/theme.model');
 const MockedThemeVoteModel = ThemeVoteModel as jest.Mocked<typeof ThemeVoteModel>;
 
-// Helper type for mocking
 type MockDatabaseThemeVote = Partial<DatabaseThemeVote>;
 
 describe('Theme Vote Service', () => {

@@ -113,7 +113,7 @@ export const addVoteToTheme = async (
 
 /**
  * Gets all theme votes from the database.
- * @returns {Promise<ThemeVoteResponse[]>} - Array of theme votes or error message
+ * @returns {Promise<ThemeVoteResponse[]>}
  */
 export const getAllThemeVotes = async (): Promise<ThemeVoteResponse[] | { error: string }> => {
   try {

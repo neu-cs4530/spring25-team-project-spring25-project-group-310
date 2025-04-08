@@ -1,4 +1,3 @@
-import React from 'react';
 import { Flex, Text } from 'theme-ui';
 import useUserContext from '../../hooks/useUserContext';
 import useThemeVote from '../../hooks/useThemeVote';
@@ -27,7 +26,6 @@ const ChevronUpIcon = ({
   </svg>
 );
 
-// Custom SVG Chevron Down Icon
 const ChevronDownIcon = ({
   size = 20,
   color = 'gray',
@@ -50,6 +48,13 @@ const ChevronDownIcon = ({
     <polyline points='6 9 12 15 18 9'></polyline>
   </svg>
 );
+
+// Function to determine text color based on count
+const getCountColor = (count: number) => {
+  if (count > 0) return 'green';
+  if (count < 0) return 'red';
+  return 'inherit';
+};
 
 // Voting Component
 const ThemeVoteComponent = ({
@@ -74,7 +79,6 @@ const ThemeVoteComponent = ({
       username: user.username,
     });
 
-    // Optionally call onVoteUpdate as a fallback if socket updates fail
     setTimeout(() => {
       onVoteUpdate();
     }, 500);
@@ -101,12 +105,11 @@ const ThemeVoteComponent = ({
         />
       </Flex>
 
-      {/* Single vote count in the middle */}
       <Text
         sx={{
           fontSize: 1,
           fontWeight: 'bold',
-          color: count > 0 ? 'green' : count < 0 ? 'red' : 'inherit',
+          color: getCountColor(count),
         }}>
         {count}
       </Text>
