@@ -198,6 +198,7 @@ const BookmarkCollections: React.FC = () => {
       setCollections([...collections, newCollection]);
       setNewCollectionName('');
       setIsCreatingCollection(false);
+      setSelectedCollection(newCollection._id.toString());
     } catch (err) {
       setError((err as Error).message);
     }
@@ -316,7 +317,9 @@ const BookmarkCollections: React.FC = () => {
         <div className='login-card'>
           <h2>Login Required</h2>
           <p>Please log in to view your bookmarks</p>
-          Go to Login
+          <button className='login-btn' onClick={() => navigate('/login')}>
+            Go to Login
+          </button>
         </div>
       </div>
     );
@@ -358,7 +361,19 @@ const BookmarkCollections: React.FC = () => {
           <div className='sidebar-header'>
             <h2>Collections</h2>
             <button className='create-btn' onClick={() => setIsCreatingCollection(true)}>
-              + New Collection
+              <svg
+                width='16'
+                height='16'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'>
+                <line x1='12' y1='5' x2='12' y2='19'></line>
+                <line x1='5' y1='12' x2='19' y2='12'></line>
+              </svg>
+              New
             </button>
           </div>
 
@@ -394,6 +409,7 @@ const BookmarkCollections: React.FC = () => {
                   key={collection._id.toString()}
                   className={`collection-item ${selectedCollection === collection._id.toString() ? 'active' : ''}`}
                   onClick={() => handleSelectCollection(collection._id.toString())}>
+                  <div className='collection-avatar'>{collection.name.charAt(0).toUpperCase()}</div>
                   <div className='collection-info'>
                     <span className='collection-name'>{collection.name}</span>
                     <span className='collection-count'>{collection.bookmarks.length}</span>
@@ -406,13 +422,37 @@ const BookmarkCollections: React.FC = () => {
                         e.stopPropagation();
                         handleDeleteCollection(collection._id.toString());
                       }}>
-                      Delete
+                      <svg
+                        width='14'
+                        height='14'
+                        viewBox='0 0 24 24'
+                        fill='none'
+                        stroke='currentColor'
+                        strokeWidth='2'
+                        strokeLinecap='round'
+                        strokeLinejoin='round'>
+                        <polyline points='3 6 5 6 21 6'></polyline>
+                        <path d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'></path>
+                      </svg>
                     </button>
                   )}
                 </div>
               ))
             ) : (
               <div className='empty-collections'>
+                <div className='empty-collections-icon'>
+                  <svg
+                    width='48'
+                    height='48'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    stroke='currentColor'
+                    strokeWidth='1.5'
+                    strokeLinecap='round'
+                    strokeLinejoin='round'>
+                    <path d='M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z'></path>
+                  </svg>
+                </div>
                 <p>No collections yet</p>
                 <button className='create-btn' onClick={() => setIsCreatingCollection(true)}>
                   Create Your First Collection
@@ -429,6 +469,19 @@ const BookmarkCollections: React.FC = () => {
               <div className='content-header'>
                 <h1>{selectedCollectionData?.name || 'Bookmarks'}</h1>
                 <div className='search-bar'>
+                  <svg
+                    className='search-icon'
+                    width='16'
+                    height='16'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    stroke='currentColor'
+                    strokeWidth='2'
+                    strokeLinecap='round'
+                    strokeLinejoin='round'>
+                    <circle cx='11' cy='11' r='8'></circle>
+                    <line x1='21' y1='21' x2='16.65' y2='16.65'></line>
+                  </svg>
                   <input
                     type='text'
                     placeholder='Search bookmarks...'
@@ -478,36 +531,69 @@ const BookmarkCollections: React.FC = () => {
                           <div className='bookmark-meta'>
                             {typeof bookmark !== 'string' && bookmark.createdAt && (
                               <span className='bookmark-date'>
-                                Added: {new Date(bookmark.createdAt).toLocaleDateString()}
+                                <svg
+                                  width='12'
+                                  height='12'
+                                  viewBox='0 0 24 24'
+                                  fill='none'
+                                  stroke='currentColor'
+                                  strokeWidth='2'
+                                  strokeLinecap='round'
+                                  strokeLinejoin='round'>
+                                  <circle cx='12' cy='12' r='10'></circle>
+                                  <polyline points='12 6 12 12 16 14'></polyline>
+                                </svg>
+                                {new Date(bookmark.createdAt).toLocaleDateString()}
                               </span>
                             )}
                             <span className='bookmark-user'>
-                              By: {typeof bookmark !== 'string' ? bookmark.username : username}
+                              <svg
+                                width='12'
+                                height='12'
+                                viewBox='0 0 24 24'
+                                fill='none'
+                                stroke='currentColor'
+                                strokeWidth='2'
+                                strokeLinecap='round'
+                                strokeLinejoin='round'>
+                                <path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'></path>
+                                <circle cx='12' cy='7' r='4'></circle>
+                              </svg>
+                              {typeof bookmark !== 'string' ? bookmark.username : username}
                             </span>
                           </div>
                         </div>
-                        <button
-                          className='remove-btn'
-                          onClick={e => {
-                            e.stopPropagation();
-                            handleRemoveBookmark(questionIdString);
-                          }}>
-                          Remove
-                        </button>
                       </div>
                     );
                   })
                 ) : (
                   <div className='empty-bookmarks'>
+                    <div className='empty-bookmarks-icon'>
+                      <svg
+                        width='48'
+                        height='48'
+                        viewBox='0 0 24 24'
+                        fill='none'
+                        stroke='currentColor'
+                        strokeWidth='1.5'
+                        strokeLinecap='round'
+                        strokeLinejoin='round'>
+                        <path d='M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z'></path>
+                      </svg>
+                    </div>
                     {searchTerm ? (
                       <>
-                        <p>No bookmarks match your search</p>
+                        <h3>No matching bookmarks</h3>
+                        <p>Try a different search term or browse all bookmarks</p>
                         <button className='clear-btn' onClick={() => setSearchTerm('')}>
                           Clear Search
                         </button>
                       </>
                     ) : (
-                      <p>No bookmarks in this collection yet</p>
+                      <>
+                        <h3>No bookmarks yet</h3>
+                        <p>Bookmarks you add to this collection will appear here</p>
+                      </>
                     )}
                   </div>
                 )}
@@ -515,6 +601,17 @@ const BookmarkCollections: React.FC = () => {
             </>
           ) : (
             <div className='no-selection'>
+              <svg
+                width='64'
+                height='64'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='1'
+                strokeLinecap='round'
+                strokeLinejoin='round'>
+                <path d='M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z'></path>
+              </svg>
               <h2>Select a Collection</h2>
               <p>Choose a collection from the sidebar to view your bookmarks</p>
             </div>

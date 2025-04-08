@@ -19,23 +19,26 @@ interface QuestionHeaderProps {
 }
 
 /**
- * QuestionHeader component displays the header section for a list of questions.
- * It includes the title, a button to ask a new question, the number of the quesions,
- * and buttons to set the order of questions.
+ * QuestionHeader component displays a modern header section for a list of questions.
  *
  * @param titleText - The title text to display in the header.
  * @param qcnt - The number of questions displayed in the header.
  * @param setQuestionOrder - Function to set the order of questions based on input message.
  */
 const QuestionHeader = ({ titleText, qcnt, setQuestionOrder }: QuestionHeaderProps) => (
-  <div>
-    <div className='space_between right_padding'>
-      <div className='bold_title'>{titleText}</div>
+  <div className='question-header-container'>
+    <div className='header-top-row'>
+      <h1 className='header-title'>{titleText}</h1>
       <AskQuestionButton />
     </div>
-    <div className='space_between right_padding'>
-      <div id='question_count'>{qcnt} questions</div>
-      <div className='btns'>
+
+    <div className='header-bottom-row'>
+      <div className='question-count'>
+        <span className='count-number'>{qcnt}</span> questions
+      </div>
+
+      <div className='order-buttons'>
+        <span className='sort-label'>Sort by:</span>
         {Object.keys(orderTypeDisplayName).map(order => (
           <OrderButton
             key={order}

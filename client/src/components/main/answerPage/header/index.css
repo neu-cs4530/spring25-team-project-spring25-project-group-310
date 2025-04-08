@@ -1,3 +1,39 @@
-.answer_question_title {
-  max-width: 60%;
+/* AnswerHeader styling with count below question */
+.question-title-container {
+  flex: 1;
+  margin-right: 16px;
+}
+
+.question-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-text);
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.answer-count {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--secondary-text);
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.answer-count .count {
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .question-title {
+    font-size: 20px;
+  }
+  
+  .answer-count {
+    font-size: 13px;
+  }
 }

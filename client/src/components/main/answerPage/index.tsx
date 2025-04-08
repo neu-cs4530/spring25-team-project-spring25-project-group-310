@@ -44,7 +44,7 @@ const AnswerPage = () => {
   }, [questionID, username]);
 
   if (!question) {
-    return null;
+    return <div className='loading-container'>Loading question...</div>;
   }
 
   const handleBookmarkClick = async () => {
@@ -86,16 +86,93 @@ const AnswerPage = () => {
   };
 
   return (
-    <>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <VoteComponent question={question} />
+    <div className='answer-page-container'>
+      <div className='question-section'>
+        {/* Question Header with Title and Actions */}
+        <div className='question-header'>
+          <AnswerHeader ansCount={question.answers.length} title={question.title} />
+
+          <div className='question-actions'>
+            <button
+              className={`bookmark-button ${isBookmarked ? 'bookmarked' : ''}`}
+              onClick={handleBookmarkClick}
+              title={isBookmarked ? 'Organize bookmark' : 'Bookmark this question'}>
+              <FontAwesomeIcon icon={faBookmark} />
+              <span className='bookmark-text'>{isBookmarked ? 'Bookmarked' : 'Bookmark'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Question Content */}
+        <div className='question-content'>
+          <div className='vote-section'>
+            <VoteComponent question={question} />
+          </div>
+
+          <div className='question-body-section'>
+            <QuestionBody
+              views={question.views.length}
+              text={question.text}
+              askby={question.askedBy}
+              meta={getMetaData(new Date(question.askDateTime))}
+              codeSnippet={question.codeSnippet}
+              files={question.files}
+              questionId={String(question._id)}
+            />
+
+            <CommentSection
+              comments={question.comments}
+              handleAddComment={(comment: Comment) =>
+                handleNewComment(comment, 'question', questionID)
+              }
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Answers Section */}
+      {question.answers.length > 0 && (
+        <div className='answers-section'>
+          <div className='section-header'>
+            <h2>
+              {question.answers.length} {question.answers.length === 1 ? 'Answer' : 'Answers'}
+            </h2>
+          </div>
+
+          <div className='answers-list'>
+            {question.answers.map(a => (
+              <AnswerView
+                key={String(a._id)}
+                text={a.text}
+                ansBy={a.ansBy}
+                meta={getMetaData(new Date(a.ansDateTime))}
+                comments={a.comments}
+                codeSnippet={a.codeSnippet}
+                files={a.files}
+                answerId={String(a._id)}
+                handleAddComment={(comment: Comment) =>
+                  handleNewComment(comment, 'answer', String(a._id))
+                }
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Your Answer Section */}
+      <div className='your-answer-section'>
         <button
-          className={`bookmark_button ${isBookmarked ? 'bookmarked' : ''}`}
-          onClick={handleBookmarkClick}
-          style={{ marginLeft: '10px' }}
-          title={isBookmarked ? 'Organize bookmark' : 'Bookmark this question'}>
-          <FontAwesomeIcon icon={faBookmark} />
+          className='answer-button'
+          onClick={() => {
+            handleNewAnswer();
+          }}>
+          <span className='icon'></span>
+          Answer Question
         </button>
+
+        <p className='answer-prompt'>
+          Know the solution? Share your knowledge and help the community.
+        </p>
       </div>
 
       {/* Bookmark Prompt Modal */}
@@ -107,44 +184,7 @@ const AnswerPage = () => {
           username={currentUser.username}
         />
       )}
-
-      <AnswerHeader ansCount={question.answers.length} title={question.title} />
-      <QuestionBody
-        views={question.views.length}
-        text={question.text}
-        askby={question.askedBy}
-        meta={getMetaData(new Date(question.askDateTime))}
-        codeSnippet={question.codeSnippet}
-        files={question.files}
-        questionId={String(question._id)}
-      />
-      <CommentSection
-        comments={question.comments}
-        handleAddComment={(comment: Comment) => handleNewComment(comment, 'question', questionID)}
-      />
-      {question.answers.map(a => (
-        <AnswerView
-          key={String(a._id)}
-          text={a.text}
-          ansBy={a.ansBy}
-          meta={getMetaData(new Date(a.ansDateTime))}
-          comments={a.comments}
-          codeSnippet={a.codeSnippet}
-          files={a.files}
-          answerId={String(a._id)}
-          handleAddComment={(comment: Comment) =>
-            handleNewComment(comment, 'answer', String(a._id))
-          }
-        />
-      ))}
-      <button
-        className='bluebtn ansButton'
-        onClick={() => {
-          handleNewAnswer();
-        }}>
-        Answer Question
-      </button>
-    </>
+    </div>
   );
 };
 

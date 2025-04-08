@@ -1,29 +1,52 @@
 .vote-container {
-  display: flex;
+  display: inline-flex; 
   align-items: center;
-  padding: 12px;
+  background-color: var(--secondary-bg);
+  border-radius: 20px;
+  padding: 4px 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  width: auto;
+  min-width: fit-content;
 }
 
 .vote-button {
-  padding: 0.5rem;
-  margin-right: 0.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: 0.125rem;
-  background-color: var(--secondary-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
   cursor: pointer;
-  outline: none;
+  padding: 6px;
+  border-radius: 50%;
+  color: var(--secondary-text);
+  transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
 }
 
-.vote-button-upvoted {
-  background-color: var(--button-hover);
-  color: var(--button-text);
+.vote-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--primary-text);
 }
 
-.vote-button-downvoted {
-  background-color: var(--accent-color);
-  color: var(--button-text);
+.vote-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.vote-button.active.upvote {
+  color: #4CAF50; /* Green for upvotes */
+}
+
+.vote-button.active.downvote {
+  color: #F44336; /* Red for downvotes */
 }
 
 .vote-count {
-  margin-left: 0.5rem;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--primary-text);
+  margin: 0 6px;
+  min-width: 20px;
+  text-align: center;
 }
