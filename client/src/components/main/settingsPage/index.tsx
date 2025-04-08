@@ -106,6 +106,7 @@ const ThemeVoteComponent = ({
       </Flex>
 
       {/* Single score display in the middle */}
+      {/* eslint-disable-next-line no-nested-ternary */}
       <Text sx={{ fontSize: 1, mx: 1, minWidth: '20px', textAlign: 'center' }}>{score}</Text>
 
       <Flex
@@ -143,7 +144,7 @@ const ThemePreviewCard = ({
     <Box
       sx={{
         width: '120px',
-        height: '180px',
+        height: '140px',
         borderRadius: '8px',
         overflow: 'hidden',
         border: isActive ? '3px solid' : '1px solid',
