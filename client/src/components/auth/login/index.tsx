@@ -1,4 +1,3 @@
-import React from 'react';
 import './index.css';
 import { Link } from 'react-router-dom';
 import useAuth from '../../../hooks/useAuth';
@@ -20,7 +19,7 @@ const Login = () => {
 
   return (
     <div className='container'>
-      <h2>Welcome to FakeStackOverflow!</h2>
+      <h2>Welcome to Semicolon!</h2>
       <h3>Please login to continue.</h3>
       <form onSubmit={handleSubmit}>
         <h4>Please enter your username.</h4>

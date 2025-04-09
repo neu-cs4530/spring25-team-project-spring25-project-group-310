@@ -18,7 +18,7 @@ describe("Cypress Tests to verify adding new answers", () => {
       A2_TXT,
     ];
     cy.visit("http://localhost:3000");
-    cy.contains('Welcome to FakeStackOverflow!');
+    cy.contains('Welcome to Semicolon');
     cy.get("#usernameInput").type("testuser")
     cy.contains("Submit").click();
     cy.contains(Q1_DESC).click();
@@ -35,7 +35,7 @@ describe("Cypress Tests to verify adding new answers", () => {
 
   it("5.3 | Answer is mandatory when creating a new answer", () => {
     cy.visit("http://localhost:3000");
-    cy.contains('Welcome to FakeStackOverflow!');
+    cy.contains('Welcome to Semicolon!');
     cy.get("#usernameInput").type("testuser")
     cy.contains("Submit").click();
     cy.contains(Q1_DESC).click();

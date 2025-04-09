@@ -14,7 +14,8 @@ interface VoteComponentProps {
 }
 
 /**
- * A Vote component that allows users to upvote or downvote a question.
+ * A modern Vote component with horizontal layout that allows users
+ * to upvote or downvote a question.
  *
  * @param question - The question object containing voting information.
  */
@@ -44,16 +45,40 @@ const VoteComponent = ({ question }: VoteComponentProps) => {
   return (
     <div className='vote-container'>
       <button
-        className={`vote-button ${voted === 1 ? 'vote-button-upvoted' : ''}`}
-        onClick={() => handleVote('upvote')}>
-        Upvote
+        className={`vote-button upvote ${voted === 1 ? 'active' : ''}`}
+        onClick={() => handleVote('upvote')}
+        aria-label='Upvote'>
+        <svg
+          viewBox='0 0 24 24'
+          width='24'
+          height='24'
+          stroke='currentColor'
+          strokeWidth='2'
+          fill='none'
+          strokeLinecap='round'
+          strokeLinejoin='round'>
+          <polyline points='18 15 12 9 6 15'></polyline>
+        </svg>
       </button>
+
+      <div className='vote-count'>{count}</div>
+
       <button
-        className={`vote-button ${voted === -1 ? 'vote-button-downvoted' : ''}`}
-        onClick={() => handleVote('downvote')}>
-        Downvote
+        className={`vote-button downvote ${voted === -1 ? 'active' : ''}`}
+        onClick={() => handleVote('downvote')}
+        aria-label='Downvote'>
+        <svg
+          viewBox='0 0 24 24'
+          width='24'
+          height='24'
+          stroke='currentColor'
+          strokeWidth='2'
+          fill='none'
+          strokeLinecap='round'
+          strokeLinejoin='round'>
+          <polyline points='6 9 12 15 18 9'></polyline>
+        </svg>
       </button>
-      <span className='vote-count'>{count}</span>
     </div>
   );
 };

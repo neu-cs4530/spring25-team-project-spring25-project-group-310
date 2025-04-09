@@ -1,4 +1,6 @@
 import { Schema } from 'mongoose';
+import fileMetaDataSchema from './fileMetaData.schema';
+
 /**
  * Mongoose schema for the Question collection.
  *
@@ -23,6 +25,11 @@ const questionSchema: Schema = new Schema(
     text: {
       type: String,
     },
+    codeSnippet: {
+      type: String,
+      default: '',
+    },
+    files: [fileMetaDataSchema],
     tags: [{ type: Schema.Types.ObjectId, ref: 'Tag' }],
     answers: [{ type: Schema.Types.ObjectId, ref: 'Answer' }],
     askedBy: {

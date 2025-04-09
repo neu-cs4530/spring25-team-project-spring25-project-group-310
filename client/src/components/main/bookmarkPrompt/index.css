@@ -1,0 +1,392 @@
+/* BookmarkPrompt Styling */
+
+.bookmark-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+.bookmark-modal {
+  background-color: var(--primary-bg);
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90vw;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: modalFadeIn 0.25s ease-out;
+  overflow: hidden;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Confirmation view styling */
+.confirmation-view {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.confirmation-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: rgba(var(--accent-color-rgb, 0, 120, 255), 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-color);
+  margin-bottom: 16px;
+  animation: checkmarkPop 0.4s ease-out;
+}
+
+@keyframes checkmarkPop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.confirmation-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--primary-text);
+  margin: 0 0 24px 0;
+}
+
+.confirmation-actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.manage-button,
+.close-button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.manage-button {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: none;
+}
+
+.manage-button:hover {
+  background-color: var(--button-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.close-button {
+  background-color: transparent;
+  color: var(--secondary-text);
+  border: 1px solid var(--border-color);
+}
+
+.close-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--primary-text);
+}
+
+/* Collection selection view styling */
+.bookmark-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.bookmark-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--primary-text);
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  color: var(--secondary-text);
+  font-size: 24px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.close-modal-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--primary-text);
+}
+
+.bookmark-modal-content {
+  padding: 20px;
+}
+
+/* Tab Navigation */
+.bookmark-tabs {
+  display: flex;
+  background-color: var(--secondary-bg);
+  border-radius: 8px;
+  padding: 4px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.bookmark-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--secondary-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  position: relative;
+  text-align: center;
+}
+
+.bookmark-tab:hover {
+  color: var(--primary-text);
+}
+
+.bookmark-tab.active {
+  color: var(--accent-color);
+  background-color: var(--primary-bg);
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Collection List */
+.collection-selection {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.collection-option {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--primary-bg);
+}
+
+.collection-option:hover {
+  background-color: rgba(var(--accent-color-rgb, 0, 120, 255), 0.05);
+}
+
+.collection-option.selected {
+  background-color: rgba(var(--accent-color-rgb, 0, 120, 255), 0.1);
+  border-color: rgba(var(--accent-color-rgb, 0, 120, 255), 0.2);
+}
+
+.collection-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background-color: var(--accent-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.collection-option-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.collection-option-name {
+  font-weight: 500;
+  color: var(--primary-text);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.collection-option-count {
+  font-size: 12px;
+  color: var(--secondary-text);
+}
+
+.check-icon {
+  color: var(--accent-color);
+  font-size: 18px;
+  margin-left: 12px;
+}
+
+/* Empty Collection State */
+.no-collections {
+  text-align: center;
+  padding: 24px 0;
+  color: var(--secondary-text);
+}
+
+.switch-to-create-btn {
+  background: none;
+  border: none;
+  color: var(--accent-color);
+  font-size: 14px;
+  padding: 6px 12px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.switch-to-create-btn:hover {
+  background-color: rgba(var(--accent-color-rgb, 0, 120, 255), 0.08);
+  text-decoration: none;
+}
+
+/* Create Collection Form */
+.create-collection-form {
+  margin-bottom: 16px;
+}
+
+.create-collection-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--primary-text);
+}
+
+.collection-name-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: var(--input-bg);
+  color: var(--primary-text);
+  transition: all 0.2s ease;
+}
+
+.collection-name-input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb, 0, 120, 255), 0.15);
+  outline: none;
+}
+
+/* Error Message */
+.bookmark-error-message {
+  margin-top: 16px;
+  padding: 10px;
+  background-color: rgba(255, 71, 87, 0.1);
+  color: #ff4757;
+  border-radius: 6px;
+  font-size: 14px;
+  border-left: 3px solid #ff4757;
+}
+
+/* Modal Actions */
+.bookmark-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  background-color: var(--secondary-bg);
+  border-top: 1px solid var(--border-color);
+}
+
+.cancel-bookmark-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: 6px;
+  color: var(--secondary-text);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-bookmark-btn:hover:not(:disabled) {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--primary-text);
+}
+
+.save-bookmark-btn {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.save-bookmark-btn:hover:not(:disabled) {
+  background-color: var(--button-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .confirmation-view {
+    padding: 24px 16px;
+  }
+
+  .bookmark-modal-actions,
+  .confirmation-actions {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .manage-button,
+  .close-button,
+  .save-bookmark-btn,
+  .cancel-bookmark-btn {
+    width: 100%;
+  }
+}

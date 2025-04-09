@@ -41,13 +41,18 @@ const getQuestionById = async (
 };
 
 /**
- * Function to add a new question.
+ * Function to add a new question with file support.
  *
- * @param q - The question object to add.
+ * @param q - The question object to add (includes Base64 encoded files).
  * @throws Error if there is an issue creating the new question.
  */
 const addQuestion = async (q: Question): Promise<PopulatedDatabaseQuestion> => {
-  const res = await api.post(`${QUESTION_API_URL}/addQuestion`, q);
+  // Use JSON for sending question data with Base64 encoded files
+  const res = await api.post(`${QUESTION_API_URL}/addQuestion`, q, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 
   if (res.status !== 200) {
     throw new Error('Error while creating a new question');

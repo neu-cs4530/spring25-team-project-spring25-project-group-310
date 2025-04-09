@@ -1,42 +1,126 @@
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  height: 10%;
-  width: 100%;
-  background: #dddddd;
+/* Enhanced Header styles with better responsiveness */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: box-shadow 0.3s ease;
 }
 
-.title {
-  font-size: 32px;
-  font-weight: 800;
+/* Shadow when scrolling */
+header.scrolled {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
 }
 
-.logout-button {
-  padding: 12px;
-  font-size: 16px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+/* Ensure search input is properly styled */
+header input {
+  transition: all 0.2s ease !important;
 }
 
-.view-profile-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-left: 10px; /* Add spacing from Logout button */
+header input::placeholder {
+  color: rgba(0, 0, 0, 0.4) !important;
 }
 
-.view-profile-button:hover {
-  background-color: #0056b3;
+/* Logo animation */
+header .logo-container:hover {
+  animation: pulse 1s infinite ease-in-out;
 }
 
-.view-profile-button:active {
-  background-color: #003f7f;
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Button styling */
+header button {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ripple effect for buttons */
+header button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1) translate(-50%, -50%);
+  transform-origin: 50% 50%;
+}
+
+header button:active::after {
+  animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+  0% { transform: scale(0); opacity: 0.5; }
+  100% { transform: scale(30); opacity: 0; }
+}
+
+/* Mobile menu animation */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-menu {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Extra responsive adjustments */
+@media (max-width: 1024px) {
+  header .logo-text {
+    font-size: 24px !important;
+  }
+  
+  header .search-container {
+    max-width: 60% !important;
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    padding: 0 1rem !important;
+    height: 60px !important;
+  }
+  
+  header .logo-container {
+    width: auto !important;
+  }
+  
+  header .search-container {
+    display: none !important;
+  }
+  
+  header .logo-text {
+    font-size: 22px !important;
+  }
+  
+  header .icon-buttons {
+    display: none !important;
+  }
+  
+  header .mobile-menu-toggle {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 480px) {
+  header .logo-text {
+    font-size: 20px !important;
+  }
+  
+  .mobile-menu button {
+    font-size: 14px !important;
+  }
 }

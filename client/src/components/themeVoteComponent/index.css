@@ -1,0 +1,58 @@
+/* ThemeVote component styling matching VoteComponent exactly */
+.vote-container {
+  display: inline-flex; 
+  align-items: center;
+  background-color: var(--secondary-bg);
+  border-radius: 20px;
+  padding: 4px 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  width: auto;
+  min-width: fit-content;
+}
+
+.vote-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  color: var(--secondary-text);
+  transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+}
+
+.vote-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--primary-text);
+}
+
+.vote-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.vote-button.active.upvote {
+  color: #4CAF50; /* Green for upvotes */
+}
+
+.vote-button.active.downvote {
+  color: #F44336; /* Red for downvotes */
+}
+
+.vote-count {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--primary-text);
+  margin: 0 6px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.vote-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -1,7 +1,230 @@
-.answer_question_meta {
-  color: #bbbbbb;
+.answer-page-container {
+  max-width: 1000px !important;
+  margin: 0 auto !important;
+  padding: 0 calc(1.5rem * var(--text-size-factor, 100%) / 100) !important;
+  width: 100% !important;
 }
 
-.ansButton {
-  margin: 2% 0 2% 2%;
+.question-section {
+  background-color: var(--primary-bg) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  margin-bottom: calc(1.5rem * var(--text-size-factor, 100%) / 100) !important;
+  overflow: hidden !important;
+}
+
+.question-header {
+  padding: calc(1.5rem * var(--text-size-factor, 100%) / 100) calc(1.5rem * var(--text-size-factor, 100%) / 100) calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.question-actions {
+  display: flex !important;
+  gap: calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
+  align-items: center !important;
+}
+
+.bookmark-button {
+  display: flex !important;
+  align-items: center !important;
+  gap: calc(0.5rem * var(--text-size-factor, 100%) / 100) !important;
+  background-color: rgba(var(--accent-color-rgb, 0, 120, 255), 0.1) !important;
+  border-color: rgba(var(--accent-color-rgb, 0, 120, 255), 0.2) !important;
+  border: 1px solid transparent !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  font-size: calc(0.9rem * var(--text-size-factor, 100%) / 100) !important;
+  padding: calc(0.5rem * var(--text-size-factor, 100%) / 100) calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
+  color: var(--accent-color) !important;
+  transition: all 0.2s ease !important;
+}
+
+.bookmark-button:hover {
+  background-color: rgba(var(--accent-color-rgb, 0, 120, 255), 0.08) !important;
+  color: var(--accent-color) !important;
+}
+
+.bookmark-button.bookmarked {
+  color: var(--accent-color) !important;
+  background-color: rgba(var(--accent-color-rgb, 0, 120, 255), 0.1) !important;
+  border-color: rgba(var(--accent-color-rgb, 0, 120, 255), 0.2) !important;
+}
+
+.bookmark-button.bookmarked:hover {
+  background-color: rgba(var(--accent-color-rgb, 0, 120, 255), 0.15) !important;
+}
+
+.bookmark-text {
+  font-weight: 500 !important;
+  line-height: var(--line-height, 1.5) !important;
+}
+
+.question-content {
+  display: flex !important;
+  padding: 0 !important;
+}
+
+.vote-section {
+  padding: calc(1.5rem * var(--text-size-factor, 100%) / 100) 0 0 calc(1.5rem * var(--text-size-factor, 100%) / 100) !important;
+}
+
+.question-body-section {
+  flex: 1 !important;
+  padding: calc(1.5rem * var(--text-size-factor, 100%) / 100) !important;
+  min-width: 0 !important;
+}
+
+.answers-section {
+  background-color: var(--primary-bg) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  margin-bottom: calc(1.5rem * var(--text-size-factor, 100%) / 100) !important;
+  overflow: hidden !important;
+}
+
+.section-header {
+  padding: calc(1.25rem * var(--text-size-factor, 100%) / 100) calc(1.5rem * var(--text-size-factor, 100%) / 100) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.section-header h2 {
+  font-size: calc(1.25rem * var(--text-size-factor, 100%) / 100) !important;
+  font-weight: 600 !important;
+  color: var(--primary-text) !important;
+  margin: 0 !important;
+  line-height: var(--line-height, 1.5) !important;
+}
+
+.answers-list {
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.your-answer-section {
+  background-color: var(--primary-bg) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  padding: calc(1.5rem * var(--text-size-factor, 100%) / 100) !important;
+  text-align: center !important;
+  margin-bottom: calc(2.5rem * var(--text-size-factor, 100%) / 100) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+.answer-button {
+  background: var(--button-bg) !important;
+  color: var(--button-text) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: calc(0.875rem * var(--text-size-factor, 100%) / 100) calc(1.75rem * var(--text-size-factor, 100%) / 100) !important;
+  font-size: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: calc(0.5rem * var(--text-size-factor, 100%) / 100) !important;
+  margin-bottom: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+  line-height: var(--line-height, 1.5) !important;
+}
+
+.answer-button:hover {
+  background-color: var(--button-hover) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.answer-button:active {
+  transform: translateY(0) !important;
+}
+
+.answer-button .icon {
+  font-size: calc(1.125rem * var(--text-size-factor, 100%) / 100) !important;
+}
+
+.answer-prompt {
+  color: var(--secondary-text) !important;
+  font-size: calc(0.9375rem * var(--text-size-factor, 100%) / 100) !important;
+  margin: 0 !important;
+  max-width: 400px !important;
+  line-height: var(--line-height, 1.5) !important;
+}
+
+.loading-container {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  min-height: 200px !important;
+  color: var(--secondary-text) !important;
+  font-size: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+}
+
+.answer_question_meta {
+  color: var(--secondary-text) !important;
+  font-size: calc(0.875rem * var(--text-size-factor, 100%) / 100) !important;
+  margin-top: calc(0.25rem * var(--text-size-factor, 100%) / 100) !important;
+  line-height: var(--line-height, 1.5) !important;
+}
+
+@media (max-width: 768px) {
+  .answer-page-container {
+    padding: 0 calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+  }
+
+  .question-header,
+  .question-body-section,
+  .section-header {
+    padding: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+  }
+
+  .vote-section {
+    padding: calc(1rem * var(--text-size-factor, 100%) / 100) 0 0 calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+  }
+
+  .question-content {
+    flex-direction: column !important;
+  }
+
+  .vote-section {
+    flex-direction: row !important;
+    padding: calc(0.75rem * var(--text-size-factor, 100%) / 100) calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+  }
+
+  .question-body-section {
+    padding-top: 0 !important;
+  }
+
+  .your-answer-section {
+    padding: calc(1.25rem * var(--text-size-factor, 100%) / 100) calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+  }
+
+  .answer-button {
+    width: 100% !important;
+    font-size: calc(0.9375rem * var(--text-size-factor, 100%) / 100) !important;
+  }
+  
+  .answer-prompt {
+    font-size: calc(0.875rem * var(--text-size-factor, 100%) / 100) !important;
+  }
+  
+  .bookmark_button svg {
+    color: white !important;
+  }
+
+  .bookmark_button_bookmarked svg {
+    color: #0095ff !important;
+  }
+}
+
+[data-theme="dark"] .question-section,
+[data-theme="dark"] .answers-section,
+[data-theme="dark"] .your-answer-section {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+  border: 1px solid var(--border-color) !important;
 }

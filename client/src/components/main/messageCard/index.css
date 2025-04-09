@@ -4,20 +4,20 @@
   padding: 10px;
   margin: auto;
   margin-bottom: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: var(--secondary-bg);
   width: 98%;
 }
 
 .message.sender {
   align-self: flex-end;
-  background-color: #d1e7ff;
+  background-color: var(--input-bg);
 }
 
 .message.receiver {
   align-self: flex-start;
-  background-color: #ffffff;
+  background-color: var(--primary-bg);
 }
 
 .message-header {
@@ -26,22 +26,22 @@
   align-items: center;
   margin-bottom: 5px;
   font-size: 0.9rem;
-  color: #666;
+  color: var(--secondary-text);
 }
 
 .message-sender {
   font-weight: bold;
-  color: #333;
+  color: var(--primary-text);
 }
 
 .message-time {
   font-size: 0.8rem;
-  color: #999;
+  color: var(--secondary-text);
 }
 
 .message-body {
   font-size: 1rem;
-  color: #333;
+  color: var(--primary-text);
   line-height: 1.5;
   word-wrap: break-word;
 }
