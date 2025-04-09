@@ -16,7 +16,11 @@ const defaultSettings: AccessibilitySettings = {
 const getSavedSettings = (): AccessibilitySettings => {
   const savedSettings = localStorage.getItem('accessibility-settings');
   if (savedSettings) {
-    return JSON.parse(savedSettings);
+    try {
+      return JSON.parse(savedSettings);
+    } catch (error) {
+      return defaultSettings;
+    }
   }
   return defaultSettings;
 };
@@ -34,12 +38,13 @@ export const applyAccessibilitySettings = (settings: AccessibilitySettings): voi
   localStorage.setItem('accessibility-settings', JSON.stringify(settings));
 };
 
-// Apply the settings immediately when the app loads, before any React code runs
-const initialSettings = getSavedSettings();
-applyAccessibilitySettings(initialSettings);
-
 export const useAccessibilitySettings = () => {
-  const [settings, setSettings] = useState<AccessibilitySettings>(initialSettings);
+  // Use lazy initialization to read from localStorage
+  const [settings, setSettings] = useState<AccessibilitySettings>(() => {
+    const savedSettings = getSavedSettings();
+    applyAccessibilitySettings(savedSettings);
+    return savedSettings;
+  });
 
   const updateSettings = (newSettings: AccessibilitySettings) => {
     applyAccessibilitySettings(newSettings);

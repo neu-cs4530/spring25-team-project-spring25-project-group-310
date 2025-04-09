@@ -85,6 +85,12 @@ export const deleteBookmark = async (
       console.error('Error removing from default collection:', collectionError);
     }
 
+    const defaultCollection = await getOrCreateDefaultCollection(username);
+    await CollectionModel.findByIdAndUpdate(
+      defaultCollection._id,
+      { $pull: { bookmarks: questionId } },
+      { new: true },
+    );
     return deletedBookmark || { error: 'Bookmark not found' };
   } catch (error) {
     return { error: 'Error when deleting bookmark' };
