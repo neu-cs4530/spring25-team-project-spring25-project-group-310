@@ -48,7 +48,8 @@
   background-color: var(--button-bg) !important;
   color: var(--button-text) !important;
   border: none !important;
-  padding: calc(0.5rem * var(--text-size-factor, 100%) / 100) calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
+  padding: calc(0.5rem * var(--text-size-factor, 100%) / 100)
+    calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
   border-radius: 8px !important;
   cursor: pointer !important;
   font-size: calc(0.875rem * var(--text-size-factor, 100%) / 100) !important;
@@ -80,7 +81,8 @@
 
 .new-collection-form input {
   width: 100% !important;
-  padding: calc(0.625rem * var(--text-size-factor, 100%) / 100) calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
+  padding: calc(0.625rem * var(--text-size-factor, 100%) / 100)
+    calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 8px !important;
   font-size: calc(0.875rem * var(--text-size-factor, 100%) / 100) !important;
@@ -106,7 +108,8 @@
 .cancel-btn {
   background-color: transparent !important;
   border: 1px solid var(--border-color) !important;
-  padding: calc(0.5rem * var(--text-size-factor, 100%) / 100) calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
+  padding: calc(0.5rem * var(--text-size-factor, 100%) / 100)
+    calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
   border-radius: 6px !important;
   cursor: pointer !important;
   font-size: calc(0.875rem * var(--text-size-factor, 100%) / 100) !important;
@@ -119,7 +122,8 @@
   background-color: var(--button-bg) !important;
   color: var(--button-text) !important;
   border: none !important;
-  padding: calc(0.5rem * var(--text-size-factor, 100%) / 100) calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
+  padding: calc(0.5rem * var(--text-size-factor, 100%) / 100)
+    calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
   border-radius: 6px !important;
   cursor: pointer !important;
   font-size: calc(0.875rem * var(--text-size-factor, 100%) / 100) !important;
@@ -141,7 +145,8 @@
 .collection-item {
   display: flex !important;
   align-items: center !important;
-  padding: calc(0.625rem * var(--text-size-factor, 100%) / 100) calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
+  padding: calc(0.625rem * var(--text-size-factor, 100%) / 100)
+    calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
   border-radius: 8px !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
@@ -186,7 +191,7 @@
 }
 
 .delete-btn {
-  visibility: hidden !important;
+  visibility: hidden;
   opacity: 0 !important;
   background-color: transparent !important;
   color: #ff4757 !important;
@@ -218,7 +223,8 @@
   align-items: center !important;
   justify-content: center !important;
   text-align: center !important;
-  padding: calc(2.5rem * var(--text-size-factor, 100%) / 100) calc(1.25rem * var(--text-size-factor, 100%) / 100) !important;
+  padding: calc(2.5rem * var(--text-size-factor, 100%) / 100)
+    calc(1.25rem * var(--text-size-factor, 100%) / 100) !important;
   color: var(--secondary-text) !important;
   height: 100% !important;
 }
@@ -278,7 +284,10 @@
 
 .search-bar input {
   width: 100% !important;
-  padding: calc(0.625rem * var(--text-size-factor, 100%) / 100) calc(0.75rem * var(--text-size-factor, 100%) / 100) calc(0.625rem * var(--text-size-factor, 100%) / 100) calc(2.25rem * var(--text-size-factor, 100%) / 100) !important;
+  padding: calc(0.625rem * var(--text-size-factor, 100%) / 100)
+    calc(0.75rem * var(--text-size-factor, 100%) / 100)
+    calc(0.625rem * var(--text-size-factor, 100%) / 100)
+    calc(2.25rem * var(--text-size-factor, 100%) / 100) !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 20px !important;
   font-size: calc(0.875rem * var(--text-size-factor, 100%) / 100) !important;
@@ -314,7 +323,10 @@
 /* Bookmarks List */
 .bookmarks-list {
   display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(calc(300px * var(--text-size-factor, 100%) / 100), 1fr)) !important;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(calc(300px * var(--text-size-factor, 100%) / 100), 1fr)
+  ) !important;
   gap: calc(1.25rem * var(--text-size-factor, 100%) / 100) !important;
 }
 
@@ -331,7 +343,8 @@
 }
 
 .bookmark-content {
-  padding: calc(1rem * var(--text-size-factor, 100%) / 100) calc(1.25rem * var(--text-size-factor, 100%) / 100) !important;
+  padding: calc(1rem * var(--text-size-factor, 100%) / 100)
+    calc(1.25rem * var(--text-size-factor, 100%) / 100) !important;
   cursor: pointer !important;
   flex: 1 !important;
   display: flex !important;
@@ -360,7 +373,7 @@
   margin-top: auto !important;
 }
 
-.bookmark-date svg, 
+.bookmark-date svg,
 .bookmark-user svg {
   width: calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
   height: calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
@@ -372,7 +385,7 @@
   border-top: 1px solid var(--border-color) !important;
 }
 
-.view-btn, 
+.view-btn,
 .remove-btn {
   flex: 1 !important;
   padding: calc(0.625rem * var(--text-size-factor, 100%) / 100) !important;
@@ -394,7 +407,8 @@
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: calc(3.75rem * var(--text-size-factor, 100%) / 100) calc(1.25rem * var(--text-size-factor, 100%) / 100) !important;
+  padding: calc(3.75rem * var(--text-size-factor, 100%) / 100)
+    calc(1.25rem * var(--text-size-factor, 100%) / 100) !important;
   text-align: center !important;
   background-color: var(--secondary-bg) !important;
   border-radius: 12px !important;
@@ -417,7 +431,8 @@
 
 .clear-btn {
   font-size: calc(0.875rem * var(--text-size-factor, 100%) / 100) !important;
-  padding: calc(0.5rem * var(--text-size-factor, 100%) / 100) calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+  padding: calc(0.5rem * var(--text-size-factor, 100%) / 100)
+    calc(1rem * var(--text-size-factor, 100%) / 100) !important;
 }
 
 .no-selection {
@@ -443,22 +458,134 @@
 
 .login-card p,
 .error-card p {
-  font-size: calc(0.9375rem * var(--text-size-factor,
-  100%) / 100) !important;
+  font-size: calc(0.9375rem * var(--text-size-factor, 100%) / 100) !important;
   line-height: var(--line-height, 1.5) !important;
 }
 
 .login-btn,
 .retry-btn {
   font-size: calc(0.9375rem * var(--text-size-factor, 100%) / 100) !important;
-  padding: calc(0.625rem * var(--text-size-factor, 100%) / 100) calc(1.25rem * var(--text-size-factor, 100%) / 100) !important;
+  padding: calc(0.625rem * var(--text-size-factor, 100%) / 100)
+    calc(1.25rem * var(--text-size-factor, 100%) / 100) !important;
   line-height: var(--line-height, 1.5) !important;
 }
 
+/* Modal Styles */
+.modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 1000 !important;
+  backdrop-filter: blur(3px) !important;
+}
+
+.modal-content {
+  background-color: var(--primary-bg) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+  padding: calc(1.5rem * var(--text-size-factor, 100%) / 100) !important;
+  width: 90% !important;
+  max-width: 400px !important;
+  animation: modalFadeIn 0.3s ease !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content h2 {
+  margin-top: 0 !important;
+  font-size: calc(1.25rem * var(--text-size-factor, 100%) / 100) !important;
+  font-weight: 600 !important;
+  color: var(--primary-text) !important;
+  margin-bottom: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+}
+
+.modal-content p {
+  margin-bottom: calc(1.5rem * var(--text-size-factor, 100%) / 100) !important;
+  color: var(--secondary-text) !important;
+  font-size: calc(0.9375rem * var(--text-size-factor, 100%) / 100) !important;
+  line-height: var(--line-height, 1.5) !important;
+}
+
+.modal-actions {
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
+}
+
+/* Modal Button Styles */
+.modal-actions .cancel-btn {
+  background-color: transparent !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--secondary-text) !important;
+  padding: calc(0.75rem * var(--text-size-factor, 100%) / 100)
+    calc(1.25rem * var(--text-size-factor, 100%) / 100) !important;
+  border-radius: 6px !important;
+  font-size: calc(0.875rem * var(--text-size-factor, 100%) / 100) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  line-height: var(--line-height, 1.5) !important;
+  font-weight: 500 !important;
+  min-width: 80px !important;
+  text-align: center !important;
+}
+
+.modal-actions .cancel-btn:hover {
+  background-color: var(--secondary-bg) !important;
+}
+
+/* Fix for the delete button spacing and colors */
+.modal-actions .delete-btn {
+  background-color: #ff8a8a !important; /* Light red background */
+  color: white !important;
+  border: none !important;
+  padding: calc(0.75rem * var(--text-size-factor, 100%) / 100)
+    calc(1.25rem * var(--text-size-factor, 100%) / 100) !important;
+  border-radius: 6px !important;
+  font-size: calc(0.875rem * var(--text-size-factor, 100%) / 100) !important;
+  cursor: pointer !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  line-height: var(--line-height, 1.5) !important;
+  /* Override opacity and visibility from the collection delete button styles */
+  opacity: 1 !important;
+  visibility: visible !important;
+  /* Fix spacing issues */
+  min-width: 80px !important;
+  text-align: center !important;
+  /* Ensure display is set correctly */
+  display: inline-block !important;
+  /* Ensure width is appropriate */
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Add darker red hover effect for the delete button */
+.modal-actions .delete-btn:hover {
+  background-color: #d32f2f !important; /* Dark red on hover */
+}
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .bookmarks-list {
-    grid-template-columns: repeat(auto-fill, minmax(calc(260px * var(--text-size-factor, 100%) / 100), 1fr)) !important;
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(calc(260px * var(--text-size-factor, 100%) / 100), 1fr)
+    ) !important;
     gap: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
   }
 }
@@ -469,12 +596,12 @@
     align-items: flex-start !important;
     gap: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
   }
-  
+
   .search-bar {
     width: 100% !important;
     margin-top: calc(0.5rem * var(--text-size-factor, 100%) / 100) !important;
   }
-  
+
   .sidebar {
     max-height: calc(300px * var(--text-size-factor, 100%) / 100) !important;
   }
@@ -484,11 +611,11 @@
   .bookmarks-list {
     grid-template-columns: 1fr !important;
   }
-  
+
   .sidebar-header {
     padding: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
   }
-  
+
   .main-content {
     padding: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
   }

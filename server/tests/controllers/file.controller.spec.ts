@@ -72,6 +72,38 @@ describe('File Controller', () => {
       expect(response.status).toBe(400);
       expect(response.body).toEqual({ error: 'Invalid file index' });
     });
+
+    it('should handle files from answers', async () => {
+      (AnswerModel.findById as jest.Mock).mockResolvedValue({
+        files: [mockImageFile],
+      });
+
+      const response = await request(app).get('/files/answer/456/0');
+
+      expect(response.status).toBe(200);
+      expect(response.headers['content-type']).toBe('image/png');
+      expect(response.headers['content-disposition']).toBe('inline; filename="test.png"');
+    });
+
+    it('should return 404 when document not found', async () => {
+      (QuestionModel.findById as jest.Mock).mockResolvedValue(null);
+
+      const response = await request(app).get('/files/question/123/0');
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({ error: 'question not found' });
+    });
+
+    it('should return 404 when file not found at index', async () => {
+      (QuestionModel.findById as jest.Mock).mockResolvedValue({
+        files: [mockImageFile],
+      });
+
+      const response = await request(app).get('/files/question/123/1');
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({ error: 'File not found at this index' });
+    });
   });
 
   describe('PDF Route', () => {
@@ -103,6 +135,33 @@ describe('File Controller', () => {
       expect(response.status).toBe(404);
       expect(response.body).toEqual({ error: 'File not found' });
     });
+
+    it('should handle PDF from answer', async () => {
+      (AnswerModel.findById as jest.Mock).mockResolvedValue({
+        files: [mockPdfFile],
+      });
+
+      const response = await request(app).get('/files/pdf/answer/456/0');
+
+      expect(response.status).toBe(200);
+      expect(response.headers['content-type']).toBe('application/pdf');
+    });
+
+    it('should return 400 for invalid type parameter', async () => {
+      const response = await request(app).get('/files/pdf/invalid/123/0');
+
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({ error: 'Invalid type parameter' });
+    });
+
+    it('should handle server errors in PDF route', async () => {
+      (QuestionModel.findById as jest.Mock).mockRejectedValue(new Error('Database error'));
+
+      const response = await request(app).get('/files/pdf/question/123/0');
+
+      expect(response.status).toBe(500);
+      expect(response.body).toEqual({ error: 'Error: Database error' });
+    });
   });
 
   describe('Text Route', () => {
@@ -133,6 +192,64 @@ describe('File Controller', () => {
 
       expect(response.status).toBe(404);
       expect(response.body).toEqual({ error: 'File content is missing' });
+    });
+
+    it('should handle text files from questions', async () => {
+      (QuestionModel.findById as jest.Mock).mockResolvedValue({
+        files: [mockTextFile],
+      });
+
+      const response = await request(app).get('/files/text/question/123/0');
+
+      expect(response.status).toBe(200);
+      expect(response.headers['content-type']).toBe('text/plain');
+    });
+
+    it('should handle server errors in text route', async () => {
+      (AnswerModel.findById as jest.Mock).mockRejectedValue(new Error('Database error'));
+
+      const response = await request(app).get('/files/text/answer/456/0');
+
+      expect(response.status).toBe(500);
+      expect(response.body).toEqual({ error: 'Error: Database error' });
+    });
+  });
+
+  describe('Other Route', () => {
+    const mockOtherFile = {
+      filename: 'data.json',
+      contentType: 'application/json',
+      content: Buffer.from('{"test": "data"}').toString('base64'),
+    };
+
+    it('should serve other file types successfully', async () => {
+      (QuestionModel.findById as jest.Mock).mockResolvedValue({
+        files: [mockOtherFile],
+      });
+
+      const response = await request(app).get('/files/other/question/123/0');
+
+      expect(response.status).toBe(200);
+      expect(response.headers['content-type']).toBe('application/json');
+      expect(response.headers['content-disposition']).toBe('inline; filename="data.json"');
+    });
+
+    it('should handle missing content in other file types', async () => {
+      (QuestionModel.findById as jest.Mock).mockResolvedValue({
+        files: [{ filename: 'data.json', contentType: 'application/json' }],
+      });
+
+      const response = await request(app).get('/files/other/question/123/0');
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({ error: 'File content is missing' });
+    });
+
+    it('should handle invalid type parameter in other route', async () => {
+      const response = await request(app).get('/files/other/invalid/123/0');
+
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({ error: 'Invalid type parameter' });
     });
   });
 
@@ -168,6 +285,17 @@ describe('File Controller', () => {
       expect(response.status).toBe(500);
       expect(response.body).toEqual({ error: 'Error: Database error' });
     });
+
+    it('should handle missing files array', async () => {
+      (QuestionModel.findById as jest.Mock).mockResolvedValue({
+        // No files array property
+      });
+
+      const response = await request(app).get('/files/question/123/0');
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({ error: 'File not found at this index' });
+    });
   });
 
   describe('Fallback content type', () => {
@@ -201,6 +329,23 @@ describe('File Controller', () => {
       const response = await request(app).get('/files/pdf/question/123/0');
 
       expect(response.status).toBe(200);
+      expect(response.headers['content-type']).toBe('image/jpeg');
+    });
+
+    it('should use octet-stream for general route with no content type', async () => {
+      const mockFileNoType = {
+        filename: 'unknown.dat',
+        content: Buffer.from('unknown data').toString('base64'),
+      };
+
+      (QuestionModel.findById as jest.Mock).mockResolvedValue({
+        files: [mockFileNoType],
+      });
+
+      const response = await request(app).get('/files/question/123/0');
+
+      expect(response.status).toBe(200);
+      expect(response.headers['content-type']).toBe('application/octet-stream');
     });
   });
 });
