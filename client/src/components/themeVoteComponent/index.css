@@ -1,0 +1,42 @@
+.theme-vote-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.theme-vote-button-upvoted {
+  color: var(--primary-color, #0095ff);
+}
+
+.theme-vote-button-downvoted {
+  color: var(--negative-color, #f44336);
+}
+
+.theme-vote-button:hover {
+  opacity: 0.8;
+}
+
+.theme-vote-button:focus {
+  outline: none;
+}
+
+.theme-vote-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.theme-vote-count {
+  margin: 0 8px;
+  font-size: 12px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.theme-vote-login-message {
+  font-size: 10px;
+  text-align: center;
+  color: var(--muted-text);
+}

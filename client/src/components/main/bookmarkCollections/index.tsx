@@ -24,6 +24,9 @@ const BookmarkCollections: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [bookmarkDetails, setBookmarkDetails] = useState<{ [key: string]: { title: string } }>({});
   const [error, setError] = useState<string | null>(null);
+  const [collectionToDelete, setCollectionToDelete] = useState<{ id: string; name: string } | null>(
+    null,
+  );
 
   const user = useUserContext();
   const username = user?.user?.username;
@@ -96,12 +99,7 @@ const BookmarkCollections: React.FC = () => {
       const data = await fetchAllBookmarks(username);
 
       // Make sure each bookmark has a valid questionId
-      const validBookmarks = data.filter(bookmark => {
-        if (!bookmark.questionId) {
-          return false;
-        }
-        return true;
-      });
+      const validBookmarks = data.filter(bookmark => !!bookmark.questionId);
 
       setBookmarks(validBookmarks);
 
@@ -125,21 +123,16 @@ const BookmarkCollections: React.FC = () => {
 
         // Handle data regardless of its type (Array<string> or Array<Bookmark>)
         if (data.length > 0) {
-          // Check data type - if it's an array of strings
           if (typeof data[0] === 'string') {
-            // No need to transform, just set directly as the new state format supports strings
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            setBookmarks(data as any[]);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            fetchQuestionDetails(data as any[]);
+            // If array of strings, set directly
+            setBookmarks(data as unknown as string[]);
+            fetchQuestionDetails(data as unknown as string[]);
           } else {
-            // It's an array of bookmark objects
-            const validBookmarks = data.filter((bookmark: Bookmark) => !!bookmark.questionId);
+            const validBookmarks = (data as Bookmark[]).filter(bookmark => !!bookmark.questionId);
             setBookmarks(validBookmarks);
             fetchQuestionDetails(validBookmarks);
           }
         } else {
-          // Empty array
           setBookmarks([]);
         }
       } catch (err) {
@@ -152,17 +145,17 @@ const BookmarkCollections: React.FC = () => {
     [username, fetchQuestionDetails],
   );
 
-  // First effect to load collections when component mounts
+  // Load collections when component mounts
   useEffect(() => {
     loadCollections();
   }, [loadCollections]);
 
-  // Second effect to load all bookmarks when component mounts
+  // Load all bookmarks when component mounts
   useEffect(() => {
     loadBookmarks();
   }, [loadBookmarks]);
 
-  // Third effect to load collection-specific bookmarks when a collection is selected
+  // Load collection-specific bookmarks when a collection is selected
   useEffect(() => {
     if (selectedCollection) {
       loadBookmarksForCollection(selectedCollection);
@@ -172,19 +165,15 @@ const BookmarkCollections: React.FC = () => {
   // Listen for bookmarkAdded events
   useEffect(() => {
     const handleBookmarkAdded = (event: Event) => {
-      // Reload collections to get the latest data
       loadBookmarks();
       loadCollections();
 
-      // If there's an active collection, reload its bookmarks
       if (selectedCollection) {
         loadBookmarksForCollection(selectedCollection);
       }
     };
 
     window.addEventListener('bookmarkAdded', handleBookmarkAdded);
-
-    // Cleanup event listener on component unmount
     return () => {
       window.removeEventListener('bookmarkAdded', handleBookmarkAdded);
     };
@@ -216,7 +205,7 @@ const BookmarkCollections: React.FC = () => {
       setCollections(collections.filter(c => c._id.toString() !== collectionId));
 
       if (selectedCollection === collectionId) {
-        // If there are other collections, select the first one
+        // If there are other collections, select the first one; otherwise, clear selection.
         if (collections.length > 1) {
           const remainingCollections = collections.filter(c => c._id.toString() !== collectionId);
           setSelectedCollection(remainingCollections[0]._id.toString());
@@ -224,6 +213,9 @@ const BookmarkCollections: React.FC = () => {
           setSelectedCollection(null);
         }
       }
+
+      // Reset delete confirmation
+      setCollectionToDelete(null);
     } catch (err) {
       setError((err as Error).message);
     }
@@ -250,7 +242,7 @@ const BookmarkCollections: React.FC = () => {
     if (!selectedCollection || !username) return;
 
     try {
-      // 1. Immediately update local state for better UX
+      // Optimistically update UI
       const updatedBookmarks = bookmarks.filter(bookmark => {
         if (typeof bookmark === 'string') {
           return bookmark !== questionId;
@@ -259,19 +251,16 @@ const BookmarkCollections: React.FC = () => {
       });
       setBookmarks(updatedBookmarks);
 
-      // 2. Remove from server
+      // Remove bookmark from the server
       await removeBookmarkFromCollection(selectedCollection, questionId, username);
 
-      // 3. Force reload of collections and bookmarks
+      // Reload collections and bookmarks
       await loadCollections();
-
       if (selectedCollection) {
         await loadBookmarksForCollection(selectedCollection);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to remove bookmark');
-
-      // 4. On error, reload the data to keep UI in sync
       loadBookmarksForCollection(selectedCollection);
     }
   };
@@ -292,24 +281,43 @@ const BookmarkCollections: React.FC = () => {
       return false;
     }
 
-    // Validate the question ID
     const questionIdString = String(questionId);
     if (!questionIdString || questionIdString === 'undefined' || questionIdString === 'null') {
       return false;
     }
 
-    // Convert for case-insensitive search
     const lowerQuestionId = questionIdString.toLowerCase();
     const searchTermLower = searchTerm.toLowerCase();
-
-    // Get title if available
     const title = bookmarkDetails[questionIdString]?.title?.toLowerCase() || '';
-
-    // Match either the ID or title
     return lowerQuestionId.includes(searchTermLower) || title.includes(searchTermLower);
   });
 
   const selectedCollectionData = collections.find(c => c._id.toString() === selectedCollection);
+
+  const renderDeleteConfirmationModal = () => {
+    if (!collectionToDelete) return null;
+
+    return (
+      <div className='modal-overlay'>
+        <div className='modal-content'>
+          <h2>Confirm Deletion</h2>
+          <p>
+            Are you sure you want to delete the &quot;{collectionToDelete.name}&quot; collection?
+          </p>
+          <div className='modal-actions'>
+            <button className='cancel-btn' onClick={() => setCollectionToDelete(null)}>
+              Cancel
+            </button>
+            <button
+              className='delete-btn'
+              onClick={() => handleDeleteCollection(collectionToDelete.id)}>
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   if (!username) {
     return (
@@ -405,7 +413,10 @@ const BookmarkCollections: React.FC = () => {
                       className='delete-btn'
                       onClick={e => {
                         e.stopPropagation();
-                        handleDeleteCollection(collection._id.toString());
+                        setCollectionToDelete({
+                          id: collection._id.toString(),
+                          name: collection.name,
+                        });
                       }}>
                       Delete
                     </button>
@@ -448,7 +459,6 @@ const BookmarkCollections: React.FC = () => {
               <div className='bookmarks-list'>
                 {filteredBookmarks.length > 0 ? (
                   filteredBookmarks.map((bookmark, index) => {
-                    // Determine questionId based on bookmark type
                     let questionId;
                     if (typeof bookmark === 'string') {
                       questionId = bookmark;
@@ -457,13 +467,10 @@ const BookmarkCollections: React.FC = () => {
                     } else {
                       return null;
                     }
-
-                    // Convert to string and validate
                     const questionIdString = String(questionId);
                     if (!questionIdString) {
                       return null;
                     }
-
                     const uniqueKey = `bookmark-${index}-${questionIdString}`;
                     return (
                       <div key={uniqueKey} className='bookmark-card'>
@@ -514,6 +521,7 @@ const BookmarkCollections: React.FC = () => {
           )}
         </div>
       </div>
+      {renderDeleteConfirmationModal()}
     </div>
   );
 };

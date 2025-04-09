@@ -94,6 +94,21 @@ export interface GameMovePayload {
 }
 
 /**
+ * Interface for the payload sent from client to server for theme voting
+ */
+export interface ThemeVotePayload {
+  theme: string;
+  voteType: 'up' | 'down';
+  username: string;
+}
+
+export interface ThemeVoteUpdatePayload {
+  theme: string;
+  upVotes: string[];
+  downVotes: string[];
+}
+
+/**
  * Interface representing the events the client can emit to the server.
  * - `makeMove`: Client can emit a move in the game.
  * - `joinGame`: Client can join a game.
@@ -107,6 +122,7 @@ export interface ClientToServerEvents {
   leaveGame: (gameID: string) => void;
   joinChat: (chatID: string) => void;
   leaveChat: (chatID: string | undefined) => void;
+  themeVote: (vote: ThemeVotePayload) => void;
 }
 
 /**
@@ -133,4 +149,5 @@ export interface ServerToClientEvents {
   gameUpdate: (game: GameUpdatePayload) => void;
   gameError: (error: GameErrorPayload) => void;
   chatUpdate: (chat: ChatUpdatePayload) => void;
+  themeVoteUpdate: (themeVote: ThemeVoteUpdatePayload) => void;
 }

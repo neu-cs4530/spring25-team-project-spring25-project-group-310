@@ -20,8 +20,8 @@ import chatController from './controllers/chat.controller';
 import gameController from './controllers/game.controller';
 import collectionController from './controllers/collection.controller';
 import bookmarkController from './controllers/bookmark.controller';
-import { Socket } from 'socket.io-client';
 import fileController from './controllers/file.controller';
+import themeVoteController from './controllers/theme.controller';
 
 dotenv.config();
 
@@ -92,6 +92,7 @@ app.use('/collections', collectionController(socket));
 app.use('/bookmark', bookmarkController(socket));
 app.use('/games', gameController(socket));
 app.use('/files', fileRoutes.router);
+app.use('/themes', themeVoteController(socket));
 
 // Export the app instance
 export { app, server, startServer };

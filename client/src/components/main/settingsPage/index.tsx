@@ -1,10 +1,130 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Box, Heading, Flex, Text, Button } from 'theme-ui';
 import { useTheme, ThemeType } from '../../../hooks/useTheme';
 import themePresets from '../../theme/ThemePresets';
 import { useAccessibilitySettings } from '../../../hooks/useAccessibility';
+import useUserContext from '../../../hooks/useUserContext';
+import { getThemeVotes } from '../../../services/themeVoteService';
 
-// Use the same ThemePreviewCard component from the original ThemeSelector
+// Custom SVG Chevron Up Icon
+const ChevronUpIcon = ({
+  size = 20,
+  color = 'gray',
+  strokeWidth = 1.5,
+}: {
+  size?: number;
+  color?: string;
+  strokeWidth?: number;
+}) => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    width={size}
+    height={size}
+    viewBox='0 0 24 24'
+    fill='none'
+    stroke={color}
+    strokeWidth={strokeWidth}
+    strokeLinecap='round'
+    strokeLinejoin='round'>
+    <polyline points='18 15 12 9 6 15'></polyline>
+  </svg>
+);
+
+// Custom SVG Chevron Down Icon
+const ChevronDownIcon = ({
+  size = 20,
+  color = 'gray',
+  strokeWidth = 1.5,
+}: {
+  size?: number;
+  color?: string;
+  strokeWidth?: number;
+}) => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    width={size}
+    height={size}
+    viewBox='0 0 24 24'
+    fill='none'
+    stroke={color}
+    strokeWidth={strokeWidth}
+    strokeLinecap='round'
+    strokeLinejoin='round'>
+    <polyline points='6 9 12 15 18 9'></polyline>
+  </svg>
+);
+
+// Voting Component
+const ThemeVoteComponent = ({
+  themeName,
+  themeVotes,
+  onVoteUpdate,
+}: {
+  themeName: ThemeType;
+  themeVotes: Record<string, { upVotes: string[]; downVotes: string[] }>;
+  onVoteUpdate: () => void;
+}) => {
+  const { user } = useUserContext();
+  const { socket } = useUserContext();
+
+  const handleVote = (voteType: 'up' | 'down') => {
+    if (!user || !socket) return;
+
+    socket.emit('themeVote', {
+      theme: themeName,
+      voteType,
+      username: user.username,
+    });
+  };
+
+  const votes = themeVotes[themeName] || { upVotes: [], downVotes: [] };
+  const hasUpvoted = user ? votes.upVotes.includes(user.username) : false;
+  const hasDownvoted = user ? votes.downVotes.includes(user.username) : false;
+
+  // Calculate total score as the difference between upvotes and downvotes
+  const score = votes.upVotes.length - votes.downVotes.length;
+
+  return (
+    <Flex
+      sx={{
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 2,
+      }}>
+      <Flex
+        sx={{
+          alignItems: 'center',
+          cursor: user ? 'pointer' : 'not-allowed',
+          opacity: user ? 1 : 0.5,
+        }}
+        onClick={() => user && handleVote('up')}>
+        <ChevronUpIcon
+          size={20}
+          color={hasUpvoted ? 'green' : 'gray'}
+          strokeWidth={hasUpvoted ? 2.5 : 1.5}
+        />
+      </Flex>
+
+      <Text sx={{ fontSize: 1, mx: 1, minWidth: '20px', textAlign: 'center' }}>{score}</Text>
+
+      <Flex
+        sx={{
+          alignItems: 'center',
+          cursor: user ? 'pointer' : 'not-allowed',
+          opacity: user ? 1 : 0.5,
+        }}
+        onClick={() => user && handleVote('down')}>
+        <ChevronDownIcon
+          size={20}
+          color={hasDownvoted ? 'red' : 'gray'}
+          strokeWidth={hasDownvoted ? 2.5 : 1.5}
+        />
+      </Flex>
+    </Flex>
+  );
+};
+
+// Theme Preview Card
 const ThemePreviewCard = ({
   themeName,
   isActive,
@@ -13,6 +133,8 @@ const ThemePreviewCard = ({
   themeName: ThemeType;
   isActive: boolean;
   onSelect: (theme: ThemeType) => void;
+  themeVotes: Record<string, { upVotes: string[]; downVotes: string[] }>;
+  onVoteUpdate: () => void;
 }) => {
   const themeColors = themePresets[themeName].colors;
 
@@ -27,15 +149,25 @@ const ThemePreviewCard = ({
         borderColor: isActive ? 'primary' : 'borderColor',
         boxShadow: isActive ? '0 0 10px rgba(0,0,0,0.2)' : 'none',
         transition: 'all 0.2s ease',
-        cursor: 'pointer',
         m: 2,
-      }}
-      onClick={() => onSelect(themeName)}>
+        display: 'flex',
+        flexDirection: 'column',
+      }}>
       {/* Preview header */}
-      <Box sx={{ bg: themeColors.headerBg, height: '20px' }} />
+      <Box
+        sx={{ bg: themeColors.headerBg, height: '20px', cursor: 'pointer' }}
+        onClick={() => onSelect(themeName)}
+      />
 
       {/* Preview content */}
-      <Box sx={{ bg: themeColors.background, p: 2, height: '90px' }}>
+      <Box
+        sx={{
+          bg: themeColors.background,
+          p: 2,
+          flex: 1,
+          cursor: 'pointer',
+        }}
+        onClick={() => onSelect(themeName)}>
         <Text
           sx={{
             color: themeColors.text,
@@ -82,6 +214,7 @@ const ThemePreviewCard = ({
 
 const SettingsPage: React.FC = () => {
   const { theme, setTheme } = useTheme();
+  const { socket } = useUserContext();
   const {
     fontSize,
     lineHeight,
@@ -93,7 +226,80 @@ const SettingsPage: React.FC = () => {
   } = useAccessibilitySettings();
 
   // Available themes - use the same list as in your original ThemeSelector
-  const availableThemes: ThemeType[] = ['light', 'dark', 'deep', 'funk', 'tosh', 'swiss'];
+  const availableThemes = useMemo<ThemeType[]>(
+    () => ['light', 'dark', 'deep', 'funk', 'tosh', 'swiss'],
+    [],
+  );
+
+  // State for theme votes
+  const [themeVotes, setThemeVotes] = useState<
+    Record<string, { upVotes: string[]; downVotes: string[] }>
+  >({});
+  const [isLoadingVotes, setIsLoadingVotes] = useState<boolean>(true);
+
+  // Fetch theme votes
+  const fetchVotes = useCallback(async () => {
+    try {
+      setIsLoadingVotes(true);
+      const votes = await getThemeVotes();
+
+      // Convert to a record for easier lookup
+      const votesRecord = votes.reduce(
+        (acc, vote) => {
+          acc[vote.theme] = {
+            upVotes: vote.upVotes || [],
+            downVotes: vote.downVotes || [],
+          };
+          return acc;
+        },
+        {} as Record<string, { upVotes: string[]; downVotes: string[] }>,
+      );
+
+      // Initialize missing themes with empty votes
+      availableThemes.forEach(themeName => {
+        if (!votesRecord[themeName]) {
+          votesRecord[themeName] = { upVotes: [], downVotes: [] };
+        }
+      });
+
+      setThemeVotes(votesRecord);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching theme votes:', error);
+    } finally {
+      setIsLoadingVotes(false);
+    }
+  }, [availableThemes]);
+
+  // Fetch votes when component mounts
+  useEffect(() => {
+    fetchVotes();
+  }, [fetchVotes]);
+
+  // Listen for theme vote updates
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleThemeVoteUpdate = (data: {
+      theme: string;
+      upVotes: string[];
+      downVotes: string[];
+    }) => {
+      setThemeVotes(prev => ({
+        ...prev,
+        [data.theme]: {
+          upVotes: data.upVotes,
+          downVotes: data.downVotes,
+        },
+      }));
+    };
+
+    socket.on('themeVoteUpdate', handleThemeVoteUpdate);
+    // eslint-disable-next-line consistent-return
+    return () => {
+      socket.off('themeVoteUpdate', handleThemeVoteUpdate);
+    };
+  }, [socket]);
 
   return (
     <Box className='right_main' sx={{ p: 4 }}>
@@ -118,17 +324,41 @@ const SettingsPage: React.FC = () => {
           </Heading>
           <Text mb={2}>Select a theme for the application</Text>
 
-          <Flex sx={{ flexWrap: 'wrap', justifyContent: 'flex-start' }}>
-            {availableThemes.map(themeName => (
-              <ThemePreviewCard
-                key={themeName}
-                themeName={themeName}
-                isActive={theme === themeName}
-                onSelect={newTheme => {
-                  setTheme(newTheme);
-                }}
-              />
-            ))}
+          <Flex
+            sx={{
+              flexWrap: 'wrap',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+            }}>
+            {isLoadingVotes ? (
+              <Text>Loading themes...</Text>
+            ) : (
+              availableThemes.map(themeName => (
+                <Flex
+                  key={themeName}
+                  sx={{
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    m: 2,
+                  }}>
+                  <ThemePreviewCard
+                    themeName={themeName}
+                    isActive={theme === themeName}
+                    onSelect={newTheme => {
+                      setTheme(newTheme);
+                    }}
+                    themeVotes={themeVotes}
+                    onVoteUpdate={fetchVotes}
+                  />
+                  {/* Voting component placed outside the card */}
+                  <ThemeVoteComponent
+                    themeName={themeName}
+                    themeVotes={themeVotes}
+                    onVoteUpdate={fetchVotes}
+                  />
+                </Flex>
+              ))
+            )}
           </Flex>
         </Box>
 
