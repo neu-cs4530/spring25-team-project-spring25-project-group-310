@@ -1,5 +1,5 @@
 import React from 'react';
-import './index.css';
+import '../index.css';
 import { TagData } from '../../../../types/types';
 import useTagSelected from '../../../../hooks/useTagSelected';
 
@@ -15,11 +15,9 @@ interface TagProps {
 }
 
 /**
- * Tag component that displays information about a specific tag.
- * The component displays the tag's name, description, and the number of associated questions.
- * It also triggers a click event to handle tag selection.
+ * Modern Tag component that displays information about a specific tag.
  *
- * @param t - The tag object .
+ * @param t - The tag object.
  * @param clickTag - Function to handle tag clicks.
  */
 const TagView = ({ t, clickTag }: TagProps) => {
@@ -27,13 +25,36 @@ const TagView = ({ t, clickTag }: TagProps) => {
 
   return (
     <div
-      className='tagNode'
+      className='tag-card'
       onClick={() => {
         clickTag(t.name);
       }}>
-      <div className='tagName'>{tag.name}</div>
-      <div className='tagDescription'>{tag.description}</div>
-      <div>{t.qcnt} questions</div>
+      <div className='tag-card-header'>
+        <div className='tag-name'>{tag.name}</div>
+      </div>
+
+      <div className='tag-card-body'>
+        <p className='tag-description'>{tag.description || 'No description available'}</p>
+      </div>
+
+      <div className='tag-card-footer'>
+        <div className='tag-question-count'>
+          <svg
+            width='16'
+            height='16'
+            viewBox='0 0 24 24'
+            fill='none'
+            stroke='currentColor'
+            strokeWidth='2'
+            strokeLinecap='round'
+            strokeLinejoin='round'>
+            <path d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'></path>
+          </svg>
+          <span>
+            {t.qcnt} {t.qcnt === 1 ? 'question' : 'questions'}
+          </span>
+        </div>
+      </div>
     </div>
   );
 };

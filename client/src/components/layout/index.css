@@ -1,17 +1,30 @@
+/* Layout CSS - modernized while preserving theme compatibility */
+
 .main {
   display: flex;
   flex-direction: row;
   height: 90%;
+  background-color: var(--primary-bg);
+  box-shadow: 0 2px 5px var(--shadow-color);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .right_main {
   width: 85%;
   overflow: auto;
+  background-color: var(--primary-bg);
+  border-left: 1px solid var(--border-color);
+  transition: width 0.3s ease;
 }
 
 .space_between {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .right_padding {
@@ -20,29 +33,43 @@
 
 .bold_title {
   font-size: 24px;
-  font-weight: 800;
-  line-height: 40px;
+  font-weight: 700;
+  line-height: 32px;
+  color: var(--primary-text);
+  margin-bottom: 1rem;
 }
 
 .bluebtn {
   background: var(--button-bg);
   color: var(--button-text);
-  border: var(--border-color) 1px solid;
+  border: none;
   font-size: 20px;
-  padding: 10px 10px 10px 10px;
+  font-weight: 600;
+  padding: 10px 16px;
   margin-right: 5%;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px var(--shadow-color);
 }
 
 .bluebtn:hover {
   background: var(--button-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px var(--shadow-color);
+}
+
+.bluebtn:active {
+  background: var(--button-active);
+  transform: translateY(0);
 }
 
 .btn_indicator_container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* This will push child elements to the extremes of the container */
   width: 100%;
+  margin-bottom: 1rem;
 }
 
 .form_postBtn {
@@ -50,12 +77,51 @@
   color: var(--button-text);
   padding: 10px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px var(--shadow-color);
+}
+
+.form_postBtn:hover {
+  background: var(--button-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px var(--shadow-color);
+}
+
+.form_postBtn:active {
+  background: var(--button-active);
+  transform: translateY(0);
 }
 
 .mandatory_indicator {
   font-size: 0.8rem;
   color: var(--accent-color);
   margin-top: 10px;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .main {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .right_main {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+  }
+  
+  .bluebtn {
+    font-size: 16px;
+    padding: 8px 12px;
+  }
+  
+  .bold_title {
+    font-size: 20px;
+    line-height: 28px;
+  }
 }

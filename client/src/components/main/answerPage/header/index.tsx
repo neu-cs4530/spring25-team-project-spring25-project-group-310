@@ -1,6 +1,5 @@
 import React from 'react';
 import './index.css';
-import AskQuestionButton from '../../askQuestionButton';
 
 /**
  * Interface representing the props for the AnswerHeader component.
@@ -14,17 +13,19 @@ interface AnswerHeaderProps {
 }
 
 /**
- * AnswerHeader component that displays a header section for the answer page.
- * It includes the number of answers, the title of the question, and a button to ask a new question.
+ * Modern AnswerHeader component with question title and left-aligned answer count below.
  *
  * @param ansCount The number of answers to display.
  * @param title The title of the question or discussion thread.
  */
 const AnswerHeader = ({ ansCount, title }: AnswerHeaderProps) => (
-  <div id='answersHeader' className='space_between right_padding'>
-    <div className='bold_title'>{ansCount} answers</div>
-    <div className='bold_title answer_question_title'>{title}</div>
-    <AskQuestionButton />
+  <div className='question-title-container'>
+    <h1 className='question-title'>{title}</h1>
+
+    <div className='answer-count'>
+      <span className='count'>{ansCount}</span>
+      <span className='label'>{ansCount === 1 ? 'answer' : 'answers'}</span>
+    </div>
   </div>
 );
 

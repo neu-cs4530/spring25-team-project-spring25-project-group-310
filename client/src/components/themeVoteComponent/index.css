@@ -1,42 +1,58 @@
-.theme-vote-button {
-  background: none;
+/* ThemeVote component styling matching VoteComponent exactly */
+.vote-container {
+  display: inline-flex; 
+  align-items: center;
+  background-color: var(--secondary-bg);
+  border-radius: 20px;
+  padding: 4px 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  width: auto;
+  min-width: fit-content;
+}
+
+.vote-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
   border: none;
   cursor: pointer;
-  font-size: 14px;
-  padding: 4px;
-  transition: color 0.2s;
+  padding: 6px;
+  border-radius: 50%;
+  color: var(--secondary-text);
+  transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
 }
 
-.theme-vote-button-upvoted {
-  color: var(--primary-color, #0095ff);
+.vote-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--primary-text);
 }
 
-.theme-vote-button-downvoted {
-  color: var(--negative-color, #f44336);
+.vote-button svg {
+  width: 18px;
+  height: 18px;
 }
 
-.theme-vote-button:hover {
-  opacity: 0.8;
+.vote-button.active.upvote {
+  color: #4CAF50; /* Green for upvotes */
 }
 
-.theme-vote-button:focus {
-  outline: none;
+.vote-button.active.downvote {
+  color: #F44336; /* Red for downvotes */
 }
 
-.theme-vote-button:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-.theme-vote-count {
-  margin: 0 8px;
-  font-size: 12px;
+.vote-count {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--primary-text);
+  margin: 0 6px;
   min-width: 20px;
   text-align: center;
 }
 
-.theme-vote-login-message {
-  font-size: 10px;
-  text-align: center;
-  color: var(--muted-text);
+.vote-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

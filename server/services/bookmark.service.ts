@@ -73,8 +73,6 @@ export const deleteBookmark = async (
       username,
     });
 
-    // Also remove it from the default collection
-
     const defaultCollection = await getOrCreateDefaultCollection(username);
     await CollectionModel.findByIdAndUpdate(
       defaultCollection._id,

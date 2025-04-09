@@ -1,24 +1,393 @@
-.questionBody {
-  display: flex;
-  flex-direction: row;
-  /* justify-content: space-between;  */
-  margin-top: 5%;
-  border-bottom: var(--border-color) 1px dashed;
+.question-body-container {
+  padding: 0 0 calc(1.5rem * var(--text-size-factor, 100%) / 100) 0 !important;
+  margin-bottom: calc(1.5rem * var(--text-size-factor, 100%) / 100) !important;
+  border-bottom: 1px solid var(--border-color) !important;
 }
 
-.answer_question_view {
-  width: 15%;
-  margin-top: 10px;
+.question-layout {
+  display: flex !important;
+  gap: calc(2rem * var(--text-size-factor, 100%) / 100) !important;
+  min-height: 150px !important; 
 }
 
-.answer_question_text {
-  width: 80%;
-  margin-bottom: 20px;
+.question-main-content {
+  flex: 1 !important;
+  min-width: 0 !important;
+  padding-top: calc(1.75rem * var(--text-size-factor, 100%) / 100) !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
 }
 
-.question_author {
-  margin-right: 5px;
+.question-sidebar {
+  width: 200px !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
 }
-.question_author {
-  margin-right: 5px;
+
+.question-label {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  display: inline-block !important;
+  background-color: rgba(var(--accent-color-rgb, 0, 120, 255), 0.1) !important;
+  color: var(--accent-color) !important;
+  font-size: calc(0.875rem * var(--text-size-factor, 100%) / 100) !important;
+  font-weight: 600 !important;
+  padding: calc(0.25rem * var(--text-size-factor, 100%) / 100) calc(0.625rem * var(--text-size-factor, 100%) / 100) !important;
+  border-radius: 4px !important;
+}
+
+.question-text {
+  font-size: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+  line-height: var(--line-height, 1.6) !important;
+  color: var(--primary-text) !important;
+  margin-bottom: calc(1.5rem * var(--text-size-factor, 100%) / 100) !important;
+  word-break: break-word !important;
+}
+
+.code-snippet-section {
+  margin: calc(1.5rem * var(--text-size-factor, 100%) / 100) 0 !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  background-color: var(--primary-bg) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+.code-snippet-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: calc(0.75rem * var(--text-size-factor, 100%) / 100) calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+  background-color: var(--secondary-bg) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.code-snippet-header h4 {
+  margin: 0 !important;
+  font-size: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+  font-weight: 600 !important;
+  color: var(--primary-text) !important;
+}
+
+.code-language-indicator {
+  display: flex !important;
+  align-items: center !important;
+  background-color: #f0db4f !important;
+  color: #323330 !important;
+  padding: calc(0.25rem * var(--text-size-factor, 100%) / 100) calc(0.5rem * var(--text-size-factor, 100%) / 100) !important;
+  border-radius: 12px !important;
+  font-size: calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
+  font-weight: 500 !important;
+}
+
+.code-language-indicator svg {
+  margin-right: 4px !important;
+  width: calc(0.875rem * var(--text-size-factor, 100%) / 100) !important;
+  height: calc(0.875rem * var(--text-size-factor, 100%) / 100) !important;
+}
+
+/* Attachments Section */
+.attachments-section {
+  margin: calc(1.5rem * var(--text-size-factor, 100%) / 100) 0 !important;
+}
+
+.attachments-section h4 {
+  margin: 0 0 calc(1rem * var(--text-size-factor, 100%) / 100) 0 !important;
+  font-size: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+  font-weight: 600 !important;
+  color: var(--primary-text) !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.attachments-section h4 svg {
+  margin-right: calc(0.5rem * var(--text-size-factor, 100%) / 100) !important;
+  color: var(--accent-color) !important;
+  width: calc(1.25rem * var(--text-size-factor, 100%) / 100) !important;
+  height: calc(1.25rem * var(--text-size-factor, 100%) / 100) !important;
+}
+
+.attachments-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
+  gap: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+}
+
+.attachment-item {
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  background-color: var(--secondary-bg) !important;
+  transition: all 0.2s ease !important;
+  position: relative !important;
+}
+
+.attachment-item:hover {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(-2px) !important;
+}
+
+.image-preview {
+  position: relative !important;
+  height: calc(140px * var(--text-size-factor, 100%) / 100) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  cursor: pointer !important;
+}
+
+.attachment-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.attachment-filename {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  color: white !important;
+  padding: calc(0.375rem * var(--text-size-factor, 100%) / 100) calc(0.625rem * var(--text-size-factor, 100%) / 100) !important;
+  font-size: calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  transition: opacity 0.2s ease !important;
+  backdrop-filter: blur(2px) !important;
+}
+
+.attachment-item:hover .attachment-controls {
+  opacity: 1 !important;
+}
+
+.attachment-controls {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  display: flex !important;
+  gap: 4px !important;
+  padding: 6px !important;
+  opacity: 0 !important;
+  transition: opacity 0.2s ease !important;
+}
+
+.attachment-button {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  color: white !important;
+  border: none !important;
+  width: calc(28px * var(--text-size-factor, 100%) / 100) !important;
+  height: calc(28px * var(--text-size-factor, 100%) / 100) !important;
+  border-radius: 4px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: background-color 0.2s ease !important;
+  backdrop-filter: blur(2px) !important;
+}
+
+.attachment-button:hover {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+.file-preview {
+  height: calc(140px * var(--text-size-factor, 100%) / 100) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+}
+
+.file-icon {
+  margin-bottom: calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
+  color: var(--accent-color) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.file-icon svg {
+  width: calc(48px * var(--text-size-factor, 100%) / 100) !important;
+  height: calc(48px * var(--text-size-factor, 100%) / 100) !important;
+  opacity: 0.8 !important;
+}
+
+.pdf-preview .file-icon {
+  color: #e53935 !important;
+}
+
+.text-preview .file-icon {
+  color: #039be5 !important;
+}
+
+.view-count {
+  background-color: var(--secondary-bg) !important;
+  border-radius: 8px !important;
+  padding: calc(0.625rem * var(--text-size-factor, 100%) / 100) calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+  color: var(--secondary-text) !important;
+  font-size: calc(0.875rem * var(--text-size-factor, 100%) / 100) !important;
+  margin-bottom: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+  text-align: center !important;
+}
+
+.view-count .count {
+  font-weight: 600 !important;
+  color: var(--primary-text) !important;
+  font-size: calc(1.125rem * var(--text-size-factor, 100%) / 100) !important;
+  display: block !important;
+  margin-bottom: 2px !important;
+}
+
+.question-author-info {
+  display: flex !important;
+  align-items: center !important;
+  background-color: var(--secondary-bg) !important;
+  border-radius: 8px !important;
+  padding: calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
+}
+
+.author-avatar {
+  width: calc(32px * var(--text-size-factor, 100%) / 100) !important;
+  height: calc(32px * var(--text-size-factor, 100%) / 100) !important;
+  border-radius: 50% !important;
+  background-color: var(--accent-color) !important;
+  color: white !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 600 !important;
+  font-size: calc(0.875rem * var(--text-size-factor, 100%) / 100) !important;
+  margin-right: calc(0.625rem * var(--text-size-factor, 100%) / 100) !important;
+  flex-shrink: 0 !important;
+}
+
+.author-details {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.author-name {
+  font-size: calc(0.875rem * var(--text-size-factor, 100%) / 100) !important;
+  font-weight: 600 !important;
+  color: var(--primary-text) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: var(--line-height, 1.5) !important;
+}
+
+.post-time {
+  font-size: calc(0.75rem * var(--text-size-factor, 100%) / 100) !important;
+  color: var(--secondary-text) !important;
+  line-height: var(--line-height, 1.5) !important;
+}
+
+.fullscreen-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background-color: rgba(0, 0, 0, 0.9) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 9999 !important;
+  padding: calc(2.5rem * var(--text-size-factor, 100%) / 100) !important;
+  animation: fadeIn 0.2s ease-out !important;
+}
+
+.fullscreen-image {
+  max-width: 100% !important;
+  max-height: 90vh !important;
+  object-fit: contain !important;
+}
+
+.fullscreen-close {
+  position: absolute !important;
+  top: 20px !important;
+  right: 20px !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: calc(40px * var(--text-size-factor, 100%) / 100) !important;
+  height: calc(40px * var(--text-size-factor, 100%) / 100) !important;
+  font-size: calc(1.5rem * var(--text-size-factor, 100%) / 100) !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.fullscreen-close:hover {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.fullscreen-download {
+  position: absolute !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: calc(0.5rem * var(--text-size-factor, 100%) / 100) calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+  font-size: calc(0.875rem * var(--text-size-factor, 100%) / 100) !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: calc(0.5rem * var(--text-size-factor, 100%) / 100) !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.fullscreen-download:hover {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+@media (max-width: 768px) {
+  .question-layout {
+    flex-direction: column !important;
+    gap: calc(1.25rem * var(--text-size-factor, 100%) / 100) !important;
+  }
+  
+  .question-sidebar {
+    width: 100% !important;
+    display: flex !important;
+    padding-top: 0 !important;
+    gap: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+    flex-direction: row !important;
+  }
+  
+  .view-count, .question-author-info {
+    flex: 1 !important;
+    margin-bottom: 0 !important;
+  }
+  
+  .attachments-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .question-sidebar {
+    flex-direction: column !important;
+  }
+  
+  .view-count {
+    margin-bottom: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+  }
+  
+  .attachment-button {
+    width: calc(32px * var(--text-size-factor, 100%) / 100) !important;
+    height: calc(32px * var(--text-size-factor, 100%) / 100) !important;
+  }
 }

@@ -1,14 +1,35 @@
 .tagNode {
-  place-self: center;
-  border: var(--border-color) 1px dashed;
-  padding: 5%;
-  width: 30%;
-  display: flex;
-  flex-direction: column;
-  justify-items: center;
-  align-items: center;
+  place-self: center !important;
+  border: var(--border-color) 1px dashed !important;
+  padding: calc(5% * var(--text-size-factor, 100%) / 100) !important;
+  width: 30% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-items: center !important;
+  align-items: center !important;
 }
 
 .tagName {
-  color: var(--accent-color);
+  color: var(--accent-color) !important;
+  font-size: calc(1rem * var(--text-size-factor, 100%) / 100) !important;
+  font-weight: 500 !important;
+  line-height: var(--line-height, 1.5) !important;
+  margin-bottom: calc(0.5rem * var(--text-size-factor, 100%) / 100) !important;
+}
+
+@media (max-width: 768px) {
+  .tagNode {
+    width: 45% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .tagNode {
+    width: 90% !important;
+    padding: calc(8% * var(--text-size-factor, 100%) / 100) !important; 
+  }
+  
+  .tagName {
+    font-size: calc(1.125rem * var(--text-size-factor, 100%) / 100) !important;
+  }
 }

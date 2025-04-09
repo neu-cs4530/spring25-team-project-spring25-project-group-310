@@ -1,110 +1,126 @@
-/* Container styles */
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: var(--primary-bg);
-  padding: 20px;
+/* Enhanced Header styles with better responsiveness */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: box-shadow 0.3s ease;
 }
 
-/* Heading styles */
-.container h2 {
-  font-size: 2rem;
-  color: var(--primary-text);
-  margin-bottom: 10px;
+/* Shadow when scrolling */
+header.scrolled {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
 }
 
-.container h3 {
-  font-size: 1.5rem;
-  color: var(--secondary-text);
-  margin-bottom: 20px;
+/* Ensure search input is properly styled */
+header input {
+  transition: all 0.2s ease !important;
 }
 
-.container h4 {
-  font-size: 1rem;
-  color: var(--secondary-text);
-  margin: 15px 0 5px;
-  /* Adjusted for better spacing */
-  text-align: left;
-  /* Align text to the left */
-  width: 100%;
-  /* Ensure alignment respects the form's width */
-  max-width: 400px;
-  /* Match the form's max width */
+header input::placeholder {
+  color: rgba(0, 0, 0, 0.4) !important;
 }
 
-/* Form styles */
-form {
-  width: 100%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+/* Logo animation */
+header .logo-container:hover {
+  animation: pulse 1s infinite ease-in-out;
 }
 
-/* Input styles */
-.input-text {
-  padding: 12px;
-  font-size: 16px;
-  width: 100%;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  background-color: var(--input-bg);
-  color: var(--primary-text);
-  box-sizing: border-box;
-  transition:
-    border-color 0.3s,
-    box-shadow 0.3s;
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
-.input-text:focus {
-  border-color: var(--accent-color);
-  box-shadow: 0 0 5px var(--shadow-color);
+/* Button styling */
+header button {
+  position: relative;
+  overflow: hidden;
 }
 
-/* Button styles */
-.signup-button {
-  padding: 12px;
-  font-size: 16px;
-  background-color: var(--button-bg);
-  color: var(--button-text);
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+/* Ripple effect for buttons */
+header button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1) translate(-50%, -50%);
+  transform-origin: 50% 50%;
 }
 
-.signup-button:hover {
-  background-color: var(--button-hover);
+header button:active::after {
+  animation: ripple 0.6s ease-out;
 }
 
-.signup-button:active {
-  background-color: var(--button-active);
+@keyframes ripple {
+  0% { transform: scale(0); opacity: 0.5; }
+  100% { transform: scale(30); opacity: 0; }
 }
 
-/* Signup link styles */
-.login-link {
-  margin-top: 30px;
-  /* Increased spacing */
-  font-size: 14px;
-  color: var(--accent-color);
-  text-decoration: none;
-  cursor: pointer;
-  transition: color 0.3s;
-  text-align: center;
-  /* Center the link */
+/* Mobile menu animation */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.login-link:hover {
-  color: var(--button-hover);
-  text-decoration: underline;
+.mobile-menu {
+  animation: slideDown 0.3s ease-out;
 }
 
-.error-message {
-  color: var(--accent-color);
-  font-size: 14px;
-  margin-top: 20px;
-  text-align: center;
+/* Extra responsive adjustments */
+@media (max-width: 1024px) {
+  header .logo-text {
+    font-size: 24px !important;
+  }
+  
+  header .search-container {
+    max-width: 60% !important;
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    padding: 0 1rem !important;
+    height: 60px !important;
+  }
+  
+  header .logo-container {
+    width: auto !important;
+  }
+  
+  header .search-container {
+    display: none !important;
+  }
+  
+  header .logo-text {
+    font-size: 22px !important;
+  }
+  
+  header .icon-buttons {
+    display: none !important;
+  }
+  
+  header .mobile-menu-toggle {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 480px) {
+  header .logo-text {
+    font-size: 20px !important;
+  }
+  
+  .mobile-menu button {
+    font-size: 14px !important;
+  }
 }

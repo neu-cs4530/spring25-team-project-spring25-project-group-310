@@ -5,6 +5,7 @@ import TextArea from '../baseComponents/textarea';
 import useAnswerForm from '../../../hooks/useAnswerForm';
 import CodeCompiler from '../codeCompiler';
 
+// SVG icons for file types
 const ImageIcon = () => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
@@ -60,9 +61,29 @@ const TextFileIcon = () => (
   </svg>
 );
 
+const JavaScriptIcon = () => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    width='24'
+    height='24'
+    viewBox='0 0 24 24'
+    fill='none'
+    stroke='currentColor'
+    strokeWidth='2'
+    strokeLinecap='round'
+    strokeLinejoin='round'>
+    <path d='M20 3H4a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1z' />
+    <path d='M10 9v8' />
+    <path d='M14 9v8' />
+    <path d='M10 13h4' />
+    <path d='M16 9l2 8' />
+    <path d='M8 9l-2 8' />
+  </svg>
+);
+
 /**
- * NewAnswerPage component allows users to submit an answer to a specific question
- * with file upload capabilities.
+ * Modern NewAnswerPage component allows users to submit an answer to a specific question
+ * with code execution and file upload capabilities.
  */
 const NewAnswerPage = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -155,101 +176,121 @@ const NewAnswerPage = () => {
   };
 
   return (
-    <Form>
-      <TextArea
-        title={'Answer Text *'}
-        id={'answerTextInput'}
-        val={text}
-        setState={setText}
-        err={textErr}
-      />
-      <div className='code-editor-section'>
-        <label className='code-editor-label'>Code Snippet</label>
-        <CodeCompiler code={codeSnippet} onCodeChange={setCodeSnippet} />
+    <div className='new-answer-container'>
+      <div className='page-header'>
+        <h1>Your Answer</h1>
+        <p className='page-description'>
+          Help the community by contributing your knowledge and expertise
+        </p>
       </div>
 
-      <div
-        className={`file-upload-container ${isDragging ? 'dragging' : ''}`}
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}>
-        <div className='file-upload-header'>
-          <h3>Attachments</h3>
-          <span className='file-upload-hint'>
-            Upload images (PNG, JPG), PDFs, or text files (max 5MB per file)
-          </span>
-        </div>
-
-        <input
-          type='file'
-          id='fileInput'
-          className='file-input'
-          ref={fileInputRef}
-          accept='.jpg,.jpeg,.png,.pdf,.txt'
-          multiple
-          onChange={e => {
-            handleFileChange(e);
-            resetFileInput();
-          }}
+      <Form>
+        <TextArea
+          title={'Answer Text *'}
+          id={'answerTextInput'}
+          val={text}
+          setState={setText}
+          err={textErr}
         />
 
-        <div className='drag-drop-area'>
-          <div className='drag-drop-content'>
-            <ImageIcon />
-            <p>Drag & drop files here or</p>
-            <button type='button' className='file-select-btn' onClick={handleAddMoreFiles}>
-              Browse Files
-            </button>
+        <div className='code-editor-section'>
+          <div className='code-editor-header'>
+            <label className='code-editor-label'>Code Snippet</label>
+            <div className='code-language-indicator'>
+              <JavaScriptIcon />
+              <span>JavaScript Only</span>
+            </div>
+          </div>
+          <CodeCompiler code={codeSnippet} onCodeChange={setCodeSnippet} />
+          <div className='code-editor-hint'>
+            Add a JavaScript code snippet to demonstrate your solution. Code will be executable by
+            other users.
           </div>
         </div>
 
-        {fileErr && <div className='error-message'>{fileErr}</div>}
+        <div
+          className={`file-upload-container ${isDragging ? 'dragging' : ''}`}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}>
+          <div className='file-upload-header'>
+            <h3>Attachments</h3>
+            <span className='file-upload-hint'>
+              Upload images (PNG, JPG), PDFs, or text files (max 5MB per file)
+            </span>
+          </div>
 
-        {files.length > 0 && (
-          <div className='file-preview-container'>
-            <div className='file-preview-header'>
-              <h4>Selected Files ({files.length}/10)</h4>
-              <button type='button' className='clear-files-btn' onClick={clearFiles}>
-                Clear All
+          <input
+            type='file'
+            id='fileInput'
+            className='file-input'
+            ref={fileInputRef}
+            accept='.jpg,.jpeg,.png,.pdf,.txt'
+            multiple
+            onChange={e => {
+              handleFileChange(e);
+              resetFileInput();
+            }}
+          />
+
+          <div className='drag-drop-area'>
+            <div className='drag-drop-content'>
+              <ImageIcon />
+              <p>Drag & drop files here or</p>
+              <button type='button' className='file-select-btn' onClick={handleAddMoreFiles}>
+                Browse Files
               </button>
             </div>
-
-            <div className='file-previews'>
-              {files.map(file => (
-                <div key={file.id} className='file-preview-item'>
-                  {renderFilePreview(file)}
-                  <div className='file-actions'>
-                    <button
-                      type='button'
-                      className='replace-file-btn'
-                      onClick={() => handleReplaceFile(file.id)}>
-                      Replace
-                    </button>
-                    <button
-                      type='button'
-                      className='remove-file-btn'
-                      onClick={() => removeFile(file.id)}>
-                      Remove
-                    </button>
-                  </div>
-                  <div className='file-meta'>
-                    <span className='file-size'>{(file.file.size / 1024).toFixed(1)} KB</span>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
-        )}
-      </div>
 
-      <div className='btn_indicator_container'>
-        <button className='form_postBtn' onClick={postAnswer}>
-          Post Answer
-        </button>
-        <div className='mandatory_indicator'>* indicates mandatory fields</div>
-      </div>
-    </Form>
+          {fileErr && <div className='error-message'>{fileErr}</div>}
+
+          {files.length > 0 && (
+            <div className='file-preview-container'>
+              <div className='file-preview-header'>
+                <h4>Selected Files ({files.length}/10)</h4>
+                <button type='button' className='clear-files-btn' onClick={clearFiles}>
+                  Clear All
+                </button>
+              </div>
+
+              <div className='file-previews'>
+                {files.map(file => (
+                  <div key={file.id} className='file-preview-item'>
+                    {renderFilePreview(file)}
+                    <div className='file-actions'>
+                      <button
+                        type='button'
+                        className='replace-file-btn'
+                        onClick={() => handleReplaceFile(file.id)}>
+                        Replace
+                      </button>
+                      <button
+                        type='button'
+                        className='remove-file-btn'
+                        onClick={() => removeFile(file.id)}>
+                        Remove
+                      </button>
+                    </div>
+                    <div className='file-meta'>
+                      <span className='file-size'>{(file.file.size / 1024).toFixed(1)} KB</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className='btn_indicator_container'>
+          <button className='form_postBtn' onClick={postAnswer}>
+            Post Answer
+          </button>
+          <div className='mandatory_indicator'>* indicates mandatory fields</div>
+        </div>
+      </Form>
+    </div>
   );
 };
 

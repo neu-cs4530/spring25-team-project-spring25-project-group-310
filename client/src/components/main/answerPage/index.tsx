@@ -67,12 +67,9 @@ const AnswerPage = () => {
     };
   }, [checkBookmarkStatus]);
 
-  // Recheck bookmark status when modal closes
-  useEffect(() => {
-    if (!isBookmarkModalOpen) {
-      checkBookmarkStatus();
-    }
-  }, [isBookmarkModalOpen, checkBookmarkStatus]);
+  if (!question) {
+    return <div className='loading-container'>Loading question...</div>;
+  }
 
   // Remove bookmark from all collections
   const removeFromAllCollections = async (questionIdString: string) => {
@@ -101,43 +98,47 @@ const AnswerPage = () => {
 
     setIsLoading(true);
 
-    // Refresh bookmark status to ensure accuracy
-    const currentlyBookmarked = await checkBookmarkStatus();
-    const questionIdString = String(questionID);
+    try {
+      // Refresh bookmark status to ensure accuracy
+      const currentlyBookmarked = await checkBookmarkStatus();
+      const questionIdString = String(questionID);
 
-    if (!currentlyBookmarked) {
-      // Add to default collection
-      await addBookmarkWithoutCollection(questionIdString, username);
-      setIsBookmarked(true);
-      setIsNewBookmark(true);
+      if (!currentlyBookmarked) {
+        // Add to default collection
+        await addBookmarkWithoutCollection(questionIdString, username);
+        setIsBookmarked(true);
+        setIsNewBookmark(true);
 
-      // Open modal with confirmation mode
-      setIsBookmarkModalOpen(true);
+        // Open modal with confirmation mode
+        setIsBookmarkModalOpen(true);
 
-      // Dispatch event for profile refresh
-      window.dispatchEvent(
-        new CustomEvent('bookmarkAdded', {
-          detail: {
-            questionId: questionIdString,
-            username,
-            title: question?.title,
-          },
-        }),
-      );
-    } else {
-      // Remove from ALL collections
-      await removeFromAllCollections(questionIdString);
-      setIsBookmarked(false);
+        // Dispatch event for profile refresh
+        window.dispatchEvent(
+          new CustomEvent('bookmarkAdded', {
+            detail: {
+              questionId: questionIdString,
+              username,
+              title: question?.title,
+            },
+          }),
+        );
+      } else {
+        // Remove from ALL collections
+        await removeFromAllCollections(questionIdString);
+        setIsBookmarked(false);
 
-      // Dispatch event for profile refresh
-      window.dispatchEvent(
-        new CustomEvent('bookmarkRemoved', {
-          detail: {
-            questionId: questionIdString,
-            username,
-          },
-        }),
-      );
+        // Dispatch event for profile refresh
+        window.dispatchEvent(
+          new CustomEvent('bookmarkRemoved', {
+            detail: {
+              questionId: questionIdString,
+              username,
+            },
+          }),
+        );
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -159,23 +160,87 @@ const AnswerPage = () => {
   }
 
   return (
-    <>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <VoteComponent question={question} />
-        <button
-          className={isBookmarked ? 'bookmark_button_bookmarked' : 'bookmark_button'}
-          onClick={handleBookmarkClick}
-          disabled={isLoading}
-          style={{ marginLeft: '10px' }}
-          title={isBookmarked ? 'Click to remove bookmark' : 'Bookmark this question'}>
-          <FontAwesomeIcon
-            icon={faBookmark}
-            style={{ color: isBookmarked ? '#0095ff' : 'white' }}
-          />
-        </button>
+    <div className='answer-page-container'>
+      <div className='question-section'>
+        <div className='question-header'>
+          <AnswerHeader ansCount={question.answers.length} title={question.title} />
+
+          <div className='question-actions'>
+            <button
+              className={`bookmark-button ${isBookmarked ? 'bookmarked' : ''}`}
+              onClick={handleBookmarkClick}
+              disabled={isLoading}
+              title={isBookmarked ? 'Organize bookmark' : 'Bookmark this question'}>
+              <FontAwesomeIcon icon={faBookmark} />
+              <span className='bookmark-text'>{isBookmarked ? 'Bookmarked' : 'Bookmark'}</span>
+            </button>
+          </div>
+        </div>
+
+        <div className='question-content'>
+          <div className='vote-section'>
+            <VoteComponent question={question} />
+          </div>
+
+          <div className='question-body-section'>
+            <QuestionBody
+              views={question.views.length}
+              text={question.text}
+              askby={question.askedBy}
+              meta={getMetaData(new Date(question.askDateTime))}
+              codeSnippet={question.codeSnippet}
+              files={question.files}
+              questionId={String(question._id)}
+            />
+
+            <CommentSection
+              comments={question.comments}
+              handleAddComment={comment => handleNewComment(comment, 'question', questionID)}
+            />
+          </div>
+        </div>
       </div>
 
-      {/* Bookmark Modal */}
+      {question.answers.length > 0 && (
+        <div className='answers-section'>
+          <div className='section-header'>
+            <h2>
+              {question.answers.length} {question.answers.length === 1 ? 'Answer' : 'Answers'}
+            </h2>
+          </div>
+
+          <div className='answers-list'>
+            {question.answers.map(a => (
+              <AnswerView
+                key={String(a._id)}
+                text={a.text}
+                ansBy={a.ansBy}
+                meta={getMetaData(new Date(a.ansDateTime))}
+                comments={a.comments}
+                codeSnippet={a.codeSnippet}
+                files={a.files}
+                answerId={String(a._id)}
+                handleAddComment={comment => handleNewComment(comment, 'answer', String(a._id))}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className='your-answer-section'>
+        <button
+          className='answer-button'
+          onClick={() => {
+            handleNewAnswer();
+          }}>
+          Answer Question
+        </button>
+
+        <p className='answer-prompt'>
+          Know the solution? Share your knowledge and help the community.
+        </p>
+      </div>
+
       {isBookmarkModalOpen && (
         <BookmarkPrompt
           questionId={String(question._id)}
@@ -185,38 +250,7 @@ const AnswerPage = () => {
           isNewBookmark={isNewBookmark}
         />
       )}
-
-      <AnswerHeader ansCount={question.answers.length} title={question.title} />
-      <QuestionBody
-        views={question.views.length}
-        text={question.text}
-        askby={question.askedBy}
-        meta={getMetaData(new Date(question.askDateTime))}
-        codeSnippet={question.codeSnippet}
-        files={question.files}
-        questionId={String(question._id)}
-      />
-      <CommentSection
-        comments={question.comments}
-        handleAddComment={comment => handleNewComment(comment, 'question', questionID)}
-      />
-      {question.answers.map(a => (
-        <AnswerView
-          key={String(a._id)}
-          text={a.text}
-          ansBy={a.ansBy}
-          meta={getMetaData(new Date(a.ansDateTime))}
-          comments={a.comments}
-          codeSnippet={a.codeSnippet}
-          files={a.files}
-          answerId={String(a._id)}
-          handleAddComment={comment => handleNewComment(comment, 'answer', String(a._id))}
-        />
-      ))}
-      <button className='bluebtn ansButton' onClick={handleNewAnswer}>
-        Answer Question
-      </button>
-    </>
+    </div>
   );
 };
 
