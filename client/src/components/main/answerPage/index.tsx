@@ -67,12 +67,9 @@ const AnswerPage = () => {
     };
   }, [checkBookmarkStatus]);
 
-  // Recheck bookmark status when modal closes
-  useEffect(() => {
-    if (!isBookmarkModalOpen) {
-      checkBookmarkStatus();
-    }
-  }, [isBookmarkModalOpen, checkBookmarkStatus]);
+  if (!question) {
+    return <div className='loading-container'>Loading question...</div>;
+  }
 
   // Remove bookmark from all collections
   const removeFromAllCollections = async (questionIdString: string) => {
@@ -159,7 +156,7 @@ const AnswerPage = () => {
   };
 
   if (!question) {
-    return <div className='loading-container'>Loading question...</div>;
+    return null;
   }
 
   return (
