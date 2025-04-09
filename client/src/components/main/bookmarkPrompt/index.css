@@ -1,4 +1,5 @@
-/* Modern Bookmark Prompt Modal Styling */
+/* BookmarkPrompt Styling */
+
 .bookmark-modal-overlay {
     position: fixed;
     top: 0;
@@ -16,11 +17,11 @@
   .bookmark-modal {
     background-color: var(--primary-bg);
     border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    width: 450px;
+    width: 400px;
     max-width: 90vw;
-    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     animation: modalFadeIn 0.25s ease-out;
+    overflow: hidden;
   }
   
   @keyframes modalFadeIn {
@@ -34,7 +35,89 @@
     }
   }
   
-  /* Modal Header */
+  /* Confirmation view styling */
+  .confirmation-view {
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .confirmation-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: rgba(var(--accent-color-rgb, 0, 120, 255), 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-color);
+    margin-bottom: 16px;
+    animation: checkmarkPop 0.4s ease-out;
+  }
+  
+  @keyframes checkmarkPop {
+    0% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    40% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  .confirmation-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--primary-text);
+    margin: 0 0 24px 0;
+  }
+  
+  .confirmation-actions {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+  }
+  
+  .manage-button, .close-button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .manage-button {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+  }
+  
+  .manage-button:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .close-button {
+    background-color: transparent;
+    color: var(--secondary-text);
+    border: 1px solid var(--border-color);
+  }
+  
+  .close-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--primary-text);
+  }
+  
+  /* Collection selection view styling */
   .bookmark-modal-header {
     display: flex;
     justify-content: space-between;
@@ -70,7 +153,6 @@
     color: var(--primary-text);
   }
   
-  /* Modal Content */
   .bookmark-modal-content {
     padding: 20px;
   }
@@ -78,7 +160,10 @@
   /* Tab Navigation */
   .bookmark-tabs {
     display: flex;
-    border-bottom: 1px solid var(--border-color);
+    background-color: var(--secondary-bg);
+    border-radius: 8px;
+    padding: 4px;
+    border: 1px solid var(--border-color);
     margin-bottom: 20px;
   }
   
@@ -86,13 +171,15 @@
     flex: 1;
     background: none;
     border: none;
-    padding: 12px 16px;
+    padding: 10px 16px;
     font-size: 14px;
     font-weight: 500;
     color: var(--secondary-text);
     cursor: pointer;
     transition: all 0.2s ease;
+    border-radius: 6px;
     position: relative;
+    text-align: center;
   }
   
   .bookmark-tab:hover {
@@ -101,28 +188,15 @@
   
   .bookmark-tab.active {
     color: var(--accent-color);
+    background-color: var(--primary-bg);
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
   
-  .bookmark-tab.active::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background-color: var(--accent-color);
-  }
-  
-  /* Collection Selection */
+  /* Collection List */
   .collection-selection {
     max-height: 300px;
     overflow-y: auto;
-  }
-  
-  .collections-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
   }
   
   .collection-option {
@@ -132,7 +206,9 @@
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: 1px solid transparent;
+    margin-bottom: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--primary-bg);
   }
   
   .collection-option:hover {
@@ -294,8 +370,22 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
   
-  .save-bookmark-btn:disabled,
-  .cancel-bookmark-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    .confirmation-view {
+      padding: 24px 16px;
+    }
+    
+    .bookmark-modal-actions,
+    .confirmation-actions {
+      flex-direction: column-reverse;
+      gap: 8px;
+    }
+    
+    .manage-button, 
+    .close-button,
+    .save-bookmark-btn,
+    .cancel-bookmark-btn {
+      width: 100%;
+    }
   }

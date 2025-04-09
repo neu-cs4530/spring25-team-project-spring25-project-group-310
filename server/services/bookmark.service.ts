@@ -1,14 +1,28 @@
 import { Bookmark, BookmarkResponse, DatabaseBookmark } from '../types/types';
 import BookmarkModel from '../models/bookmark.model';
+import CollectionModel from '../models/collection.model';
+import { getOrCreateDefaultCollection } from './collection.service';
 
 /**
- * Saves a new bookmark to the database.
+ * Saves a new bookmark to the database and adds it to the default collection.
  * @param {Bookmark} bookmark - The bookmark to save.
  * @returns {Promise<BookmarkResponse>} - The saved bookmark or an error message.
  */
 export const saveBookmark = async (bookmark: Bookmark): Promise<BookmarkResponse> => {
   try {
+    // Create the bookmark
     const result: DatabaseBookmark = await BookmarkModel.create(bookmark);
+
+    // Get or create the default "All Bookmarks" collection
+    const defaultCollection = await getOrCreateDefaultCollection(bookmark.username);
+
+    // Add the bookmark to the default collection
+    await CollectionModel.findByIdAndUpdate(
+      defaultCollection._id,
+      { $addToSet: { bookmarks: bookmark.questionId } },
+      { new: true },
+    );
+
     return result;
   } catch (error) {
     return { error: 'Error when saving a bookmark' };
@@ -58,6 +72,18 @@ export const deleteBookmark = async (
       questionId,
       username,
     });
+
+    // Also remove it from the default collection
+    try {
+      const defaultCollection = await getOrCreateDefaultCollection(username);
+      await CollectionModel.findByIdAndUpdate(
+        defaultCollection._id,
+        { $pull: { bookmarks: questionId } },
+        { new: true },
+      );
+    } catch (collectionError) {
+      console.error('Error removing from default collection:', collectionError);
+    }
 
     return deletedBookmark || { error: 'Bookmark not found' };
   } catch (error) {

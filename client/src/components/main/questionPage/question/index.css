@@ -1,4 +1,3 @@
-/* Modern Question Card */
 .question-card {
   display: flex;
   background-color: var(--primary-bg);
@@ -162,7 +161,7 @@
     padding: 16px;
     align-items: flex-start;
   }
-  
+
   .question-stats {
     flex-direction: row;
     padding-right: 0;
@@ -174,24 +173,24 @@
     margin-bottom: 12px;
     min-width: auto;
   }
-  
+
   .stat-item {
     margin-bottom: 0;
     margin-right: 24px;
     flex-direction: row;
     align-items: center;
   }
-  
+
   .stat-value {
     margin-right: 4px;
   }
-  
+
   .question-content {
     padding-right: 0;
     margin-bottom: 16px;
     width: 100%;
   }
-  
+
   .question-meta {
     width: 100%;
     justify-content: flex-start;
@@ -202,7 +201,7 @@
   .question-title {
     font-size: 16px;
   }
-  
+
   .author-avatar {
     width: 32px;
     height: 32px;

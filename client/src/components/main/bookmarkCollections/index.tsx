@@ -246,6 +246,7 @@ const BookmarkCollections: React.FC = () => {
     }
   };
 
+  // eslint-disable-next-line
   const handleRemoveBookmark = async (questionId: string) => {
     if (!selectedCollection || !username) return;
 

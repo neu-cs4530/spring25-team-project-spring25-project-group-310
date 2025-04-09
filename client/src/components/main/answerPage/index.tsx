@@ -1,89 +1,166 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookmark } from '@fortawesome/free-solid-svg-icons';
 import { getMetaData } from '../../../tool';
 import AnswerView from './answer';
 import AnswerHeader from './header';
-import { Comment } from '../../../types/types';
 import './index.css';
 import QuestionBody from './questionBody';
 import VoteComponent from '../voteComponent';
 import CommentSection from '../commentSection';
 import useAnswerPage from '../../../hooks/useAnswerPage';
 import BookmarkPrompt from '../bookmarkPrompt';
-import { addBookmarkWithoutCollection, fetchAllBookmarks } from '../../../services/bookmarkService';
+import {
+  addBookmarkWithoutCollection,
+  fetchAllBookmarks,
+  removeBookmark,
+  fetchCollections,
+  removeBookmarkFromCollection,
+} from '../../../services/bookmarkService';
 import useUserContext from '../../../hooks/useUserContext';
 
 const AnswerPage = () => {
   const { questionID, question, handleNewComment, handleNewAnswer } = useAnswerPage();
   const [isBookmarkModalOpen, setIsBookmarkModalOpen] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isNewBookmark, setIsNewBookmark] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { user: currentUser } = useUserContext();
-  const { username } = currentUser;
+  const { username } = currentUser || {};
 
-  // Check if the question is already bookmarked when component mounts
-  useEffect(() => {
-    const checkIfBookmarked = async () => {
-      if (!questionID || !username) return;
+  // Check bookmark status
+  const checkBookmarkStatus = useCallback(async () => {
+    if (!questionID || !username) return false;
 
-      // Convert questionID to string for consistent comparison
+    try {
       const questionIdString = String(questionID);
-
-      // Fetch all bookmarks for the user
       const bookmarks = await fetchAllBookmarks(username);
 
-      // Check if this question is already in the bookmarks
-      const isAlreadyBookmarked = bookmarks.some(
-        bookmark => bookmark.questionId === questionIdString,
-      );
+      const exists =
+        Array.isArray(bookmarks) &&
+        bookmarks.some(bookmark => bookmark.questionId === questionIdString);
 
-      setIsBookmarked(isAlreadyBookmarked);
+      setIsBookmarked(exists);
+      return exists;
+    } catch (error) {
+      return false;
+    }
+  }, [questionID, username]);
+
+  // Initial load of bookmark status
+  useEffect(() => {
+    checkBookmarkStatus();
+  }, [checkBookmarkStatus]);
+
+  // Listen for bookmark events
+  useEffect(() => {
+    const handleBookmarkEvent = () => {
+      checkBookmarkStatus();
     };
 
-    checkIfBookmarked();
-  }, [questionID, username]);
+    window.addEventListener('bookmarkRemoved', handleBookmarkEvent);
+    window.addEventListener('bookmarkAdded', handleBookmarkEvent);
+
+    return () => {
+      window.removeEventListener('bookmarkRemoved', handleBookmarkEvent);
+      window.removeEventListener('bookmarkAdded', handleBookmarkEvent);
+    };
+  }, [checkBookmarkStatus]);
+
+  // Recheck bookmark status when modal closes
+  useEffect(() => {
+    if (!isBookmarkModalOpen) {
+      checkBookmarkStatus();
+    }
+  }, [isBookmarkModalOpen, checkBookmarkStatus]);
+
+  // Remove bookmark from all collections
+  const removeFromAllCollections = async (questionIdString: string) => {
+    const collections = await fetchCollections(username);
+
+    if (Array.isArray(collections)) {
+      // For each collection containing the bookmark, remove it
+      const removePromises = collections.map(async collection => {
+        // Check if the collection contains the bookmark
+        if (collection.bookmarks && collection.bookmarks.includes(questionIdString)) {
+          await removeBookmarkFromCollection(collection._id.toString(), questionIdString, username);
+        }
+      });
+
+      // Wait for all removal operations to complete
+      await Promise.all(removePromises);
+    }
+
+    // Finally, remove the bookmark itself
+    await removeBookmark(username, questionIdString);
+  };
+
+  // Handle bookmark button click
+  const handleBookmarkClick = async () => {
+    if (!username || !questionID) return;
+
+    setIsLoading(true);
+
+    try {
+      // Refresh bookmark status to ensure accuracy
+      const currentlyBookmarked = await checkBookmarkStatus();
+      const questionIdString = String(questionID);
+
+      if (!currentlyBookmarked) {
+        // Add to default collection
+        await addBookmarkWithoutCollection(questionIdString, username);
+        setIsBookmarked(true);
+        setIsNewBookmark(true);
+
+        // Open modal with confirmation mode
+        setIsBookmarkModalOpen(true);
+
+        // Dispatch event for profile refresh
+        window.dispatchEvent(
+          new CustomEvent('bookmarkAdded', {
+            detail: {
+              questionId: questionIdString,
+              username,
+              title: question?.title,
+            },
+          }),
+        );
+      } else {
+        // Remove from ALL collections
+        await removeFromAllCollections(questionIdString);
+        setIsBookmarked(false);
+
+        // Dispatch event for profile refresh
+        window.dispatchEvent(
+          new CustomEvent('bookmarkRemoved', {
+            detail: {
+              questionId: questionIdString,
+              username,
+            },
+          }),
+        );
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle closing of the bookmark modal
+  const handleBookmarkClose = () => {
+    setIsBookmarkModalOpen(false);
+    setIsNewBookmark(false);
+    checkBookmarkStatus();
+  };
+
+  // Handle success from BookmarkPrompt
+  const handleBookmarkSuccess = () => {
+    setIsBookmarked(true);
+    setIsBookmarkModalOpen(false);
+  };
 
   if (!question) {
     return <div className='loading-container'>Loading question...</div>;
   }
-
-  const handleBookmarkClick = async () => {
-    // If already bookmarked, just open the organization dialog
-    if (isBookmarked) {
-      setIsBookmarkModalOpen(true);
-      return;
-    }
-
-    // Make sure questionID is a string
-    const questionIdString = String(questionID);
-
-    // Add bookmark to default collection
-    await addBookmarkWithoutCollection(questionIdString, username);
-
-    // Update local state
-    setIsBookmarked(true);
-
-    // Dispatch event to notify profile settings to refresh
-    window.dispatchEvent(
-      new CustomEvent('bookmarkAdded', {
-        detail: {
-          questionId: questionIdString,
-          username,
-          title: question.title,
-        },
-      }),
-    );
-
-    setIsBookmarkModalOpen(true);
-  };
-
-  const handleBookmarkClose = () => {
-    setIsBookmarkModalOpen(false);
-  };
-
-  const handleBookmarkSuccess = () => {
-    setIsBookmarked(true);
-  };
 
   return (
     <div className='answer-page-container'>
@@ -96,6 +173,7 @@ const AnswerPage = () => {
             <button
               className={`bookmark-button ${isBookmarked ? 'bookmarked' : ''}`}
               onClick={handleBookmarkClick}
+              disabled={isLoading}
               title={isBookmarked ? 'Organize bookmark' : 'Bookmark this question'}>
               <FontAwesomeIcon icon={faBookmark} />
               <span className='bookmark-text'>{isBookmarked ? 'Bookmarked' : 'Bookmark'}</span>
@@ -122,9 +200,7 @@ const AnswerPage = () => {
 
             <CommentSection
               comments={question.comments}
-              handleAddComment={(comment: Comment) =>
-                handleNewComment(comment, 'question', questionID)
-              }
+              handleAddComment={comment => handleNewComment(comment, 'question', questionID)}
             />
           </div>
         </div>
@@ -150,9 +226,7 @@ const AnswerPage = () => {
                 codeSnippet={a.codeSnippet}
                 files={a.files}
                 answerId={String(a._id)}
-                handleAddComment={(comment: Comment) =>
-                  handleNewComment(comment, 'answer', String(a._id))
-                }
+                handleAddComment={comment => handleNewComment(comment, 'answer', String(a._id))}
               />
             ))}
           </div>
@@ -166,7 +240,6 @@ const AnswerPage = () => {
           onClick={() => {
             handleNewAnswer();
           }}>
-          <span className='icon'></span>
           Answer Question
         </button>
 
@@ -181,7 +254,8 @@ const AnswerPage = () => {
           questionId={String(question._id)}
           onClose={handleBookmarkClose}
           onSuccess={handleBookmarkSuccess}
-          username={currentUser.username}
+          username={username}
+          isNewBookmark={isNewBookmark}
         />
       )}
     </div>

@@ -4,13 +4,54 @@ import { Collection, CollectionResponse, DatabaseCollection } from '../types/typ
 import CollectionModel from '../models/collection.model';
 
 /**
+ * Creates or gets the default "All Bookmarks" collection for a user.
+ * @param {string} username - The unique username of the user.
+ * @returns {Promise<DatabaseCollection>} - The default collection.
+ */
+export const getOrCreateDefaultCollection = async (
+  username: string,
+): Promise<DatabaseCollection> => {
+  try {
+    // Check if the default collection already exists
+    let defaultCollection = await CollectionModel.findOne({
+      username,
+      isDefault: true,
+    });
+
+    // If it doesn't exist, create it
+    if (!defaultCollection) {
+      defaultCollection = await CollectionModel.create({
+        name: 'All Bookmarks',
+        username,
+        bookmarks: [],
+        isDefault: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+    }
+
+    return defaultCollection;
+  } catch (error) {
+    throw new Error(`Error creating default collection: ${(error as Error).message}`);
+  }
+};
+
+/**
  * Saves a new collection to the database.
  * @param {Collection} collection - The collection to save.
  * @returns {Promise<CollectionResponse>} - The saved collection or an error message.
  */
 export const saveCollection = async (collection: Collection): Promise<CollectionResponse> => {
   try {
-    const result: DatabaseCollection = await CollectionModel.create(collection);
+    // Ensure user has a default collection first
+    await getOrCreateDefaultCollection(collection.username);
+
+    const collectionToSave = {
+      ...collection,
+      isDefault: false,
+    };
+
+    const result: DatabaseCollection = await CollectionModel.create(collectionToSave);
     return result;
   } catch (error) {
     return { error: 'Error when saving a collection' };
@@ -26,6 +67,8 @@ export const getCollectionsForUser = async (
   username: string,
 ): Promise<CollectionResponse[] | { error: string }> => {
   try {
+    await getOrCreateDefaultCollection(username);
+
     const collections: DatabaseCollection[] = await CollectionModel.find({ username });
     return collections;
   } catch (error) {
@@ -46,6 +89,12 @@ export const updateCollection = async (
   username: string,
 ): Promise<CollectionResponse> => {
   try {
+    const collection = await CollectionModel.findOne({ _id: collectionId, username });
+
+    if (collection && collection.isDefault) {
+      return { error: 'Cannot rename default collection' };
+    }
+
     const updatedCollection: DatabaseCollection | null = await CollectionModel.findOneAndUpdate(
       { _id: collectionId, username },
       { name, updatedAt: new Date() },
@@ -136,6 +185,7 @@ export const addBookmarkToCollection = async (
     return { error: `Error when adding bookmark to collection: ${(error as Error).message}` };
   }
 };
+
 /**
  * Removes a bookmark from a collection.
  * @param {string} collectionId - The ID of the collection.
