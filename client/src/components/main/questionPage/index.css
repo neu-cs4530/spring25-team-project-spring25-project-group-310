@@ -1,11 +1,9 @@
-/* Question Page Container */
 .question-page-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px;
 }
 
-/* Question List Styling */
 .question-list {
   display: flex;
   flex-direction: column;
@@ -15,7 +13,6 @@
   overflow: hidden;
 }
 
-/* Empty state styling */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -49,7 +46,6 @@
   margin: 0;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .question-page-container {
     padding: 0 16px;

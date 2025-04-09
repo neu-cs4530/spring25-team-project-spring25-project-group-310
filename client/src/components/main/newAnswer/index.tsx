@@ -187,9 +187,6 @@ const NewAnswerPage = () => {
       <Form>
         <TextArea
           title={'Answer Text *'}
-          hint={
-            'Be specific and include all relevant details to help others understand your solution'
-          }
           id={'answerTextInput'}
           val={text}
           setState={setText}

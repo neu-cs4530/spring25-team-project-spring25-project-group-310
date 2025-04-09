@@ -1,71 +1,25 @@
-import { Flex, Text } from 'theme-ui';
+import React from 'react';
 import useUserContext from '../../hooks/useUserContext';
 import useThemeVote from '../../hooks/useThemeVote';
+import './index.css';
 
-// Custom SVG Chevron Up Icon
-const ChevronUpIcon = ({
-  size = 20,
-  color = 'gray',
-  strokeWidth = 1.5,
-}: {
-  size?: number;
-  color?: string;
-  strokeWidth?: number;
-}) => (
-  <svg
-    xmlns='http://www.w3.org/2000/svg'
-    width={size}
-    height={size}
-    viewBox='0 0 24 24'
-    fill='none'
-    stroke={color}
-    strokeWidth={strokeWidth}
-    strokeLinecap='round'
-    strokeLinejoin='round'>
-    <polyline points='18 15 12 9 6 15'></polyline>
-  </svg>
-);
-
-const ChevronDownIcon = ({
-  size = 20,
-  color = 'gray',
-  strokeWidth = 1.5,
-}: {
-  size?: number;
-  color?: string;
-  strokeWidth?: number;
-}) => (
-  <svg
-    xmlns='http://www.w3.org/2000/svg'
-    width={size}
-    height={size}
-    viewBox='0 0 24 24'
-    fill='none'
-    stroke={color}
-    strokeWidth={strokeWidth}
-    strokeLinecap='round'
-    strokeLinejoin='round'>
-    <polyline points='6 9 12 15 18 9'></polyline>
-  </svg>
-);
-
-// Function to determine text color based on count
-const getCountColor = (count: number) => {
-  if (count > 0) return 'green';
-  if (count < 0) return 'red';
-  return 'inherit';
-};
-
-// Voting Component
-const ThemeVoteComponent = ({
-  themeName,
-  themeVotes,
-  onVoteUpdate,
-}: {
+/**
+ * Interface represents the props for the ThemeVoteComponent.
+ */
+interface ThemeVoteComponentProps {
   themeName: string;
   themeVotes: Record<string, { upVotes: string[]; downVotes: string[] }>;
   onVoteUpdate: () => void;
-}) => {
+}
+
+/**
+ * A modern ThemeVoteComponent that allows users to upvote or downvote a theme.
+ *
+ * @param themeName - The name of the theme being voted on.
+ * @param themeVotes - The current votes for the theme.
+ * @param onVoteUpdate - Callback function to handle vote updates.
+ */
+const ThemeVoteComponent = ({ themeName, themeVotes, onVoteUpdate }: ThemeVoteComponentProps) => {
   const { user, socket } = useUserContext();
   const { count, voted } = useThemeVote(themeVotes, themeName);
 
@@ -85,49 +39,45 @@ const ThemeVoteComponent = ({
   };
 
   return (
-    <Flex
-      sx={{
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 2,
-      }}>
-      <Flex
-        sx={{
-          alignItems: 'center',
-          cursor: user ? 'pointer' : 'not-allowed',
-          opacity: user ? 1 : 0.5,
-        }}
-        onClick={() => user && handleVote('up')}>
-        <ChevronUpIcon
-          size={20}
-          color={voted === 1 ? 'green' : 'gray'}
-          strokeWidth={voted === 1 ? 2.5 : 1.5}
-        />
-      </Flex>
+    <div className='vote-container'>
+      <button
+        className={`vote-button upvote ${voted === 1 ? 'active' : ''}`}
+        onClick={() => handleVote('up')}
+        disabled={!user}
+        aria-label='Upvote'>
+        <svg
+          viewBox='0 0 24 24'
+          width='24'
+          height='24'
+          stroke='currentColor'
+          strokeWidth='2'
+          fill='none'
+          strokeLinecap='round'
+          strokeLinejoin='round'>
+          <polyline points='18 15 12 9 6 15'></polyline>
+        </svg>
+      </button>
 
-      <Text
-        sx={{
-          fontSize: 1,
-          fontWeight: 'bold',
-          color: getCountColor(count),
-        }}>
-        {count}
-      </Text>
+      <div className='vote-count'>{count}</div>
 
-      <Flex
-        sx={{
-          alignItems: 'center',
-          cursor: user ? 'pointer' : 'not-allowed',
-          opacity: user ? 1 : 0.5,
-        }}
-        onClick={() => user && handleVote('down')}>
-        <ChevronDownIcon
-          size={20}
-          color={voted === -1 ? 'red' : 'gray'}
-          strokeWidth={voted === -1 ? 2.5 : 1.5}
-        />
-      </Flex>
-    </Flex>
+      <button
+        className={`vote-button downvote ${voted === -1 ? 'active' : ''}`}
+        onClick={() => handleVote('down')}
+        disabled={!user}
+        aria-label='Downvote'>
+        <svg
+          viewBox='0 0 24 24'
+          width='24'
+          height='24'
+          stroke='currentColor'
+          strokeWidth='2'
+          fill='none'
+          strokeLinecap='round'
+          strokeLinejoin='round'>
+          <polyline points='6 9 12 15 18 9'></polyline>
+        </svg>
+      </button>
+    </div>
   );
 };
 

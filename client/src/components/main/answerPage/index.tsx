@@ -162,7 +162,6 @@ const AnswerPage = () => {
   return (
     <div className='answer-page-container'>
       <div className='question-section'>
-        {/* Question Header with Title and Actions */}
         <div className='question-header'>
           <AnswerHeader ansCount={question.answers.length} title={question.title} />
 
@@ -178,7 +177,6 @@ const AnswerPage = () => {
           </div>
         </div>
 
-        {/* Question Content */}
         <div className='question-content'>
           <div className='vote-section'>
             <VoteComponent question={question} />
@@ -203,7 +201,6 @@ const AnswerPage = () => {
         </div>
       </div>
 
-      {/* Answers Section */}
       {question.answers.length > 0 && (
         <div className='answers-section'>
           <div className='section-header'>
@@ -230,7 +227,6 @@ const AnswerPage = () => {
         </div>
       )}
 
-      {/* Your Answer Section */}
       <div className='your-answer-section'>
         <button
           className='answer-button'
@@ -245,7 +241,6 @@ const AnswerPage = () => {
         </p>
       </div>
 
-      {/* Bookmark Prompt Modal */}
       {isBookmarkModalOpen && (
         <BookmarkPrompt
           questionId={String(question._id)}

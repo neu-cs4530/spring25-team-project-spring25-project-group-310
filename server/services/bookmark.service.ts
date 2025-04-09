@@ -73,18 +73,6 @@ export const deleteBookmark = async (
       username,
     });
 
-    // Also remove it from the default collection
-    try {
-      const defaultCollection = await getOrCreateDefaultCollection(username);
-      await CollectionModel.findByIdAndUpdate(
-        defaultCollection._id,
-        { $pull: { bookmarks: questionId } },
-        { new: true },
-      );
-    } catch (collectionError) {
-      console.error('Error removing from default collection:', collectionError);
-    }
-
     const defaultCollection = await getOrCreateDefaultCollection(username);
     await CollectionModel.findByIdAndUpdate(
       defaultCollection._id,

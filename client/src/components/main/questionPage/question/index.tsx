@@ -46,7 +46,6 @@ const QuestionView = ({ question }: QuestionProps) => {
           handleAnswer(question._id);
         }
       }}>
-      {/* Left side - Stats */}
       <div className='question-stats'>
         <div className='stat-item'>
           <span className='stat-value'>{question.answers.length || 0}</span>
@@ -59,7 +58,6 @@ const QuestionView = ({ question }: QuestionProps) => {
         </div>
       </div>
 
-      {/* Middle - Content */}
       <div className='question-content'>
         <h3 className='question-title'>{question.title}</h3>
 
@@ -78,7 +76,6 @@ const QuestionView = ({ question }: QuestionProps) => {
         </div>
       </div>
 
-      {/* Right side - Author info */}
       <div className='question-meta'>
         <div className='author-info'>
           <div className='author-avatar'>{question.askedBy.charAt(0).toUpperCase()}</div>

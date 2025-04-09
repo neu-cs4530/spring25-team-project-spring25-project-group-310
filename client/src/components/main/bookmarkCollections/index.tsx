@@ -365,7 +365,6 @@ const BookmarkCollections: React.FC = () => {
   return (
     <div className='bookmarks-page'>
       <div className='bookmarks-container'>
-        {/* Sidebar */}
         <div className='sidebar'>
           <div className='sidebar-header'>
             <h2>Collections</h2>
@@ -386,7 +385,6 @@ const BookmarkCollections: React.FC = () => {
             </button>
           </div>
 
-          {/* New Collection Form */}
           {isCreatingCollection && (
             <div className='new-collection-form'>
               <input
@@ -410,7 +408,6 @@ const BookmarkCollections: React.FC = () => {
             </div>
           )}
 
-          {/* Collections List */}
           <div className='collections-list'>
             {collections.length > 0 ? (
               collections.map(collection => (
@@ -474,7 +471,6 @@ const BookmarkCollections: React.FC = () => {
           </div>
         </div>
 
-        {/* Main Content */}
         <div className='main-content'>
           {selectedCollection ? (
             <>

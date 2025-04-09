@@ -6,54 +6,6 @@ import { useAccessibilitySettings } from '../../../hooks/useAccessibility';
 import useUserContext from '../../../hooks/useUserContext';
 import { getThemeVotes } from '../../../services/themeVoteService';
 
-// Custom SVG Chevron Up Icon
-const ChevronUpIcon = ({
-  size = 20,
-  color = 'gray',
-  strokeWidth = 1.5,
-}: {
-  size?: number;
-  color?: string;
-  strokeWidth?: number;
-}) => (
-  <svg
-    xmlns='http://www.w3.org/2000/svg'
-    width={size}
-    height={size}
-    viewBox='0 0 24 24'
-    fill='none'
-    stroke={color}
-    strokeWidth={strokeWidth}
-    strokeLinecap='round'
-    strokeLinejoin='round'>
-    <polyline points='18 15 12 9 6 15'></polyline>
-  </svg>
-);
-
-// Custom SVG Chevron Down Icon
-const ChevronDownIcon = ({
-  size = 20,
-  color = 'gray',
-  strokeWidth = 1.5,
-}: {
-  size?: number;
-  color?: string;
-  strokeWidth?: number;
-}) => (
-  <svg
-    xmlns='http://www.w3.org/2000/svg'
-    width={size}
-    height={size}
-    viewBox='0 0 24 24'
-    fill='none'
-    stroke={color}
-    strokeWidth={strokeWidth}
-    strokeLinecap='round'
-    strokeLinejoin='round'>
-    <polyline points='6 9 12 15 18 9'></polyline>
-  </svg>
-);
-
 // Voting Component
 const ThemeVoteComponent = ({
   themeName,
@@ -85,42 +37,45 @@ const ThemeVoteComponent = ({
   const score = votes.upVotes.length - votes.downVotes.length;
 
   return (
-    <Flex
-      sx={{
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 2,
-      }}>
-      <Flex
-        sx={{
-          alignItems: 'center',
-          cursor: user ? 'pointer' : 'not-allowed',
-          opacity: user ? 1 : 0.5,
-        }}
-        onClick={() => user && handleVote('up')}>
-        <ChevronUpIcon
-          size={20}
-          color={hasUpvoted ? 'green' : 'gray'}
-          strokeWidth={hasUpvoted ? 2.5 : 1.5}
-        />
-      </Flex>
+    <div className='vote-container'>
+      <button
+        className={`vote-button upvote ${hasUpvoted === true ? 'active' : ''}`}
+        onClick={() => handleVote('up')}
+        disabled={!user}
+        aria-label='Upvote'>
+        <svg
+          viewBox='0 0 24 24'
+          width='24'
+          height='24'
+          stroke='currentColor'
+          strokeWidth='2'
+          fill='none'
+          strokeLinecap='round'
+          strokeLinejoin='round'>
+          <polyline points='18 15 12 9 6 15'></polyline>
+        </svg>
+      </button>
 
-      <Text sx={{ fontSize: 1, mx: 1, minWidth: '20px', textAlign: 'center' }}>{score}</Text>
+      <div className='vote-count'>{score}</div>
 
-      <Flex
-        sx={{
-          alignItems: 'center',
-          cursor: user ? 'pointer' : 'not-allowed',
-          opacity: user ? 1 : 0.5,
-        }}
-        onClick={() => user && handleVote('down')}>
-        <ChevronDownIcon
-          size={20}
-          color={hasDownvoted ? 'red' : 'gray'}
-          strokeWidth={hasDownvoted ? 2.5 : 1.5}
-        />
-      </Flex>
-    </Flex>
+      <button
+        className={`vote-button downvote ${hasDownvoted === true ? 'active' : ''}`}
+        onClick={() => handleVote('down')}
+        disabled={!user}
+        aria-label='Downvote'>
+        <svg
+          viewBox='0 0 24 24'
+          width='24'
+          height='24'
+          stroke='currentColor'
+          strokeWidth='2'
+          fill='none'
+          strokeLinecap='round'
+          strokeLinejoin='round'>
+          <polyline points='6 9 12 15 18 9'></polyline>
+        </svg>
+      </button>
+    </div>
   );
 };
 
