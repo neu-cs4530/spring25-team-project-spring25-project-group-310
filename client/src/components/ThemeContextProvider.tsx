@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { ThemeUIProvider } from 'theme-ui';
 import { ThemeContext, useThemeProvider } from '../hooks/useTheme';
 import themePresets from './theme/ThemePresets';
